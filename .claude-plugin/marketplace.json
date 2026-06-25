@@ -1,0 +1,28 @@
+{
+  "name": "webmometro-plugins",
+  "owner": {
+    "name": "Webmometro"
+  },
+  "metadata": {
+    "description": "Plugins personales de Webmometro para Claude Code / Claude Desktop",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "brand-voice-pro",
+      "displayName": "Brand Voice Pro",
+      "source": "./brand-voice-pro",
+      "description": "Discover brand materials across enterprise platforms, generate LLM-ready guidelines, and enforce brand voice on AI content",
+      "version": "1.2.0",
+      "keywords": [
+        "brand-voice",
+        "sales",
+        "marketing",
+        "content-creation",
+        "guidelines",
+        "discovery",
+        "enterprise"
+      ]
+    }
+  ]
+}
