@@ -1,6 +1,9 @@
 # Brand Voice Plugin
 
-A [Tribe AI](https://tribe.ai) plugin for Claude Cowork. Built as a Cowork launch partner.
+Extensión mantenida por **Webmometro** del plugin **Brand Voice** creado originalmente por
+[Tribe AI](https://tribe.ai) para Claude Cowork (Cowork launch partner). Este fork añade un
+**Módulo de Web Content (GEO/AEO + SEO on-page)** al enforcement de marca. Distribuido bajo
+licencia MIT, conservando la atribución original. Ver [Créditos](#créditos).
 
 The brand knowledge that makes a company recognizable rarely lives anywhere useful. It's in a deck from 2022, a Confluence page no one's updated since the last rebrand, and the instincts of a few senior people who've been there long enough to just know. When sales reps are generating outreach with AI and new hires are producing content in their first week, that's exactly what gets lost.
 
@@ -130,3 +133,17 @@ Copy `settings/brand-voice.local.md.example` to `.claude/brand-voice.local.md` i
 - Progressive disclosure — frontmatter is lean, SKILL.md is focused, detail lives in references/
 - Notion AI Search as federated discovery engine — one API searches 8+ platforms via connected sources
 - Google Drive and Slack are native Claude integrations — no MCP connector needed
+
+## Créditos
+
+Este plugin es una **extensión** del plugin **Brand Voice** creado originalmente por
+[Tribe AI](https://tribe.ai) (Cowork launch partner) y publicado bajo licencia MIT. El diseño
+base, los skills, los agentes y la arquitectura son obra de Tribe AI, y todo el crédito por ese
+trabajo les corresponde.
+
+**Webmometro** mantiene este fork, que añade el **Módulo de Web Content (GEO/AEO + SEO on-page)**
+al skill `brand-voice-enforcement` (ver `skills/brand-voice-enforcement/references/web-content-geo-seo.md`),
+además de ajustes menores.
+
+Se conserva la licencia MIT y el aviso de copyright original de Tribe AI. Gracias a Tribe AI por
+liberar este trabajo bajo una licencia abierta.
