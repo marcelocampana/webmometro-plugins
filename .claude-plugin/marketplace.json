@@ -23,6 +23,22 @@
         "discovery",
         "enterprise"
       ]
+    },
+    {
+      "name": "design-system",
+      "displayName": "Design System",
+      "source": "./design-system",
+      "description": "Audita, documenta y extiende design systems, y produce carruseles publicables para redes respetando el sistema de diseño de cada cliente",
+      "version": "1.0.0",
+      "keywords": [
+        "design-system",
+        "design-tokens",
+        "components",
+        "carousel",
+        "social-media",
+        "branding",
+        "ui"
+      ]
     }
   ]
 }
