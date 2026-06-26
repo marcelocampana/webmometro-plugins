@@ -57,6 +57,8 @@ the article.
   show" but "according to [organization/publication, year]".
 - When location matters to the topic, state the relevant geography/market explicitly (AI engines
   prioritize geographically relevant context).
+- The named source in a quotable passage is the **condensed form** (name + source), not the full
+  credential chain — see the attribution-without-redundancy convention in §4.
 
 ## 3. Question → answer structure
 
@@ -88,6 +90,29 @@ LLMs need precisely named entities to attribute information correctly.
 - Name **laws, programs, products, and bodies** by their full official name.
 - **Define** technical or proprietary terms the first time they are used.
 - Re-name relevant entities **in each section** — don't fall back to "the institution" / "it".
+
+**Attribution without redundancy.** Re-naming an entity is necessary; repeating its *full
+credential* every time is not — it adds no new signal after the first mention and reads as heavy
+and redundant. Use a three-level convention by mention position:
+
+- **First mention — full introduction (once):** name + role + affiliation + source + (where/when).
+  This is the only place the full chain appears; EEAT (§5) and entity clarity are satisfied here in
+  one go.
+- **Later mentions — short anchor:** an abbreviated form that keeps only the identifier relevant to
+  that data point — surname when the expert's authority matters, institution when the figure/study
+  matters, source when the origin of the testimony matters. Don't drag all four elements along each
+  time.
+- **Self-contained quotable passage (§2) — intermediate form:** name + source, the minimum for the
+  fragment to stand on its own when an AI lifts it.
+
+Anti-opposite-error rule: the short form is **still a proper noun** (surname or institution),
+never a pronoun or generic ("the specialist", "the institution", "the same one") — that is exactly
+what this section forbids. Vary the connectors ("according to", "details", "stated", "explained")
+so the short form doesn't read like a template.
+
+This convention **reinforces** §2/§4/§5 rather than contradicting them: every passage keeps a
+named, traceable source; only the repeated credential — which carries no new signal after the
+first mention — is dropped.
 
 ## 5. EEAT signals (Expertise, Experience, Authoritativeness, Trustworthiness)
 
@@ -131,6 +156,9 @@ Especially important for YMYL (Your Money or Your Life) topics — health, finan
 ## 10. Internal links
 
 - At least **2 internal links** to related content; **1 to the pillar/hub page** if one exists.
+- Links are **woven into the body** — placed with descriptive anchor text at the thematic point
+  where they apply, not only grouped in a "Related articles" block at the foot. When the project
+  has an internal-linking map with suggested anchors, use those anchors.
 - Anchor text is **descriptive** (not "click here").
 - Note any already-published pages that should be updated to link back to this new piece.
 
@@ -158,6 +186,23 @@ Emit the schema type(s) that fit the page, e.g.:
 - Core Web Vitals within targets (LCP < 2.5s, CLS < 0.1, INP < 200ms) — check with a PageSpeed /
   Lighthouse tool when one is connected.
 
+## 14. Readability & visual breaks (scannability)
+
+Purpose, in priority order: (1) give the reader **visual breaks** while reading (avoid walls of
+prose), (2) make the content **scannable** (the eye can skim it), (3) make the **key data quick to
+look up**.
+
+- No stretch runs more than ~3–4 paragraphs of continuous prose without a visual break: a list, a
+  comparison table, a callout/blockquote, or a highlighted data point.
+- Turn any enumeration of **3+ parallel items** (options, steps, requirements, signals) into a
+  list.
+- Turn any contrast of **2+ entities across 2+ dimensions** (e.g. option A/B/C, before/after, two
+  opposing approaches) into a **comparison table**.
+- **Voice wins:** lists and tables give rhythm, they don't replace the brand's reflective prose.
+  Don't fragment narrative/emotional content into bullets when it loses meaning once chopped up.
+- **Anti-overuse:** no more than ~1 table per 2–3 sections; too many tables tire the reader as much
+  as too much prose.
+
 ---
 
 ## Coverage report (include in "Validate and Explain" for web content)
@@ -178,6 +223,9 @@ After drafting, report briefly:
 | Internal links | ✅ / ⚠️ / ⛔ | |
 | Schema noted | ✅ / ⚠️ / ⛔ | |
 | Fact-first, voice-after (neutral claim opens each section) | ✅ / ⚠️ / ⛔ | |
+| Readability / visual breaks (lists, tables, no walls of prose) | ✅ / ⚠️ / ⛔ | |
+| Internal links woven into the body (not only at the foot) | ✅ / ⚠️ / ⛔ | |
+| Attribution without redundancy (1st full, then short form) | ✅ / ⚠️ / ⛔ | |
 
 > Sources/claims are governed by the citation rule in the brand guidelines (e.g. "every figure
 > carries a named source"). This module adds **no** separate claim-validation mechanism — rigorous

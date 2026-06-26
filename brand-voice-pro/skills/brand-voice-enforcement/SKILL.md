@@ -85,8 +85,8 @@ Create content that:
 - Uses preferred terminology
 - Mirrors the quality and style of guideline examples
 
-For complex or long-form content, delegate to the content-generation agent (defined in `agents/content-generation.md`).
-For high-stakes content, delegate to the quality-assurance agent (defined in `agents/quality-assurance.md`) for validation.
+For complex or long-form content, delegate to the `content-generation` subagent.
+For high-stakes content, delegate to the `quality-assurance` subagent for validation.
 
 **If the request was flagged as web content (Step 1), apply the Web Content Module below
 while drafting** — voice and GEO/SEO are applied together, in the same pass, not as a
@@ -126,12 +126,20 @@ drafting, build in:
   is what carries EEAT. They stack — never let subjective framing replace the neutral answer
   (see reference §3).
 - **Entity clarity** — name key entities (brand, people with their credential, laws/programs by
-  official name) precisely and repeatedly, not only on first mention.
+  official name) precisely and repeatedly, not only on first mention. Re-naming an entity does
+  **not** mean repeating its full credential each time: give the full chain (name + role +
+  affiliation + source) on first mention, then a short proper-noun anchor (surname / institution /
+  source) afterward — never a pronoun or generic (see reference §4).
 - **FAQ section** — when the topic warrants it, with direct 40–80-word answers.
 - **Keyword placement** — primary keyword in the title, first ~100 words, at least one H2, and
   the main image alt; secondary keywords distributed naturally.
 - **Heading hierarchy** — a single H1; descriptive H2/H3; no skipped levels.
-- **Internal links** — link to related existing content with descriptive anchor text.
+- **Readability / visual breaks** — give the reader visual breaks (no walls of prose), keep it
+  scannable, and make key data quick to look up: break up any 3–4 paragraph prose run with a list,
+  comparison table, or callout; turn 3+ parallel items into a list and 2+ entities across 2+
+  dimensions into a table — without fragmenting reflective brand prose (see reference §14).
+- **Internal links** — weave links into the body with descriptive anchor text at the thematic
+  point where they apply, not only grouped in a "Related articles" list at the foot.
 - **Schema** — note the appropriate schema type(s) for the page.
 
 **On sources/claims:** do NOT add a separate claim-validation mechanism here. Web content
