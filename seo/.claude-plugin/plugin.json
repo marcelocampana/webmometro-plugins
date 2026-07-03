@@ -1,0 +1,10 @@
+{
+  "name": "seo",
+  "displayName": "SEO Suite",
+  "version": "1.0.0",
+  "description": "Suite de SEO de 6 skills: contexto estratégico del sitio, snapshots factuales de dominio y de página (GA4, GSC, PageSpeed, Clarity, DataForSEO), auditoría técnica y on-page, evaluación de demanda de audiencia y optimización de conversión (CRO). Los skills comparten archivos de contexto y se encadenan entre sí.",
+  "author": {
+    "name": "Webmometro"
+  },
+  "keywords": ["seo", "audit", "cro", "analytics", "snapshot", "search-console", "content"]
+}
