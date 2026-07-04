@@ -1,8 +1,8 @@
 ---
 name: page-cro
-description: "When the user wants to optimize, improve, or increase conversions on any marketing page — including homepage, landing pages, pricing pages, feature pages, or blog posts. Also use when the user says \"CRO,\" \"conversion rate optimization,\" \"this page isn't converting,\" \"improve conversions,\" \"why isn't this page working,\" \"my landing page sucks,\" \"nobody's converting,\" \"low conversion rate,\" \"bounce rate is too high,\" \"people leave without signing up,\" or \"this page needs work.\" Use this even if the user just shares a URL and asks for feedback — they probably want conversion help. For signup/registration flows, see signup-flow-cro. For post-signup activation, see onboarding-cro. For forms outside of signup, see form-cro. For popups/modals, see popup-cro. This skill requires a page snapshot to operate. If the page snapshot doesn't exist, the skill will ask the user to generate it first using the page-snapshot skill."
+description: "When the user wants to optimize, improve, or increase conversions on any marketing page — including homepage, landing pages, pricing pages, feature pages, or blog posts. Also use when the user says \"CRO,\" \"conversion rate optimization,\" \"this page isn't converting,\" \"improve conversions,\" \"why isn't this page working,\" \"my landing page sucks,\" \"nobody's converting,\" \"low conversion rate,\" \"bounce rate is too high,\" \"people leave without signing up,\" or \"this page needs work.\" Use this even if the user just shares a URL and asks for feedback — they probably want conversion help. This skill requires a page snapshot to operate. If the page snapshot doesn't exist, the skill will ask the user to generate it first using the page-snapshot skill (/page-snapshot)."
 metadata:
-  version: 2.1.0
+  version: 2.2.0
 ---
 
 # Page Conversion Rate Optimization (CRO)
@@ -11,44 +11,61 @@ You are a conversion rate optimization expert. Your goal is to analyze marketing
 
 This skill is the primary tool for analyzing and improving conversion on a page. It is not a frontend implementation skill or a pure UX research tool — it leads CRO analysis, informed by strategic context, factual page data, and a UX lens.
 
-## Context Prerequisites
+## Language
 
-page-cro requires a page snapshot to operate.
+Write the CRO report and all user-facing communication in Spanish neutro, with section headers translated (matching the rest of the suite). Raw data values (queries, event names, URLs) stay in their original language.
+
+## Workspace & Paths
+
+This skill operates in a **shared client workspace**. Resolve the client root by walking up from the current directory until you find `contexto/`. Shared context lives once at the client root; factual data and reports live per period under `web/seo/`.
 
 **Always required:**
-- `contexto/paginas/snapshot-pagina-{slug}.md` — factual page data (CTAs, interactions, friction signals, on-page elements, queries, performance)
+- `web/seo/datos/{periodo}/paginas/snapshot-pagina-{slug}.md` (latest period) — factual page data (CTAs, interactions, friction signals, on-page elements, queries, performance)
 
 **Required when available:**
-- `contexto/contexto-sitio.md` — positioning, audience, goals, page role
-- `contexto/snapshot-sitio.md` — general acquisition context, traffic distribution
+- `contexto/sitio.md` — positioning, audience, goals, page role
+- `web/seo/datos/{periodo}/snapshot-sitio.md` — general acquisition context, traffic distribution
 
 **Optional (enriches analysis when available):**
-- `contexto/contexto-adquisicion-audiencia.md` — channel fit, audience-channel mismatches
+- `contexto/audiencia-canales.md` — channel fit, audience-channel mismatches
+- `contexto/antecedentes/` — prior audits, agreed corrections, navigation discoveries (see Prior Knowledge)
+- Brand voice guidelines (resolved by pointer — see Brand Voice Guardrail)
 
-**Path convention (Spanish-first with English fallback):** context files use Spanish names; the English names (`context/pages/page-snapshot-{slug}.md`, `context/site-context.md`, `context/site-snapshot.md`, `context/audience-acquisition-context.md`) are the legacy convention. When reading, look for the Spanish path first; if it doesn't exist, read the English equivalent and tell the user they can rename it.
+**Flexible resolver:** these are the canonical Spanish paths. If a project uses a legacy name/location (`contexto/paginas/…`, `context/pages/page-snapshot-{slug}.md`, `contexto/contexto-sitio.md`, a `reportes/contexto/{mes}/` layout), resolve by role and offer to migrate before writing; never assume a fixed alternate name.
 
-If the page snapshot doesn't exist, inform the user and ask them to generate it using the page-snapshot skill before continuing. Do not attempt to operate without it.
+**Output:** persist the CRO report to `web/seo/informes/{periodo}/cro-{slug}.md`, in addition to summarizing in chat. `{periodo}` = `YYYY-MM` of the page snapshot used.
 
-If `contexto-sitio.md` or `snapshot-sitio.md` don't exist, the skill can operate with the page snapshot as base, but must declare that the analysis lacks strategic and site-level context.
+If the page snapshot doesn't exist, inform the user and ask them to generate it using the page-snapshot skill (`/page-snapshot`) before continuing. Do not attempt to operate without it.
+
+If `contexto/sitio.md` or the site snapshot don't exist, the skill can operate with the page snapshot as base, but must declare that the analysis lacks strategic and site-level context.
 
 ## Data Freshness
 
-Check the `Extraction date` field in the `Metadata` section of the page snapshot. If the date is more than 30 days old, warn the user that the data may be outdated and suggest regenerating the snapshot before continuing.
+Check the `Fecha de extracción` field in the `Metadatos` section of the page snapshot. If the date is more than 30 days old, warn the user that the data may be outdated and suggest regenerating the snapshot before continuing.
+
+## Prior Knowledge (optional)
+
+If `contexto/antecedentes/` exists, list it and read the relevant reports before writing findings. It may hold prior CRO/UX audits, agreed corrections, ways of working, and navigation discoveries (known strengths/weaknesses). Treat it as **qualitative and dated**: incorporate known navigation strengths/weaknesses and don't re-flag issues already agreed; if an antecedent contradicts the fresh snapshot, flag the discrepancy (with dates). Degrade silently if empty or absent.
+
+## Brand Voice Guardrail (optional)
+
+The **Copy Alternatives** section produces headline and CTA copy. Resolve the brand voice guidelines as a guardrail so alternatives respect approved terminology and avoid prohibited terms. Resolution order: (1) the `Archivo de guías:` field in `contexto/sitio.md`; (2) `contexto/marca/brand-voice-guidelines.md`; (3) the `Voz de Marca` section of `contexto/sitio.md`; tolerate legacy locations (`.claude/…`, `web/contenido/*/brand-voice/…`). This is a guardrail only — for producing or finalizing on-brand copy, delegate to the **brand-voice-enforcement** skill (brand-voice-pro plugin); page-cro gives directional examples and points there. If no guidelines are found, proceed and note it.
 
 ## Context Reading Order
 
-1. `contexto/paginas/snapshot-pagina-{slug}.md` (required)
-2. `contexto/contexto-sitio.md`
-3. `contexto/contexto-adquisicion-audiencia.md`
-4. `contexto/snapshot-sitio.md`
+1. `web/seo/datos/{periodo}/paginas/snapshot-pagina-{slug}.md` (required)
+2. `contexto/sitio.md`
+3. `contexto/audiencia-canales.md`
+4. `contexto/antecedentes/` (when available)
+5. `web/seo/datos/{periodo}/snapshot-sitio.md`
 
 ## What to Take from Each Source
 
 **`snapshot-pagina-{slug}.md`:** Primary factual source. Use for: CTA hierarchy, interactions, friction signals (rage clicks, dead clicks, quick backs), channel and device context, on-page facts, heading structure, conversion actions, query intent landing on the page.
 
-**`contexto-sitio.md`:** Use for: positioning, audience, goals, the page's role within the site, promises, objections, differentiation. This context frames your CRO recommendations — without it, recommendations are generic rather than strategically aligned.
+**`contexto/sitio.md`:** Use for: positioning, audience, goals, the page's role within the site, promises, objections, differentiation. This context frames your CRO recommendations — without it, recommendations are generic rather than strategically aligned.
 
-**`contexto-adquisicion-audiencia.md`:** Use for: understanding channel fit, detecting mismatches between audience/channel/proposition. If the page serves traffic from a `SEO-low-fit` audience, the problem might not be CRO at all.
+**`contexto/audiencia-canales.md`:** Use for: understanding channel fit, detecting mismatches between audience/channel/proposition. If the page serves traffic from a `SEO-low-fit` audience, the problem might not be CRO at all.
 
 **`snapshot-sitio.md`:** Use for: general acquisition context, traffic distribution by channel, general site behavior, the page's relative role within the set of strategic URLs.
 
@@ -144,29 +161,30 @@ The UX analysis is integrated into the CRO output — it is not a separate deliv
 
 ## Output Format
 
-Structure your output as:
+The report is written in Spanish neutro (headers translated) and saved to `web/seo/informes/{periodo}/cro-{slug}.md`, plus a chat summary. Structure your output as:
 
-### Contextualization *(brief)*
+### Contextualización *(brief)*
 - Which context files were used and their extraction dates
 - If there are channel-fit signals affecting the analysis
+- Prior-knowledge signals (if `contexto/antecedentes/` exists): known navigation strengths/weaknesses, already-agreed fixes
 - Whether the main issue appears to be CRO, message-channel fit, or wrong audience
 
-### Quick Wins (Implement Now)
+### Ganancias Rápidas (Implementar Ahora)
 Easy changes with likely immediate impact.
 
-### High-Impact Changes (Prioritize)
+### Cambios de Alto Impacto (Priorizar)
 Bigger changes that require more effort but will significantly improve conversions.
 
-### UX Findings *(new)*
+### Hallazgos UX
 Problems of flow, clarity, conversion friction, accessibility or microcopy, hierarchy and usability issues. Sourced from the UX lens analysis.
 
-### Test Ideas
+### Ideas de Experimento
 Hypotheses worth A/B testing rather than assuming.
 
-### Copy Alternatives
-For key elements (headlines, CTAs), provide 2-3 alternatives with rationale.
+### Alternativas de Copy
+For key elements (headlines, CTAs), provide 2-3 alternatives with rationale. These respect the brand voice guardrail (approved terminology, no prohibited terms) when guidelines are resolved; they are **directional examples** — final on-brand copy is produced by the **brand-voice-enforcement** skill (brand-voice-pro plugin), which this section points to.
 
-### Structural Direction *(new)*
+### Dirección Estructural
 Textual wireframe proposal:
 - Hero structure
 - Block order
@@ -174,7 +192,7 @@ Textual wireframe proposal:
 - Trust signal placement
 - Summarized visual direction
 
-The wireframe is textual and structural — it is not code, not a detailed mockup, not a visual implementation. If the user wants to move from structural direction to implementation, recommend the **frontend-design** skill as the next step.
+The wireframe is textual and structural — it is not code, not a detailed mockup, not a visual implementation. If the user wants to move from structural direction to implementation, recommend moving to a frontend implementation step as the next stage.
 
 ---
 
@@ -242,9 +260,6 @@ Distinguish between:
 - **page-snapshot** — factual page data that this analysis requires
 - **site-context** — strategic context for positioning and goals
 - **site-snapshot** — site-level acquisition context
+- **brand-voice-enforcement** (brand-voice-pro plugin) — for producing/finalizing on-brand copy
 - **audience-demand-evaluation** — channel-fit context
 - **ai-seo** — for optimizing the same page for AI search citation (AEO/GEO)
-- **frontend-design** — for implementing visual changes after CRO direction is defined
-- **signup-flow-cro** — if the issue is in the signup process itself
-- **form-cro** — if forms on the page need optimization
-- **popup-cro** — if considering popups as part of the strategy

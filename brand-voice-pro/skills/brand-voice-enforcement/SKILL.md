@@ -22,7 +22,9 @@ Find the user's brand guidelines using this sequence. Stop as soon as you find t
 
 1. **Session context** — Check if brand guidelines were generated earlier in this session (via `/brand-voice-pro:generate-guidelines`). If so, they are already in the conversation. Use them directly. Session-generated guidelines are the freshest and reflect the user's most recent intent.
 
-2. **Local guidelines file** — Check for `.claude/brand-voice-pro-guidelines.md` inside the user's working folder. Do NOT use a relative path from the agent's current working directory — in Cowork, the agent runs from a plugin cache directory, not the user's project. Resolve the path relative to the user's working folder. If no working folder is set, skip this step.
+2. **Local guidelines file (workspace-aware)** — Check, in order: (a) `contexto/marca/brand-voice-guidelines.md` when a `contexto/` directory exists at or above the working folder (the shared client workspace convention — this is the canonical home); (b) `.claude/brand-voice-guidelines.md` in the working folder; (c) the legacy `.claude/brand-voice-pro-guidelines.md`. Do NOT use a relative path from the agent's current working directory — in Cowork, the agent runs from a plugin cache directory, not the user's project. Resolve the path relative to the user's working folder. If no working folder is set, skip this step.
+
+   In a shared client workspace, also read `contexto/sitio.md` if present — its strategic context (audience, positioning, goals) frames on-brand content the same way it frames the seo-suite skills.
 
 3. **Ask the user** — If none of the above found guidelines, tell the user:
    "I couldn't find your brand guidelines. You can:

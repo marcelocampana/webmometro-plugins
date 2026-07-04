@@ -20,7 +20,7 @@ Follow the guideline-generation skill instructions to:
 4. Assign confidence scores per section
 5. Surface open questions with agent recommendations for any ambiguity
 6. Present key findings and offer next steps
-7. Save guidelines to `.claude/brand-voice-guidelines.md` inside the user's working folder (archiving any existing file first). Do NOT use a relative path from the agent's current working directory — in Cowork, the agent runs from a plugin cache directory, not the user's project.
+7. Save guidelines (archiving any existing file first) using the workspace-aware location: `contexto/marca/brand-voice-guidelines.md` when a `contexto/` directory exists at or above the user's working folder (shared client workspace), otherwise `.claude/brand-voice-guidelines.md` inside the working folder. Do NOT use a relative path from the agent's current working directory — in Cowork, the agent runs from a plugin cache directory, not the user's project.
 
 After generation, guidelines are saved locally so `/brand-voice-pro:enforce-voice` can automatically find them in future sessions.
 

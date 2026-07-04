@@ -25,7 +25,7 @@ Before starting, briefly explain what's about to happen so the user knows what t
 1. **Search** — I'll search your connected platforms (Notion, Google Drive, Slack, etc.) for brand-related materials: style guides, pitch decks, templates, transcripts, and more.
 2. **Analyze** — I'll categorize and rank what I find, pull the best sources, and produce a discovery report with what I found, any conflicts, and open questions.
 3. **Generate guidelines** — Once you've reviewed the report, I can generate a structured brand voice guideline document from the results.
-4. **Save** — Guidelines are saved to `.claude/brand-voice-guidelines.md` in your working folder once you approve them. Nothing is written until that step.
+4. **Save** — Guidelines are saved once you approve them, at the workspace-aware location (`contexto/marca/brand-voice-guidelines.md` in a shared client workspace, otherwise `.claude/brand-voice-guidelines.md` in your working folder). Nothing is written until that step.
 
 The search usually takes a few minutes depending on how many platforms are connected. Ready to get started?"
 

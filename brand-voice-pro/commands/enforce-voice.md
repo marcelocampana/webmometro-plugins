@@ -9,7 +9,7 @@ Load the user's brand guidelines and apply them to the content request provided 
 
 Find brand guidelines using this sequence (stop as soon as found):
 1. Session context — check if guidelines were generated earlier in this conversation
-2. Local guidelines file — check for `.claude/brand-voice-guidelines.md` inside the user's working folder. Do NOT use a relative path from the agent's current working directory (in Cowork, the agent runs from a plugin cache directory). If no working folder is set, skip this step.
+2. Local guidelines file (workspace-aware) — check, in order: `contexto/marca/brand-voice-guidelines.md` when a `contexto/` directory exists at or above the working folder (shared client workspace), then `.claude/brand-voice-guidelines.md`, then the legacy `.claude/brand-voice-pro-guidelines.md`. Do NOT use a relative path from the agent's current working directory (in Cowork, the agent runs from a plugin cache directory). If no working folder is set, skip this step.
 3. If not found, ask the user to run `/brand-voice-pro:discover-brand`, `/brand-voice-pro:generate-guidelines`, or paste guidelines directly
 
 Once guidelines are loaded, follow the brand-voice-enforcement skill instructions to:

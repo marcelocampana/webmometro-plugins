@@ -2,14 +2,14 @@
 name: audience-demand-evaluation
 description: "When the user wants to evaluate whether a target audience is reachable through organic search or needs alternative acquisition channels. Also use when the user mentions \"demand evaluation,\" \"audience demand,\" \"is there search demand,\" \"can we reach this audience with SEO,\" \"channel fit,\" \"acquisition channel,\" \"organic feasibility,\" \"is SEO the right channel,\" or wants to understand if low organic performance is due to execution problems or lack of demand. This skill uses MCPs for targeted demand validation queries — it is not a data extraction skill. For factual site data, see site-snapshot. For SEO diagnosis, see seo-audit."
 metadata:
-  version: 1.1.0
+  version: 1.2.0
 ---
 
 # Audience Demand Evaluation
 
 You evaluate, per audience, the potential organic demand, real SEO feasibility, and the most suitable acquisition channel or motion.
 
-The output is `contexto/contexto-adquisicion-audiencia.md` — a reference document that seo-audit, page-cro, and ai-seo can read to distinguish execution problems from demand limitations.
+The output is `contexto/audiencia-canales.md` — a living reference document at the client root that seo-audit, page-cro, and ai-seo can read to distinguish execution problems from demand limitations.
 
 ## Why This Skill Exists
 
@@ -17,7 +17,7 @@ Many sites assume that all their audiences are reachable through SEO. When organ
 
 ## Language
 
-Write section headers and field names in English.
+Write the output document's section headers and field names in Spanish neutro (translated), matching the rest of the suite. Classification codes (`SEO-primary`, `SEO-low-fit`, etc.) are stable identifiers and stay as-is.
 
 Write all user-facing communication in Spanish neutro.
 
@@ -25,13 +25,18 @@ Content inside tables stays in the language of the source or query.
 
 ## Context Prerequisites
 
+This skill operates in a **shared client workspace**. Resolve the client root by walking up to `contexto/`.
+
 **Required (read):**
-- `contexto/contexto-sitio.md` — audiences, JTBD, pains, use cases
-- `contexto/snapshot-sitio.md` — GSC signals, organic visibility
+- `contexto/sitio.md` — audiences, JTBD, pains, use cases
+- `web/seo/datos/{periodo}/snapshot-sitio.md` (latest period) — GSC signals, organic visibility
 
-**Path convention (Spanish-first with English fallback):** context files use Spanish names; the English names (`context/site-context.md`, `context/site-snapshot.md`, `context/audience-acquisition-context.md`) are the legacy convention. When reading, look for the Spanish path first; if it doesn't exist, read the English equivalent and tell the user they can rename it. When writing the output, always use the Spanish path — unless the project's existing tree is still in English, in which case offer to migrate (rename) before writing.
+**Optional (enriches when available):**
+- `contexto/antecedentes/` — prior audits, agreed corrections, and team learnings per audience (see Prior Knowledge)
 
-If these files don't exist, ask the user to generate them first using site-context and site-snapshot.
+**Flexible resolver:** these are the canonical Spanish paths. If a project uses a legacy name/location (`contexto/contexto-sitio.md`, `context/site-context.md`, a `reportes/contexto/{mes}/` layout), resolve by role and offer to migrate; never assume a fixed alternate name. Write the output as `contexto/audiencia-canales.md`.
+
+If required files don't exist, ask the user to generate them first using site-context and site-snapshot.
 
 **Not used:**
 - Page snapshots — demand evaluation is audience-level, not page-level
@@ -54,7 +59,7 @@ These queries are targeted and bounded (see execution limits), not full dataset 
 
 For each audience:
 
-1. **Take definition from `contexto-sitio.md`** — audience, JTBD, pains, use cases
+1. **Take definition from `contexto/sitio.md`** — audience, JTBD, pains, use cases
 2. **Build query family hypotheses** — generate seed keywords for applicable families
 3. **Validate with DataForSEO** (volume, competition) and **GSC** (existing real traffic)
 4. **Separate existing demand from current capturability** — high volume doesn't mean the site can capture it; low GSC traffic might mean poor execution or no demand
@@ -100,17 +105,21 @@ Not all families apply to every audience. Evaluate relevance before querying —
 
 If an audience produces no signals in GSC and no relevant volume in DataForSEO after evaluating the first 3 query families, classify it as `Insufficient evidence` and stop further investigation. This prevents wasting MCP calls on audiences with no detectable search behavior.
 
+## Prior Knowledge (optional)
+
+If `contexto/antecedentes/` exists, list it and read the relevant reports before classifying. It may hold prior audits, agreed corrections, ways of working, and team learnings about which audiences respond to which channels. Treat it as **qualitative and dated**: fold in per-audience learnings, but if an antecedent contradicts fresh GSC/DataForSEO signals, flag the discrepancy (with dates) rather than trusting the older document. Degrade silently if the directory is empty or absent.
+
 ## Output Structure
 
-`contexto/contexto-adquisicion-audiencia.md` must include:
+`contexto/audiencia-canales.md` must include (section headers in Spanish neutro):
 
-1. **Metadata** — extraction date, site, audiences evaluated, sources used
-2. **Audience Definitions** — summary of each audience from site-context
-3. **Methodology** — brief description of approach and limits applied
-4. **Audience Reachability Assessment** — per audience: hypothesized query families, observed signals, external demand validation, organic feasibility, recommended acquisition motion, confidence, caveats
-5. **Search Demand Signals** — supporting tables with volume, competition, and existing traffic data
-6. **Channel Fit Summary** — table with all audiences and their classification
-7. **Confidence and Caveats** — limitations, data gaps, assumptions
+1. **Metadatos** — extraction date, site, audiences evaluated, sources used
+2. **Definiciones de Audiencia** — summary of each audience from site-context
+3. **Metodología** — brief description of approach and limits applied
+4. **Evaluación de Alcanzabilidad por Audiencia** — per audience: hypothesized query families, observed signals, external demand validation, organic feasibility, recommended acquisition motion, confidence, caveats
+5. **Señales de Demanda de Búsqueda** — supporting tables with volume, competition, and existing traffic data
+6. **Resumen de Channel Fit** — table with all audiences and their classification
+7. **Confianza y Salvedades** — limitations, data gaps, assumptions
 
 Minimum fields per audience:
 - Audience / Segment
@@ -128,6 +137,7 @@ Minimum fields per audience:
 - Always separate demand (does the search volume exist?) from capturability (can this site realistically capture it?)
 - Do not use page snapshots as source
 - Can classify B2B audiences with motion `LinkedIn/outbound` when SEO is not the primary channel
+- If a prior audit in `contexto/antecedentes/` contradicts fresh signals, surface the discrepancy with dates rather than silently trusting the older document
 
 ## Related Skills
 

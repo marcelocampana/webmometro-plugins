@@ -2,14 +2,14 @@
 name: page-snapshot
 description: "Activar solo con el comando /page-snapshot. No invocar automáticamente por contexto de conversación."
 metadata:
-  version: 1.3.0
+  version: 1.4.0
 ---
 
 # Snapshot de Página
 
 Construyes un snapshot de datos factuales para una URL específica, consolidando métricas a nivel de página provenientes de GA4, GSC, PageSpeed, Clarity y DataForSEO, más los elementos de la página, en un único documento de referencia en Markdown.
 
-El archivo de salida es `contexto/paginas/snapshot-pagina-{slug}.md` — un archivo neutral, solo de datos, diseñado para lectura humana y consumo posterior por habilidades como page-cro, ai-seo y seo-audit (modo URL específica).
+El archivo de salida es `web/seo/datos/{periodo}/paginas/snapshot-pagina-{slug}.md` (ver Workspace y Rutas) — un archivo neutral, solo de datos, diseñado para lectura humana y consumo posterior por habilidades como page-cro, ai-seo y seo-audit (modo URL específica).
 
 ## Principios Editoriales
 
@@ -53,7 +53,7 @@ Solicita la fecha de referencia al usuario antes de iniciar cualquier extracció
 
 Acepta cualquier formato no ambiguo (ISO, fecha escrita, "fin del mes pasado", etc.) y confirma la fecha resuelta antes de continuar.
 
-Si ya existe un `Fecha de referencia` en `contexto/config-snapshot.md` (fallback inglés: `context/snapshot-config.md`), confirma con el usuario si se reutiliza o si desea actualizarla para este snapshot.
+Si ya existe una fecha de referencia previa (en `contexto/configuracion.md` o en un snapshot anterior), confirma con el usuario si se reutiliza o si desea actualizarla para este snapshot. El período `{periodo}` = `YYYY-MM` se deriva de esa fecha.
 
 Registra la fecha de referencia confirmada en los **Metadatos** del archivo de salida.
 
@@ -75,26 +75,26 @@ Reglas:
 - Si la ruta tiene más de dos niveles, usar solo los últimos dos
 - No incluir barra final, parámetros de consulta ni fragmentos
 
-## Arquitectura de Archivos
+## Workspace y Rutas
+
+Este skill opera dentro de un **workspace de cliente compartido** por varios plugins. Regla: lo compartido vive una sola vez en la raíz del cliente bajo `contexto/`; cada dominio tiene su área; nada se duplica.
 
 ```text
-{dominio-o-proyecto}/
-  contexto/
-    config-snapshot.md
-    paginas/
-      snapshot-pagina-{slug}.md
+{cliente}/
+  contexto/                     ← COMPARTIDO (todos los plugins leen)
+    configuracion.md               identificadores de fuente + URLs estratégicas
+    sitio.md                       (site-context)
+  web/seo/
+    datos/{periodo}/            ← SALIDA de este skill (solo datos)
+      paginas/
+        snapshot-pagina-{slug}.md
 ```
 
-## Rutas de Archivos de Contexto (español primero, fallback en inglés)
-
-Los archivos de contexto usan nombres en español. Los nombres en inglés son la convención anterior (legado):
-
-| Español (actual) | Inglés (legado) |
-|---|---|
-| `contexto/paginas/snapshot-pagina-{slug}.md` | `context/pages/page-snapshot-{slug}.md` |
-| `contexto/config-snapshot.md` | `context/snapshot-config.md` |
-
-Al leer, buscar primero la ruta en español; si no existe, leer la equivalente en inglés y avisar al usuario que puede renombrarla. Al escribir, usar siempre la ruta en español — salvo que el árbol del proyecto siga en inglés: en ese caso ofrecer migrar (renombrar) antes de escribir; si el usuario declina, continuar escribiendo en el árbol inglés existente para no dividir archivos entre dos árboles.
+Reglas:
+- **Raíz del cliente:** resuelve la raíz subiendo desde el directorio actual hasta encontrar `contexto/`. Lee `contexto/configuracion.md` de ahí; escribe el snapshot en `web/seo/datos/{periodo}/paginas/`.
+- **`{periodo}` = `YYYY-MM`** derivado de la fecha de referencia (p. ej. `2026-07`). Cada corrida escribe en su carpeta de período; los períodos anteriores se conservan como histórico.
+- **Nombre canónico en español:** `web/seo/datos/{periodo}/paginas/snapshot-pagina-{slug}.md`.
+- **Resolver flexible (no fallar por el nombre):** si no encuentras la ubicación canónica, resuelve por rol — busca el snapshot equivalente en el árbol existente del proyecto (p. ej. un legado `context/pages/page-snapshot-{slug}.md`, un inglés `pages/…`, o una estructura `reportes/contexto/{mes}/pages/…`). Si lo encuentras en forma legada, ofrece migrar (renombrar/reubicar) a la ruta canónica antes de escribir; si el usuario declina, escribe donde vive el árbol existente para no dividir archivos. Si no encuentras nada, pregunta — nunca asumas un nombre alterno fijo.
 
 ## Alcance
 
@@ -192,9 +192,9 @@ Mismas reglas que site-snapshot: ejecutar una verificación previa, notificar al
 
 ### Paso 1: Definir la URL objetivo y la fecha de referencia
 
-Verificar si existe `contexto/config-snapshot.md` (fallback inglés: `context/snapshot-config.md`). Si existe, leerlo.
+Resolver la raíz del cliente (subir hasta `contexto/`) y verificar si existe `contexto/configuracion.md`. Si existe, leerlo. Si solo existe con un nombre/ubicación legada (p. ej. `config-snapshot.md`, `context/snapshot-config.md`, o una estructura `reportes/contexto/{mes}/`), leerlo ahí y ofrecer migrar a `contexto/configuracion.md`.
 
-Si no existe, seguir el mismo flujo de detección automática y consulta al usuario que site-snapshot.
+Si no existe en ningún lado, seguir el mismo flujo de detección automática y consulta al usuario que site-snapshot.
 
 **Solicitar la fecha de referencia al usuario** — la fecha desde la cual se calcularán todas las ventanas de tiempo relativas. Hacerlo antes de cualquier extracción de datos. Si el config ya tiene una `Fecha de referencia`, confirmar con el usuario si se reutiliza o actualiza.
 
@@ -258,10 +258,6 @@ Confirmar:
 - `Fecha de extracción` y `Fecha de referencia` están presentes en los Metadatos
 - Los Metadatos incluyen las fechas exactas calculadas para cada período
 - Todos los encabezados de sección, encabezados de tabla y etiquetas de campo están en español neutro
-
-## Ejemplo de Referencia
-
-El archivo `page-snapshot-pricing-example.md` (provisto como referencia durante la creación del skill) define la estructura esperada y el nivel de detalle. Al construir un snapshot de página, seguir esa estructura, orden de secciones y formato de tablas.
 
 ## Habilidades Relacionadas
 

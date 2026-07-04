@@ -14,7 +14,7 @@ user-facing output (skills instruct their output language explicitly):
 
 - **brand-voice-pro** — full-stack plugin: skills + agents + commands + MCP servers.
 - **design-system** — skills-only: design-system audit/docs + social carousel generation.
-- **seo** — skills-only: a 7-skill SEO suite (snapshots → audit/CRO/audience/AI-search).
+- **seo-suite** — skills-only: a 7-skill SEO suite (snapshots → audit/CRO/audience/AI-search).
 
 ## Layout & manifest hierarchy
 
@@ -49,15 +49,41 @@ Two invariants tie the manifests together — **always keep them in sync**:
 The pattern in brand-voice-pro is **command → skill → agent(s)**: a slash command orients the
 user and invokes a skill, and the skill delegates heavy/autonomous work to subagents.
 
-## Skills chain through shared context files
+## Shared client workspace (convention for all plugins)
 
-Skills are not standalone — within a plugin they pass data via Markdown files under a
-project's `contexto/` directory (the skill looks in the *active project's* local `contexto/`
-first, not this repo). Context file names are Spanish-first with an English legacy fallback
-(`contexto/contexto-sitio.md` ← `context/site-context.md`, `contexto/snapshot-sitio.md` ←
-`context/site-snapshot.md`, `contexto/paginas/snapshot-pagina-{slug}.md` ←
-`context/pages/page-snapshot-{slug}.md`, etc.): skills read Spanish first, fall back to
-English suggesting a rename, and always write Spanish. In the **seo** plugin specifically:
+Skills are not standalone — they pass data via Markdown files inside a **shared client
+workspace** that several plugins (seo-suite, brand-voice-pro, content, RRSS/design) read and
+write. The governing rule: **shared truth lives once at the client root; each domain has its own
+work area; nothing is duplicated.** Skills resolve the client root by walking up from the active
+directory until they find `contexto/` (they operate in the *active project*, not this repo).
+
+```text
+{cliente}/
+  contexto/                     ← COMPARTIDO (todos los plugins leen; nadie duplica)
+    sitio.md                       estrategia/audiencia/objetivos   (produce: site-context)
+    marca/                         voz de marca, guidelines         (produce: brand-voice-pro)
+    audiencia-canales.md           demanda y channel-fit            (produce: audience-demand)
+    configuracion.md               IDs GA4/GSC/Clarity/DataForSEO + URLs
+    antecedentes/                  informes previos del equipo (solo lectura; input cualitativo)
+  recursos/                     ← COMPARTIDO (logos, fuentes, iconos, imágenes)
+  conocimiento/                 ← COMPARTIDO (bibliotecas de fuentes para citar/redactar; p. ej. revista-roc/)
+  web/seo/                      ← DOMINIO SEO
+    datos/{periodo}/               datos factuales (snapshots)      versionado por período YYYY-MM
+    informes/{periodo}/            interpretación (auditoría/CRO/AI-SEO)
+    tracking/                      cambios SEO (seo-change-tracker)
+  web/contenido/                ← DOMINIO CONTENIDO   ·   rrss/  ← DOMINIO RRSS/diseño
+```
+
+Reglas clave para editar skills:
+- **Nombres canónicos en español**; los archivos compartidos viven una sola vez en `contexto/` y
+  los demás plugins los leen **por puntero** (p. ej. la voz de marca vía el campo `Archivo de
+  guías:` en `contexto/sitio.md`), nunca copiando.
+- **Resolver flexible:** si un proyecto usa nombres/ubicaciones antiguas (`contexto/contexto-sitio.md`,
+  un legado `context/…`, o un `reportes/contexto/{mes}/…`), resolver por rol y ofrecer migrar; no
+  asumir un nombre alterno fijo.
+- **`contexto/` es vivo** (no versionado); datos e informes se versionan por período `YYYY-MM`.
+
+Flujo de la suite SEO:
 
 ```
 site-context + site-snapshot ─→ seo-audit / audience-demand-evaluation
@@ -67,17 +93,21 @@ page-snapshot ────────────────→ page-cro / ai-
 Snapshot skills (`site-snapshot`, `page-snapshot`) are strictly **data-only** — no
 interpretation, recommendations, or composite scores — because downstream analytical skills
 (`seo-audit`, `page-cro`, `audience-demand-evaluation`, `ai-seo`) read them and would inherit
-any bias. Preserve that separation when editing SEO skills. As a rule only snapshot skills
-query MCPs; the two bounded exceptions (with explicit execution limits) are
-`audience-demand-evaluation` (demand validation) and `ai-seo` (real AI-visibility
-verification, gated behind a cost confirmation).
+any bias. Snapshots and site-context never read `contexto/antecedentes/` (it is interpretive).
+Preserve that separation when editing SEO skills. As a rule only snapshot skills query MCPs; the
+two bounded exceptions (with explicit execution limits) are `audience-demand-evaluation` (demand
+validation) and `ai-seo` (real AI-visibility verification, gated behind a cost confirmation).
+
+Cross-plugin: the brand voice guidelines home is `contexto/marca/brand-voice-guidelines.md`
+(produced by **brand-voice-pro**), and the SEO analytical skills read it only as a guardrail,
+delegating on-brand copy production back to brand-voice-pro's `brand-voice-enforcement`.
 
 ## MCP dependencies
 
 MCP servers are **not** bundled except in brand-voice-pro (`brand-voice-pro/.mcp.json`, HTTP
-endpoints for Notion/Atlassian/Box/Figma/Gong/Granola). The **seo** plugin deliberately ships
+endpoints for Notion/Atlassian/Box/Figma/Gong/Granola). The **seo-suite** plugin deliberately ships
 no `.mcp.json`: it relies on servers the user configures globally (DataForSEO, GSC/`gsc`,
-GA4/`analytics-mcp`, plus PageSpeed/Clarity), documented as prerequisites in `seo/README.md`.
+GA4/`analytics-mcp`, plus PageSpeed/Clarity), documented as prerequisites in `seo-suite/README.md`.
 When a data source is missing, SEO skills degrade explicitly rather than fail.
 
 ## Adding or editing a plugin
@@ -86,7 +116,7 @@ When a data source is missing, SEO skills degrade explicitly rather than fail.
    `.claude-plugin/marketplace.json` (respect the two sync invariants above).
 2. Validate every manifest you touch:
    `python3 -m json.tool .claude-plugin/marketplace.json` and the plugin's `plugin.json`.
-3. Match the closest existing plugin's shape: skills-only plugins (design-system, seo) have
+3. Match the closest existing plugin's shape: skills-only plugins (design-system, seo-suite) have
    no `agents/`, `commands/`, or `.mcp.json` — skills auto-activate via their `description`.
 4. Bump `version` in **both** the plugin's `plugin.json` and its `marketplace.json` entry
    together.

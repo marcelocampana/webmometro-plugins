@@ -1,8 +1,8 @@
 ---
 name: seo-audit
-description: "When the user wants to audit, review, or diagnose SEO issues on their site. Also use when the user mentions \"SEO audit,\" \"technical SEO,\" \"why am I not ranking,\" \"SEO issues,\" \"on-page SEO,\" \"meta tags review,\" \"SEO health check,\" \"my traffic dropped,\" \"lost rankings,\" \"not showing up in Google,\" \"site isn't ranking,\" \"Google update hit me,\" \"page speed,\" \"core web vitals,\" \"crawl errors,\" or \"indexing issues.\" Use this even if the user just says something vague like \"my SEO is bad\" or \"help with SEO\" — start with an audit. For building pages at scale to target keywords, see programmatic-seo. For adding structured data, see schema-markup. For AI search optimization, see ai-seo. This skill requires context files (site-context, site-snapshot) to operate. If they don't exist, the skill will ask the user to generate them first using the corresponding snapshot and context skills."
+description: "When the user wants to audit, review, or diagnose SEO issues on their site. Also use when the user mentions \"SEO audit,\" \"technical SEO,\" \"why am I not ranking,\" \"SEO issues,\" \"on-page SEO,\" \"meta tags review,\" \"SEO health check,\" \"my traffic dropped,\" \"lost rankings,\" \"not showing up in Google,\" \"site isn't ranking,\" \"Google update hit me,\" \"page speed,\" \"core web vitals,\" \"crawl errors,\" or \"indexing issues.\" Use this even if the user just says something vague like \"my SEO is bad\" or \"help with SEO\" — start with an audit. For AI search optimization, see ai-seo. This skill requires context files (site-context, site-snapshot) to operate. If they don't exist, the skill will ask the user to generate them first using the corresponding snapshot and context skills."
 metadata:
-  version: 2.1.0
+  version: 2.2.0
 ---
 
 # SEO Audit
@@ -11,42 +11,59 @@ You are an expert in search engine optimization. Your goal is to identify SEO is
 
 This skill is a diagnostic tool — it reads context files produced by other skills in the ecosystem, it does not query MCPs directly.
 
-## Context Prerequisites
+## Language
 
-seo-audit requires context files to operate. It does not function standalone without context.
+Write the audit report and all user-facing communication in Spanish neutro, with section headers translated (matching the rest of the suite). The skill's internal reasoning may stay in English; the delivered report does not. Raw data values (queries, URLs, event names) stay in their original language.
+
+## Workspace & Paths
+
+This skill operates in a **shared client workspace**. Resolve the client root by walking up from the current directory until you find `contexto/`. Shared context lives once at the client root; factual data and reports live per period under `web/seo/`.
 
 **Always required:**
-- `contexto/contexto-sitio.md` — strategic context (audience, positioning, goals)
-- `contexto/snapshot-sitio.md` — factual site data (visibility, coverage, performance)
+- `contexto/sitio.md` — strategic context (audience, positioning, goals)
+- `web/seo/datos/{periodo}/snapshot-sitio.md` (latest period) — factual site data (visibility, coverage, performance)
 
 **Required in URL-specific mode:**
-- `contexto/paginas/snapshot-pagina-{slug}.md` — factual page data
+- `web/seo/datos/{periodo}/paginas/snapshot-pagina-{slug}.md` — factual page data
 
 **Optional (enriches diagnosis when available):**
-- `contexto/contexto-adquisicion-audiencia.md` — demand and channel-fit data
+- `contexto/audiencia-canales.md` — demand and channel-fit data
+- `contexto/antecedentes/` — prior audits, agreed corrections, team learnings (see Prior Knowledge)
+- Brand voice guidelines (resolved by pointer — see Brand Voice Guardrail)
 
-**Path convention (Spanish-first with English fallback):** context files use Spanish names; the English names (`context/site-context.md`, `context/site-snapshot.md`, `context/pages/page-snapshot-{slug}.md`, `context/audience-acquisition-context.md`) are the legacy convention. When reading, look for the Spanish path first; if it doesn't exist, read the English equivalent and tell the user they can rename it.
+**Flexible resolver:** these are the canonical Spanish paths. If a project uses a legacy name/location (`contexto/contexto-sitio.md`, `context/site-context.md`, `context/pages/page-snapshot-{slug}.md`, a `reportes/contexto/{mes}/` layout), resolve by role and offer to migrate before writing; never assume a fixed alternate name.
 
-If required files don't exist, inform the user which ones are missing and ask them to generate them using the corresponding skills (site-snapshot, page-snapshot, site-context) before continuing. Do not attempt to operate without them.
+**Output:** persist the audit report to `web/seo/informes/{periodo}/auditoria-seo.md` (full-site) or `web/seo/informes/{periodo}/auditoria-seo-{slug}.md` (URL-specific), in addition to summarizing in chat. `{periodo}` = `YYYY-MM` of the snapshot used.
+
+If required files don't exist, inform the user which ones are missing and ask them to generate them using the corresponding skills (site-snapshot, `/page-snapshot`, site-context) before continuing. Do not attempt to operate without them.
 
 ## Data Freshness
 
-Check the `Extraction date` field in the `Metadata` section of each snapshot you read. If the date is more than 30 days old, warn the user that the data may be outdated and suggest regenerating the snapshot before continuing.
+Check the `Fecha de extracción` field in the `Metadatos` section of each snapshot you read. If the date is more than 30 days old, warn the user that the data may be outdated and suggest regenerating the snapshot before continuing.
+
+## Prior Knowledge (optional)
+
+If `contexto/antecedentes/` exists, list it and read the relevant reports before writing findings. It may hold prior audits, agreed corrections, ways of working, and navigation discoveries. Treat it as **qualitative and dated**: do not re-flag issues already marked resolved/agreed, respect agreed ways of working, and if an antecedent contradicts a fresh snapshot, flag the discrepancy (with dates) rather than trusting the older document. Degrade silently if empty or absent.
+
+## Brand Voice Guardrail (optional)
+
+When the audit proposes **title tag or meta description copy**, resolve the brand voice guidelines as a guardrail so suggestions respect approved terminology and avoid prohibited terms. Resolution order: (1) the `Archivo de guías:` field in `contexto/sitio.md`; (2) `contexto/marca/brand-voice-guidelines.md`; (3) the `Voz de Marca` section of `contexto/sitio.md`; tolerate legacy locations (`.claude/…`, `web/contenido/*/brand-voice/…`). This is a guardrail only — for producing or finalizing on-brand copy, delegate to the **brand-voice-enforcement** skill (brand-voice-pro plugin); this audit only gives directional examples and points there. If no guidelines are found, proceed and note it.
 
 ## Context Reading Order
 
-1. `contexto/contexto-sitio.md`
-2. `contexto/snapshot-sitio.md`
-3. `contexto/contexto-adquisicion-audiencia.md` (when available)
-4. `contexto/paginas/snapshot-pagina-{slug}.md` (required in URL-specific mode)
+1. `contexto/sitio.md`
+2. `web/seo/datos/{periodo}/snapshot-sitio.md`
+3. `contexto/audiencia-canales.md` (when available)
+4. `contexto/antecedentes/` (when available)
+5. `web/seo/datos/{periodo}/paginas/snapshot-pagina-{slug}.md` (required in URL-specific mode)
 
 ## What to Take from Each Source
 
-**`contexto-sitio.md`:** audience, positioning, goals, strategic pages, priorities. Use this to understand what the site is trying to achieve and for whom — so your audit findings are framed in terms of business impact, not just technical compliance.
+**`contexto/sitio.md`:** audience, positioning, goals, strategic pages, priorities. Use this to understand what the site is trying to achieve and for whom — so your audit findings are framed in terms of business impact, not just technical compliance.
 
-**`snapshot-sitio.md`:** organic visibility, coverage, indexation, technical performance, competitors, channel distribution. This is your factual baseline for site-level diagnosis.
+**`snapshot-sitio.md` (latest period):** organic visibility, coverage, indexation, technical performance, competitors, channel distribution. This is your factual baseline for site-level diagnosis.
 
-**`contexto-adquisicion-audiencia.md`:** organic demand, capturability, channel limitations. Use this to distinguish SEO execution problems from demand or channel-fit problems. If this file shows `SEO-low-fit` for an audience, don't diagnose low traffic for that audience as an SEO failure.
+**`contexto/audiencia-canales.md`:** organic demand, capturability, channel limitations. Use this to distinguish SEO execution problems from demand or channel-fit problems. If this file shows `SEO-low-fit` for an audience, don't diagnose low traffic for that audience as an SEO failure.
 
 **`snapshot-pagina-{slug}.md`:** on-page facts, behavior, queries, performance for a specific URL. Only for URL-specific audits.
 
@@ -54,7 +71,7 @@ Check the `Extraction date` field in the `Metadata` section of each snapshot you
 
 ### Full Site Mode
 
-- Reads `contexto-sitio.md`, `snapshot-sitio.md`, and `contexto-adquisicion-audiencia.md`
+- Reads `contexto/sitio.md`, the latest `snapshot-sitio.md`, and `contexto/audiencia-canales.md`
 - Diagnoses at site level: coverage, indexation, general technical performance, competition, channels
 - Uses data already present in `snapshot-sitio.md` (top pages, top queries, coverage, PageSpeed for strategic URLs)
 - Does NOT read individual page snapshots — the token cost would be excessive
@@ -62,8 +79,8 @@ Check the `Extraction date` field in the `Metadata` section of each snapshot you
 
 ### URL-Specific Mode
 
-- Also reads `contexto/paginas/snapshot-pagina-{slug}.md`
-- If the page snapshot doesn't exist, asks the user to generate it first
+- Also reads `web/seo/datos/{periodo}/paginas/snapshot-pagina-{slug}.md`
+- If the page snapshot doesn't exist, asks the user to generate it first with `/page-snapshot`
 - Diagnoses at page level: on-page elements, heading structure, images, CTAs, schema, performance, queries
 
 ## Initial Contextualization Layer
@@ -360,32 +377,33 @@ Reporting "no schema found" based solely on `web_fetch` or `curl` leads to false
 
 ## Output Format
 
-### Audit Report Structure
+The report is written in Spanish neutro (headers translated) and saved to `web/seo/informes/{periodo}/auditoria-seo.md` (or `auditoria-seo-{slug}.md` in URL-specific mode), plus a chat summary.
 
-**Contextualization** *(new)*
+**Contextualización**
 - Strategic context used and extraction date
 - Factual snapshot used and extraction date
-- Demand/channel-fit signals (if audience-acquisition-context exists)
+- Demand/channel-fit signals (if `contexto/audiencia-canales.md` exists)
+- Prior-knowledge signals (if `contexto/antecedentes/` exists): already-agreed fixes, known strengths/weaknesses
 - Primary problem type assessment: technical, on-page, content, coverage, or demand
 
-**Executive Summary**
+**Resumen Ejecutivo**
 - Overall health assessment
 - Top 3-5 priority issues
 - Quick wins identified
 
-**Technical SEO Findings**
+**Hallazgos Técnicos SEO**
 For each issue:
-- **Issue**: What's wrong
-- **Impact**: SEO impact (High/Medium/Low)
-- **Evidence**: How you found it
-- **Fix**: Specific recommendation
-- **Priority**: 1-5 or High/Medium/Low
+- **Problema**: What's wrong
+- **Impacto**: SEO impact (Alto/Medio/Bajo)
+- **Evidencia**: How you found it
+- **Solución**: Specific recommendation
+- **Prioridad**: 1-5 or Alta/Media/Baja
 
-**On-Page SEO Findings** — Same format
+**Hallazgos On-Page** — Same format. When suggesting **title tag or meta description copy**, respect the brand voice guardrail (approved terminology, no prohibited terms) and note that final on-brand copy is produced by the **brand-voice-enforcement** skill; give only directional examples here.
 
-**Content Findings** — Same format
+**Hallazgos de Contenido** — Same format
 
-**Prioritized Action Plan**
+**Plan de Acción Priorizado**
 1. Critical fixes (blocking indexation/ranking)
 2. High-impact improvements
 3. Quick wins (easy, immediate benefit)
@@ -435,6 +453,5 @@ For each issue:
 - **site-context** — strategic context that frames the audit
 - **audience-demand-evaluation** — demand and channel-fit context
 - **ai-seo** — for optimizing content for AI search engines
-- **programmatic-seo** — for building SEO pages at scale
-- **schema-markup** — for implementing structured data
 - **page-cro** — for optimizing pages for conversion (not just ranking)
+- **brand-voice-enforcement** (brand-voice-pro plugin) — for producing/finalizing on-brand title & meta copy

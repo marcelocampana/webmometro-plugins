@@ -13,7 +13,7 @@
       "displayName": "Brand Voice Pro",
       "source": "./brand-voice-pro",
       "description": "Discover brand materials across enterprise platforms, generate LLM-ready guidelines, and enforce brand voice on AI content",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "keywords": [
         "brand-voice",
         "sales",
@@ -41,11 +41,11 @@
       ]
     },
     {
-      "name": "seo",
+      "name": "seo-suite",
       "displayName": "SEO Suite",
-      "source": "./seo",
+      "source": "./seo-suite",
       "description": "Suite de SEO: snapshots de datos (GA4, GSC, PageSpeed, Clarity, DataForSEO), auditoría técnica y on-page, evaluación de demanda de audiencia, optimización de conversión (CRO) y optimización para motores de búsqueda de IA (AEO/GEO)",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "keywords": [
         "seo",
         "audit",

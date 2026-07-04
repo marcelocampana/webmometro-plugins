@@ -2,14 +2,14 @@
 name: site-snapshot
 description: "When the user wants to generate a factual data snapshot for an entire site or domain. Also use when the user mentions \"site snapshot,\" \"site report,\" \"domain snapshot,\" \"site data extraction,\" \"pull site data,\" \"generate site baseline,\" \"extract site metrics,\" or wants to consolidate analytics, search, performance, behavior and SEO data for a domain into a single reference document. This skill extracts data only — it does not diagnose, recommend, or interpret. For page-level snapshots, see page-snapshot. For SEO diagnosis, see seo-audit. For conversion analysis, see page-cro."
 metadata:
-  version: 1.2.0
+  version: 1.3.0
 ---
 
 # Site Snapshot
 
 You build a factual data snapshot for an entire site or domain, consolidating metrics from GA4, GSC, PageSpeed, Clarity and DataForSEO into a single Markdown reference document.
 
-The output is `contexto/snapshot-sitio.md` — a neutral, data-only file designed for human reading and downstream consumption by other skills (seo-audit, page-cro, ai-seo, site-context, audience-demand-evaluation).
+The output is `web/seo/datos/{periodo}/snapshot-sitio.md` (see Workspace & Paths) — a neutral, data-only file designed for human reading and downstream consumption by other skills (seo-audit, page-cro, ai-seo, site-context, audience-demand-evaluation).
 
 ## Editorial Principles
 
@@ -44,37 +44,35 @@ Content inside tables stays in the original language of the source. If GA4 repor
 
 Write all user-facing communication (explanations, questions, warnings, errors) in Spanish neutro.
 
-## File Architecture
+## Workspace & Paths
+
+This skill operates inside a **shared client workspace** used by several plugins. The rule is: shared truth lives once at the client root under `contexto/`; each domain has its own work area; nothing is duplicated.
 
 ```text
-{domain-or-project}/
-  contexto/
-    config-snapshot.md
-    snapshot-sitio.md
+{cliente}/
+  contexto/                     ← COMPARTIDO (todos los plugins leen; nadie duplica)
+    sitio.md                       (site-context)
+    configuracion.md               ← este skill produce/lee aquí los identificadores de fuente
+    audiencia-canales.md           (audience-demand)
+    marca/                         (brand-voice-pro)
+    antecedentes/                  (informes previos del equipo)
+  web/seo/
+    datos/{periodo}/            ← SALIDA de este skill (solo datos)
+      snapshot-sitio.md
+      paginas/snapshot-pagina-{slug}.md
+    informes/{periodo}/         (auditoría / CRO / AI-SEO)
 ```
 
 Rules:
-- Each domain or project has its own root folder
-- `contexto/` lives inside that root folder
-- Skills look first in the local `contexto/` of the active project
-- Canonical analytical content lives in Markdown
-- Do not generate JSON versions of snapshots
-- The `Source Inventory` section inside the snapshot serves as the traceability record — no separate manifest files
+- **Client root:** resolve the workspace root by walking up from the current directory until you find `contexto/`. Read shared files from there; write snapshots under `web/seo/datos/{periodo}/`.
+- **Período (`{periodo}`) = `YYYY-MM`** derived from the reference date (e.g. `2026-07`). Each run writes into its period folder; older periods are preserved as history.
+- **Canonical Spanish names:** `contexto/configuracion.md`, `web/seo/datos/{periodo}/snapshot-sitio.md`. Do not generate JSON versions.
+- **Flexible resolver (do not fail on a name):** if the canonical file/location isn't found, resolve by role — search for the equivalent inside `contexto/` (source config) or the project's existing snapshot tree (e.g. a legacy `context/…`, an English `snapshot-config.md`, or a `reportes/contexto/{mes}/…` layout). If found in a legacy shape, **offer to migrate** (rename/relocate) to the canonical paths before writing; if the user declines, keep writing where the existing tree lives so files aren't split. If nothing is found, ask the user — never assume a fixed alternate name.
+- The `Source Inventory` section inside the snapshot is the traceability record — no separate manifest files.
 
-## Context File Paths (Spanish-first with English fallback)
+## Source Config
 
-Context files use Spanish names. English names are the legacy convention:
-
-| Spanish (current) | English (legacy) |
-|---|---|
-| `contexto/snapshot-sitio.md` | `context/site-snapshot.md` |
-| `contexto/config-snapshot.md` | `context/snapshot-config.md` |
-
-When reading, look for the Spanish path first; if it doesn't exist, read the English equivalent and tell the user they can rename it. When writing, always use the Spanish path — unless the project's existing tree is still in English, in which case offer to migrate (rename) before writing; if the user declines, keep writing in the existing English tree so files are never split across two trees.
-
-## Snapshot Config
-
-`contexto/config-snapshot.md` stores non-sensitive identifiers: domain, market, language, property IDs, project IDs, strategic URL list.
+`contexto/configuracion.md` stores non-sensitive identifiers: domain, market, language, property IDs, project IDs, strategic URL list. It is shared (other plugins read the same domain/URLs) and lives once at the client root — do not copy it into `web/seo/`.
 
 Auto-detection rules:
 - The system can auto-detect: main domain, market, language
@@ -86,7 +84,7 @@ Do not store secrets. Secrets are resolved by MCP, environment variables, or sec
 Example:
 
 ```md
-# Snapshot Config
+# Configuración
 
 ## General
 
@@ -126,7 +124,7 @@ Ask the user for the reference date before starting any data extraction. If the 
 
 Accept any unambiguous format (ISO, written date, "fin del mes pasado", etc.) and confirm the resolved date before proceeding.
 
-Store the reference date in `config-snapshot.md` under `General` as `Fecha de referencia`.
+Record the reference date in the snapshot's `Metadatos` as `Fecha de referencia` (it is per-period, so it is stamped in each period's snapshot). You may also keep the last-used value in `contexto/configuracion.md` under `General` as a convenience default.
 
 ## Sources and Time Windows
 
@@ -180,15 +178,15 @@ All windows below are calculated backwards from the reference date provided by t
 
 ### Step 1: Define base inputs
 
-Check if `contexto/config-snapshot.md` exists (English fallback: `context/snapshot-config.md`). If so, read it.
+Resolve the client root (walk up to `contexto/`) and check if `contexto/configuracion.md` exists. If so, read it. If it only exists under a legacy name/location (e.g. a `config-snapshot.md`, `context/snapshot-config.md`, or a `reportes/contexto/{mes}/` layout), read it there and offer to migrate to `contexto/configuracion.md`.
 
-If not, attempt auto-detection for: main domain, market, language. For source identifiers (GA4 property, GSC site URL, Clarity project ID, DataForSEO target domain), ask the user.
+If not found anywhere, attempt auto-detection for: main domain, market, language. For source identifiers (GA4 property, GSC site URL, Clarity project ID, DataForSEO target domain), ask the user.
 
-**Ask the user for the reference date** — the date from which all relative time windows will be calculated. Do this before any data extraction. If the config already has a `Fecha de referencia`, confirm with the user whether it should be reused or updated.
+**Ask the user for the reference date** — the date from which all relative time windows will be calculated, and which sets the period folder `{periodo}` = `YYYY-MM`. Do this before any data extraction. If a previous reference date exists, confirm whether to reuse or update it.
 
 If there is no curated list of strategic URLs, derive one automatically from: most visited pages, main landing pages, key business pages (home, pricing, product, demo, contact). Keep it manageable: 10-20 URLs.
 
-Save or update `contexto/config-snapshot.md`, including the confirmed `Fecha de referencia`.
+Save or update `contexto/configuracion.md` with the stable identifiers and strategic URLs.
 
 ### Step 2: Run source availability preflight
 
@@ -228,10 +226,6 @@ Confirm:
 - `Fecha de extracción` y `Fecha de referencia` are present in Metadatos
 - GSC section includes the top 20 pages table (últimos 90 días) with clicks, CTR, and impressions
 - All section headers, table headers, and field labels are in Spanish neutro
-
-## Reference Example
-
-The file `site-snapshot-example.md` (provided as reference during skill creation) defines the expected structure and level of detail. When building a snapshot, match that structure, section order, and table format — but translate all structural elements to Spanish neutro.
 
 ## Related Skills
 

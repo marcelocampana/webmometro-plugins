@@ -111,15 +111,18 @@ Summarize key findings:
 
 ### 8. Save for Future Sessions
 
-The default save location is `.claude/brand-voice-guidelines.md` inside the user's working folder.
+The save location is **workspace-aware**:
+- **Shared client workspace** — if a `contexto/` directory exists at or above the user's working folder (the convention used by the seo-suite and other plugins), save to `contexto/marca/brand-voice-guidelines.md`. This is the single canonical home; other plugins (e.g. seo-suite's ai-seo / page-cro / seo-audit) read it from there by pointer, so it is never duplicated.
+- **Standalone** — otherwise, save to `.claude/brand-voice-guidelines.md` inside the user's working folder.
 
 **Important:** The agent's working directory may not be the user's project root (especially in Cowork, where plugins run from a plugin cache directory). Always resolve the path relative to the user's working folder, not the current working directory. If no working folder is set, skip the file save and tell the user guidelines will only be available in this conversation.
 
-1. **Resolve the save path.** The file MUST be saved to `.claude/brand-voice-guidelines.md` inside the user's working folder. Confirm the working folder path before writing.
+1. **Resolve the save path** per the workspace-aware rule above. Confirm the working folder path before writing.
 2. **Check if guidelines already exist** at that path
 3. **If they exist, archive the previous version:** Rename the existing file to `brand-voice-guidelines-YYYY-MM-DD.md` in the same directory (using today's date)
-4. **Save new guidelines** to `.claude/brand-voice-guidelines.md` inside the working folder
-5. **Confirm to the user** with the full absolute path: "Guidelines saved to `<full-path>`. `/brand-voice-pro:enforce-voice` will find them automatically in future sessions."
+4. **Save new guidelines** to the resolved path
+5. **If saving in a shared client workspace**, offer to persist the path as `Archivo de guías:` in the `Voz de Marca` section of `contexto/sitio.md` (if that file exists) so downstream plugins resolve it automatically
+6. **Confirm to the user** with the full absolute path: "Guidelines saved to `<full-path>`. `/brand-voice-pro:enforce-voice` will find them automatically in future sessions."
 
 The guidelines are also present in this conversation, so `/brand-voice-pro:enforce-voice` can use them immediately without loading from file.
 
