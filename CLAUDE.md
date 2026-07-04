@@ -14,7 +14,7 @@ user-facing output (skills instruct their output language explicitly):
 
 - **brand-voice-pro** — full-stack plugin: skills + agents + commands + MCP servers.
 - **design-system** — skills-only: design-system audit/docs + social carousel generation.
-- **seo-suite** — skills-only: a 7-skill SEO suite (snapshots → audit/CRO/audience/AI-search).
+- **seo-suite** — skills-only: an 8-skill SEO suite (snapshots → audit/CRO/audience/AI-search, plus change tracking).
 
 ## Layout & manifest hierarchy
 
@@ -65,12 +65,13 @@ directory until they find `contexto/` (they operate in the *active project*, not
     audiencia-canales.md           demanda y channel-fit            (produce: audience-demand)
     configuracion.md               IDs GA4/GSC/Clarity/DataForSEO + URLs
     antecedentes/                  informes previos del equipo (solo lectura; input cualitativo)
+    seo-tracking/                  cambios SEO — continuo, sin período (produce: seo-change-tracker;
+                                     leen: skills SEO + brand-voice-pro)
   recursos/                     ← COMPARTIDO (logos, fuentes, iconos, imágenes)
   conocimiento/                 ← COMPARTIDO (bibliotecas de fuentes para citar/redactar; p. ej. revista-roc/)
   web/seo/                      ← DOMINIO SEO
     datos/{periodo}/               datos factuales (snapshots)      versionado por período YYYY-MM
     informes/{periodo}/            interpretación (auditoría/CRO/AI-SEO)
-    tracking/                      cambios SEO (seo-change-tracker)
   web/contenido/                ← DOMINIO CONTENIDO   ·   rrss/  ← DOMINIO RRSS/diseño
 ```
 
@@ -88,15 +89,26 @@ Flujo de la suite SEO:
 ```
 site-context + site-snapshot ─→ seo-audit / audience-demand-evaluation
 page-snapshot ────────────────→ page-cro / ai-seo
+contexto/seo-tracking/ ───────→ (leído por los skills analíticos antes de recomendar/reportar)
+seo-change-tracker ───────────→ registra la ejecución de los cambios recomendados
 ```
+
+The analytical skills (`seo-audit`, `page-cro`, `ai-seo`, `audience-demand-evaluation`) read
+`contexto/seo-tracking/` **before** producing recommendations: to avoid re-proposing a change already
+made, to verify whether a proposed fix was implemented, and to fold implemented-but-unaccounted
+changes into the diagnosis as insight. `seo-change-tracker` registers the execution of those changes
+(with `accion_origen` linking a change back to the audit action that proposed it). Generar un reporte
+del tracker es una **lectura agregada**, no un registro.
 
 Snapshot skills (`site-snapshot`, `page-snapshot`) are strictly **data-only** — no
 interpretation, recommendations, or composite scores — because downstream analytical skills
 (`seo-audit`, `page-cro`, `audience-demand-evaluation`, `ai-seo`) read them and would inherit
-any bias. Snapshots and site-context never read `contexto/antecedentes/` (it is interpretive).
-Preserve that separation when editing SEO skills. As a rule only snapshot skills query MCPs; the
-two bounded exceptions (with explicit execution limits) are `audience-demand-evaluation` (demand
-validation) and `ai-seo` (real AI-visibility verification, gated behind a cost confirmation).
+any bias. Snapshots and site-context never read `contexto/antecedentes/` nor
+`contexto/seo-tracking/` (both are interpretive). Preserve that separation when editing SEO skills.
+As a rule only snapshot skills query MCPs; the three bounded exceptions (with explicit execution
+limits) are `audience-demand-evaluation` (demand validation), `ai-seo` (real AI-visibility
+verification, gated behind a cost confirmation), and `seo-change-tracker` (baseline/checkpoint
+capture, bounded to the sources of the changed area within the configured time window).
 
 Cross-plugin: the brand voice guidelines home is `contexto/marca/brand-voice-guidelines.md`
 (produced by **brand-voice-pro**), and the SEO analytical skills read it only as a guardrail,

@@ -71,6 +71,15 @@ The brand guidelines file has a canonical shared home but the pointer may point 
 
 When guidelines are available, every rewrite must respect them (see Rewrite Rules). When they are not, proceed and note in the report that rewrites did not apply brand voice constraints.
 
+### SEO Change Tracking (optional)
+
+Before writing findings, read the change log at `contexto/seo-tracking/cambios/` (produced by the **seo-change-tracker** skill; shared cross-plugin truth). Use it to:
+- **Not re-propose** a change already registered as `implementado`/`midiendo`/`concluido` for the same `target_url`.
+- **Verify before recommending**: if a proposed change (schema, rewrite, structure) was already made, treat it as done and point to measuring its effect rather than recommending it again.
+- **Treat unaccounted implemented changes as insight**: a registered change you didn't factor in may explain a shift in AI visibility — fold it into the diagnosis.
+
+Emit your recommended actions as a **parseable checklist**: each carries a short **slug** plus `area`, `target_url`, `prioridad`, so the reconciliation routine can cross proposals against the tracking. When the user confirms they implemented one, **offer to register it in seo-change-tracker, passing the action slug** so the note stores `accion_origen`. If `contexto/seo-tracking/` doesn't exist, proceed and note it (degrade explicitly).
+
 ## Data Freshness
 
 Check the `Fecha de extracción` field in the `Metadatos` section of every snapshot you read. If the date is more than 30 days old, warn the user that the data may be outdated and suggest regenerating the snapshot before continuing.

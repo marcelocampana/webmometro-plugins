@@ -16,6 +16,24 @@ voice, terminology, or tone.
 
 ---
 
+## 0. SEO change tracking (read before drafting; register after)
+
+In a shared client workspace (a `contexto/` directory at or above the working folder), the SEO
+change log lives at `contexto/seo-tracking/cambios/`, produced by the **seo-change-tracker** skill
+(seo-suite). It is shared cross-plugin truth — read it here **by pointer**, don't duplicate it.
+
+- **Read before drafting web content for a page:** skim recent changes on that page/keywords so you
+  don't undo or contradict a deliberate SEO change (e.g. a just-rewritten title, a new schema, a
+  changed internal-link target), and so the copy builds on what was already done.
+- **Register after, on hand-off:** if the user applies a copy rewrite that affects SEO/AEO (title,
+  meta, headings, on-page content, internal links), **offer to register it in seo-change-tracker**
+  so its impact can be measured later. That skill owns the registration and always asks for
+  confirmation before writing.
+
+Degrade silently if `contexto/seo-tracking/` doesn't exist — it's optional context, not a blocker.
+
+---
+
 ## 1. Answer-first opening — the lead block
 
 The very first block of the piece is the highest-leverage real estate for AEO: search engines

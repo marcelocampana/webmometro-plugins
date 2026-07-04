@@ -1,0 +1,31 @@
+{
+  "skill_name": "seo-change-tracker",
+  "evals": [
+    {
+      "id": 1,
+      "name": "registrar-cambio-meta-tags",
+      "prompt": "Quiero registrar un cambio SEO: hoy (2026-06-16) reescribí el title y la meta description de la página https://www.clinicadrazaror.cl/laser-co2-fraccionado para mejorar el CTR, sin tocar el ranking. Antes del cambio, en Search Console (últimos 28 días) la página tenía 18 clics, 1665 impresiones, CTR 1.08% y posición promedio 6.2. En GA4 esa página tuvo 536 sesiones y 30 conversiones. Esperamos subir el CTR a un rango de 3-5% sin mover el ranking. No tengo acceso ahora a las herramientas de Search Console ni GA4, así que toma estos números que te doy manualmente, no intentes consultar nada en vivo. La keyword principal es 'laser co2 fraccionado'.",
+      "expected_output": "Lee la configuración de contexto/configuracion.md (no crea una config propia del tracker) y, tras confirmación del usuario, crea una nota en contexto/seo-tracking/cambios/2026-06-16-*.md con frontmatter siguiendo el esquema del skill: area=on-page, target_url correcto, keywords incluyendo la dada, hipotesis explícita (subir CTR 3-5% sin mover ranking), baseline.gsc y baseline.ga4 poblados con los números dados, baseline.serp/tecnico/backlinks/local en null, estado=midiendo (baseline ya capturado), resultado=pendiente. Confirma al usuario qué quedó registrado y cuándo corresponde el próximo checkpoint.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "generar-reporte-ejecutivo-mensual",
+      "prompt": "Genera un reporte ejecutivo de los cambios SEO que hemos registrado este mes (junio 2026) para Clínica Dra. Zaror. Ya tengo notas de cambio guardadas en contexto/seo-tracking/cambios/ dentro de este directorio de trabajo.",
+      "expected_output": "Usa scripts/generar_reporte.py sobre contexto/seo-tracking/cambios con --desde 2026-06-01 --hasta 2026-06-30 (o el rango equivalente a 'este mes'), genera el archivo de reporte en contexto/seo-tracking/reportes/, y además presenta la lectura ejecutiva directamente en la conversación: cuántos cambios hubo, cuántos con resultado positivo/negativo, la tabla 'Qué funcionó' ordenada por impacto, y la sección 'En medición'. Debe reflejar correctamente los dos cambios de la fixture: uno positivo (meta tags Láser CO2) y uno negativo (link building HIFU).",
+      "files": [
+        "evals/fixtures/reporte-mensual/contexto/seo-tracking/cambios/2026-06-01-meta-laser-co2.md",
+        "evals/fixtures/reporte-mensual/contexto/seo-tracking/cambios/2026-06-08-link-building-hifu.md"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "medir-checkpoint-cambio-tecnico",
+      "prompt": "Hace 14 días (el 2026-06-02) corregimos un canonical duplicado en la página de Blefaroplastia sin cirugía (https://www.clinicadrazaror.cl/blefaroplastia-sin-cirugia). Ya existe una nota de ese cambio en contexto/seo-tracking/cambios/. Quiero actualizar el seguimiento con las métricas de hoy: en Search Console ahora hay 5 clics, 410 impresiones, CTR 1.22%, posición 9.1; en SERP Live (DataForSEO) la posición es 12; y la página sigue indexada con Core Web Vitals ok. No consultes nada en vivo, usa estos datos que te doy. ¿Cómo va ese cambio?",
+      "expected_output": "Localiza la nota existente (estado=midiendo), agrega un checkpoint a los 14 días con las métricas dadas, calcula el delta frente al baseline (casi sin cambio: clics 5→5, CTR 1.25→1.22, posición 9.0→9.1, SERP 12→12, sigue indexada) y propone resultado=neutral o inconcluso con una explicación que contraste con la hipótesis original (se esperaba 'recuperar indexación estable y detener volatilidad'). No debe marcar estado=concluido sin que el usuario lo confirme explícitamente.",
+      "files": [
+        "evals/fixtures/checkpoint-blefaroplastia/contexto/seo-tracking/cambios/2026-06-02-redirect-blefaroplastia.md"
+      ]
+    }
+  ]
+}

@@ -49,6 +49,15 @@ If `contexto/antecedentes/` exists, list it and read the relevant reports before
 
 When the audit proposes **title tag or meta description copy**, resolve the brand voice guidelines as a guardrail so suggestions respect approved terminology and avoid prohibited terms. Resolution order: (1) the `Archivo de guías:` field in `contexto/sitio.md`; (2) `contexto/marca/brand-voice-guidelines.md`; (3) the `Voz de Marca` section of `contexto/sitio.md`; tolerate legacy locations (`.claude/…`, `web/contenido/*/brand-voice/…`). This is a guardrail only — for producing or finalizing on-brand copy, delegate to the **brand-voice-enforcement** skill (brand-voice-pro plugin); this audit only gives directional examples and points there. If no guidelines are found, proceed and note it.
 
+## SEO Change Tracking (optional)
+
+Before writing findings, read the change log at `contexto/seo-tracking/cambios/` (produced by the **seo-change-tracker** skill; shared cross-plugin truth). Use it to:
+- **Not re-propose** a change already registered as `implementado`/`midiendo`/`concluido` for the same `target_url`.
+- **Verify before recommending**: if a proposed fix was already made, treat it as done and point to measuring its effect (its checkpoints) rather than recommending it again.
+- **Treat unaccounted implemented changes as insight**: a registered change you didn't factor in may explain a movement in the data — fold it into the diagnosis, not as a new recommendation.
+
+Emit your recommended actions as a **parseable checklist**: each action carries a short **slug** plus `area`, `target_url`, `prioridad`. This lets the reconciliation routine (see seo-change-tracker) cross proposals against the tracking. When the user confirms they implemented one of these actions, **offer to register it in seo-change-tracker, passing the action slug** so the note stores `accion_origen` (enables deterministic matching later). If `contexto/seo-tracking/` doesn't exist, proceed and note it (degrade explicitly).
+
 ## Context Reading Order
 
 1. `contexto/sitio.md`

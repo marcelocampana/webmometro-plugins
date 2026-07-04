@@ -109,6 +109,10 @@ If an audience produces no signals in GSC and no relevant volume in DataForSEO a
 
 If `contexto/antecedentes/` exists, list it and read the relevant reports before classifying. It may hold prior audits, agreed corrections, ways of working, and team learnings about which audiences respond to which channels. Treat it as **qualitative and dated**: fold in per-audience learnings, but if an antecedent contradicts fresh GSC/DataForSEO signals, flag the discrepancy (with dates) rather than trusting the older document. Degrade silently if the directory is empty or absent.
 
+## SEO Change Tracking (optional signal)
+
+If `contexto/seo-tracking/cambios/` exists (produced by the **seo-change-tracker** skill), skim it as an additional dated signal: recent SEO changes on an audience's pages can explain shifts in organic signals when classifying channel fit — read it like prior knowledge, qualitative and dated. This skill does not produce implementable on-page changes, so no action slugs or hand-off apply here. Degrade silently if absent.
+
 ## Output Structure
 
 `contexto/audiencia-canales.md` must include (section headers in Spanish neutro):

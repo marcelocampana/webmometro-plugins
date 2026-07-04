@@ -51,6 +51,15 @@ If `contexto/antecedentes/` exists, list it and read the relevant reports before
 
 The **Copy Alternatives** section produces headline and CTA copy. Resolve the brand voice guidelines as a guardrail so alternatives respect approved terminology and avoid prohibited terms. Resolution order: (1) the `Archivo de guías:` field in `contexto/sitio.md`; (2) `contexto/marca/brand-voice-guidelines.md`; (3) the `Voz de Marca` section of `contexto/sitio.md`; tolerate legacy locations (`.claude/…`, `web/contenido/*/brand-voice/…`). This is a guardrail only — for producing or finalizing on-brand copy, delegate to the **brand-voice-enforcement** skill (brand-voice-pro plugin); page-cro gives directional examples and points there. If no guidelines are found, proceed and note it.
 
+## SEO Change Tracking (optional)
+
+Before writing recommendations, read the change log at `contexto/seo-tracking/cambios/` (produced by the **seo-change-tracker** skill; shared cross-plugin truth). Use it to:
+- **Not re-propose** a change already registered as `implementado`/`midiendo`/`concluido` for the same page.
+- **Verify before recommending**: if a proposed change was already made, treat it as done and point to measuring its effect rather than recommending it again.
+- **Treat unaccounted implemented changes as insight**: a registered change you didn't factor in may explain a movement in the conversion data — fold it into the diagnosis.
+
+Emit your recommended actions (Ganancias Rápidas / Cambios de Alto Impacto) as a **parseable checklist**: each carries a short **slug** plus `area`, `target_url`, `prioridad`, so the reconciliation routine can cross proposals against the tracking. When the user confirms they implemented one, **offer to register it in seo-change-tracker, passing the action slug** so the note stores `accion_origen`. If `contexto/seo-tracking/` doesn't exist, proceed and note it (degrade explicitly).
+
 ## Context Reading Order
 
 1. `web/seo/datos/{periodo}/paginas/snapshot-pagina-{slug}.md` (required)

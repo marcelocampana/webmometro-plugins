@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "pagespeed-insights": {
+      "source": "enderpuentes/ai-agent-skills",
+      "sourceType": "github",
+      "skillPath": "pagespeed-insights/SKILL.md",
+      "computedHash": "060ab0c75f7a9ae1e02c8948118deb01c5b93f9789283255b356ab3bea15fff4"
+    }
+  }
+}
