@@ -44,8 +44,8 @@
       "name": "seo",
       "displayName": "SEO Suite",
       "source": "./seo",
-      "description": "Suite de SEO: snapshots de datos (GA4, GSC, PageSpeed, Clarity, DataForSEO), auditoría técnica y on-page, evaluación de demanda de audiencia y optimización de conversión (CRO)",
-      "version": "1.0.0",
+      "description": "Suite de SEO: snapshots de datos (GA4, GSC, PageSpeed, Clarity, DataForSEO), auditoría técnica y on-page, evaluación de demanda de audiencia, optimización de conversión (CRO) y optimización para motores de búsqueda de IA (AEO/GEO)",
+      "version": "1.1.0",
       "keywords": [
         "seo",
         "audit",
@@ -53,7 +53,10 @@
         "analytics",
         "snapshot",
         "search-console",
-        "content"
+        "content",
+        "aeo",
+        "geo",
+        "ai-search"
       ]
     }
   ]

@@ -2,7 +2,7 @@
 name: seo-audit
 description: "When the user wants to audit, review, or diagnose SEO issues on their site. Also use when the user mentions \"SEO audit,\" \"technical SEO,\" \"why am I not ranking,\" \"SEO issues,\" \"on-page SEO,\" \"meta tags review,\" \"SEO health check,\" \"my traffic dropped,\" \"lost rankings,\" \"not showing up in Google,\" \"site isn't ranking,\" \"Google update hit me,\" \"page speed,\" \"core web vitals,\" \"crawl errors,\" or \"indexing issues.\" Use this even if the user just says something vague like \"my SEO is bad\" or \"help with SEO\" — start with an audit. For building pages at scale to target keywords, see programmatic-seo. For adding structured data, see schema-markup. For AI search optimization, see ai-seo. This skill requires context files (site-context, site-snapshot) to operate. If they don't exist, the skill will ask the user to generate them first using the corresponding snapshot and context skills."
 metadata:
-  version: 2.0.0
+  version: 2.1.0
 ---
 
 # SEO Audit
@@ -16,14 +16,16 @@ This skill is a diagnostic tool — it reads context files produced by other ski
 seo-audit requires context files to operate. It does not function standalone without context.
 
 **Always required:**
-- `context/site-context.md` — strategic context (audience, positioning, goals)
-- `context/site-snapshot.md` — factual site data (visibility, coverage, performance)
+- `contexto/contexto-sitio.md` — strategic context (audience, positioning, goals)
+- `contexto/snapshot-sitio.md` — factual site data (visibility, coverage, performance)
 
 **Required in URL-specific mode:**
-- `context/pages/page-snapshot-{slug}.md` — factual page data
+- `contexto/paginas/snapshot-pagina-{slug}.md` — factual page data
 
 **Optional (enriches diagnosis when available):**
-- `context/audience-acquisition-context.md` — demand and channel-fit data
+- `contexto/contexto-adquisicion-audiencia.md` — demand and channel-fit data
+
+**Path convention (Spanish-first with English fallback):** context files use Spanish names; the English names (`context/site-context.md`, `context/site-snapshot.md`, `context/pages/page-snapshot-{slug}.md`, `context/audience-acquisition-context.md`) are the legacy convention. When reading, look for the Spanish path first; if it doesn't exist, read the English equivalent and tell the user they can rename it.
 
 If required files don't exist, inform the user which ones are missing and ask them to generate them using the corresponding skills (site-snapshot, page-snapshot, site-context) before continuing. Do not attempt to operate without them.
 
@@ -33,34 +35,34 @@ Check the `Extraction date` field in the `Metadata` section of each snapshot you
 
 ## Context Reading Order
 
-1. `context/site-context.md`
-2. `context/site-snapshot.md`
-3. `context/audience-acquisition-context.md` (when available)
-4. `context/pages/page-snapshot-{slug}.md` (required in URL-specific mode)
+1. `contexto/contexto-sitio.md`
+2. `contexto/snapshot-sitio.md`
+3. `contexto/contexto-adquisicion-audiencia.md` (when available)
+4. `contexto/paginas/snapshot-pagina-{slug}.md` (required in URL-specific mode)
 
 ## What to Take from Each Source
 
-**`site-context.md`:** audience, positioning, goals, strategic pages, priorities. Use this to understand what the site is trying to achieve and for whom — so your audit findings are framed in terms of business impact, not just technical compliance.
+**`contexto-sitio.md`:** audience, positioning, goals, strategic pages, priorities. Use this to understand what the site is trying to achieve and for whom — so your audit findings are framed in terms of business impact, not just technical compliance.
 
-**`site-snapshot.md`:** organic visibility, coverage, indexation, technical performance, competitors, channel distribution. This is your factual baseline for site-level diagnosis.
+**`snapshot-sitio.md`:** organic visibility, coverage, indexation, technical performance, competitors, channel distribution. This is your factual baseline for site-level diagnosis.
 
-**`audience-acquisition-context.md`:** organic demand, capturability, channel limitations. Use this to distinguish SEO execution problems from demand or channel-fit problems. If this file shows `SEO-low-fit` for an audience, don't diagnose low traffic for that audience as an SEO failure.
+**`contexto-adquisicion-audiencia.md`:** organic demand, capturability, channel limitations. Use this to distinguish SEO execution problems from demand or channel-fit problems. If this file shows `SEO-low-fit` for an audience, don't diagnose low traffic for that audience as an SEO failure.
 
-**`page-snapshot-{slug}.md`:** on-page facts, behavior, queries, performance for a specific URL. Only for URL-specific audits.
+**`snapshot-pagina-{slug}.md`:** on-page facts, behavior, queries, performance for a specific URL. Only for URL-specific audits.
 
 ## Operating Modes
 
 ### Full Site Mode
 
-- Reads `site-context.md`, `site-snapshot.md`, and `audience-acquisition-context.md`
+- Reads `contexto-sitio.md`, `snapshot-sitio.md`, and `contexto-adquisicion-audiencia.md`
 - Diagnoses at site level: coverage, indexation, general technical performance, competition, channels
-- Uses data already present in `site-snapshot.md` (top pages, top queries, coverage, PageSpeed for strategic URLs)
+- Uses data already present in `snapshot-sitio.md` (top pages, top queries, coverage, PageSpeed for strategic URLs)
 - Does NOT read individual page snapshots — the token cost would be excessive
 - If it detects problems requiring page-level analysis, it recommends running `page-snapshot` + URL-specific audit for the affected pages
 
 ### URL-Specific Mode
 
-- Also reads `context/pages/page-snapshot-{slug}.md`
+- Also reads `contexto/paginas/snapshot-pagina-{slug}.md`
 - If the page snapshot doesn't exist, asks the user to generate it first
 - Diagnoses at page level: on-page elements, heading structure, images, CTAs, schema, performance, queries
 

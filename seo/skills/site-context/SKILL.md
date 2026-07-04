@@ -1,15 +1,15 @@
 ---
 name: site-context
-description: "When the user wants to create, update, or review the strategic context for a site or project. Also use when the user mentions \"site context,\" \"strategic context,\" \"positioning,\" \"target audience,\" \"who is my customer,\" \"ICP,\" \"ideal customer profile,\" \"brand voice,\" \"differentiation,\" \"competitive landscape,\" or wants to establish foundational product and audience information that other skills can reference. This skill replaces product-marketing-context for site-level projects. Use it at the start of any new site project — it creates context/site-context.md that seo-audit, page-cro, and audience-demand-evaluation reference for strategic context. For factual site data, see site-snapshot. For audience demand evaluation, see audience-demand-evaluation."
+description: "When the user wants to create, update, or review the strategic context for a site or project. Also use when the user mentions \"site context,\" \"strategic context,\" \"positioning,\" \"target audience,\" \"who is my customer,\" \"ICP,\" \"ideal customer profile,\" \"brand voice,\" \"differentiation,\" \"competitive landscape,\" or wants to establish foundational product and audience information that other skills can reference. This skill replaces product-marketing-context for site-level projects. Use it at the start of any new site project — it creates contexto/contexto-sitio.md that seo-audit, page-cro, ai-seo, and audience-demand-evaluation reference for strategic context. For factual site data, see site-snapshot. For audience demand evaluation, see audience-demand-evaluation."
 metadata:
-  version: 1.0.0
+  version: 1.1.0
 ---
 
 # Site Context
 
 You help users create and maintain the strategic context for a site or project. This document captures foundational positioning, audience, messaging, and business information that other skills reference, so users don't have to repeat themselves across tasks.
 
-The output is `context/site-context.md` — a canonical, reusable strategic context file.
+The output is `contexto/contexto-sitio.md` — a canonical, reusable strategic context file.
 
 This skill replaces `product-marketing-context`. There is no coexistence period.
 
@@ -25,11 +25,23 @@ Content inside fields stays in whatever language the user provides or the source
 
 ```text
 {domain-or-project}/
-  context/
-    site-context.md
-    site-snapshot.md
-    snapshot-config.md
+  contexto/
+    contexto-sitio.md
+    snapshot-sitio.md
+    config-snapshot.md
 ```
+
+## Context File Paths (Spanish-first with English fallback)
+
+Context files use Spanish names. English names are the legacy convention:
+
+| Spanish (current) | English (legacy) |
+|---|---|
+| `contexto/contexto-sitio.md` | `context/site-context.md` |
+| `contexto/snapshot-sitio.md` | `context/site-snapshot.md` |
+| `contexto/config-snapshot.md` | `context/snapshot-config.md` |
+
+When reading, look for the Spanish path first; if it doesn't exist, read the English equivalent and tell the user they can rename it. When writing, always use the Spanish path — unless the project's existing tree is still in English, in which case offer to migrate (rename) before writing; if the user declines, keep writing in the existing English tree so files are never split across two trees.
 
 ## Sections
 
@@ -44,7 +56,7 @@ The site-context document includes all sections from the former product-marketin
 7. **Objections & Anti-Personas** — top objections with responses, who is NOT a good fit
 8. **Switching Dynamics** — JTBD Four Forces: push, pull, habit, anxiety
 9. **Customer Language** — verbatim problem descriptions, solution descriptions, words to use/avoid, glossary
-10. **Brand Voice** — tone, style, personality
+10. **Brand Voice** — tone, style, personality; plus an optional `Guidelines file:` field pointing to the project's full brand voice guidelines document (any name, any location). Downstream skills (ai-seo) resolve brand voice through this pointer, so the guidelines file never needs a fixed name. When a user mentions where their brand guidelines live, offer to persist the path here.
 11. **Proof Points** — metrics, notable customers, testimonial snippets, value themes
 12. **Goals** — primary business goal, key conversion action, current metrics
 13. **Site Scope** *(new)* — site type, main domain, technology stack, CMS, key integrations
@@ -52,7 +64,7 @@ The site-context document includes all sections from the former product-marketin
 
 ## Auto-Draftable vs. User-Input Sections
 
-When generating site-context for the first time from `site-snapshot.md`, not all sections can be completed automatically.
+When generating site-context for the first time from `snapshot-sitio.md`, not all sections can be completed automatically.
 
 **Inferable from snapshot and visible site** (the skill can draft a V1):
 - Product Overview (partial: from title, meta description, visible content)
@@ -77,9 +89,9 @@ When the skill infers content for these sections, it must add a visible note ind
 ## Drafting Sources
 
 Priority order:
-1. `context/site-context.md` (existing — if it exists, summarize and update)
-2. `context/site-snapshot.md` (primary source for auto-drafting)
-3. `context/snapshot-config.md`
+1. `contexto/contexto-sitio.md` (existing — if it exists, summarize and update)
+2. `contexto/snapshot-sitio.md` (primary source for auto-drafting)
+3. `contexto/config-snapshot.md`
 4. Project docs with explicit strategic context
 
 Exclude:
@@ -91,7 +103,7 @@ Exclude:
 
 ### Step 1: Check for existing context
 
-Check if `context/site-context.md` exists.
+Check if `contexto/contexto-sitio.md` exists (English fallback: `context/site-context.md`).
 
 **If it exists:**
 - Read it and summarize what's captured
@@ -100,14 +112,14 @@ Check if `context/site-context.md` exists.
 
 **If it doesn't exist, offer two paths:**
 
-1. **Auto-draft from site-snapshot** (recommended when `context/site-snapshot.md` exists): Read the snapshot, draft inferable sections, mark inferred sections that need review, present to user for corrections and gap-filling.
+1. **Auto-draft from site-snapshot** (recommended when `contexto/snapshot-sitio.md` exists): Read the snapshot, draft inferable sections, mark inferred sections that need review, present to user for corrections and gap-filling.
 
 2. **Start from scratch**: Walk through each section conversationally, one at a time, gathering info progressively.
 
 ### Step 2: Gather information
 
 **If auto-drafting:**
-1. Read `context/site-snapshot.md` and `context/snapshot-config.md`
+1. Read `contexto/snapshot-sitio.md` and `contexto/config-snapshot.md`
 2. Draft all inferable sections
 3. Attempt inference on user-input sections, clearly marking them
 4. Present the draft and ask what needs correcting or is missing
@@ -124,9 +136,9 @@ Push for verbatim customer language — exact phrases are more valuable than pol
 
 ### Step 3: Save
 
-Save to `context/site-context.md`.
+Save to `contexto/contexto-sitio.md`.
 
-Tell the user: "Los skills de diagnóstico (seo-audit, page-cro) y el skill de evaluación de demanda (audience-demand-evaluation) van a usar este contexto automáticamente. Puedes actualizarlo cuando quieras."
+Tell the user: "Los skills de diagnóstico (seo-audit, page-cro, ai-seo) y el skill de evaluación de demanda (audience-demand-evaluation) van a usar este contexto automáticamente. Puedes actualizarlo cuando quieras."
 
 ## Tips
 
@@ -142,3 +154,4 @@ Tell the user: "Los skills de diagnóstico (seo-audit, page-cro) y el skill de e
 - **audience-demand-evaluation** — evaluates demand and channel fit per audience, reading this context
 - **seo-audit** — SEO diagnosis that reads this context for strategic alignment
 - **page-cro** — conversion analysis that reads this context for positioning and goals
+- **ai-seo** — AEO/GEO audit that reads this context for market, audience, and the brand voice pointer

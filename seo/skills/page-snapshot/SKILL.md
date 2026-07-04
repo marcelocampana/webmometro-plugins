@@ -2,14 +2,14 @@
 name: page-snapshot
 description: "Activar solo con el comando /page-snapshot. No invocar automáticamente por contexto de conversación."
 metadata:
-  version: 1.2.0
+  version: 1.3.0
 ---
 
 # Snapshot de Página
 
 Construyes un snapshot de datos factuales para una URL específica, consolidando métricas a nivel de página provenientes de GA4, GSC, PageSpeed, Clarity y DataForSEO, más los elementos de la página, en un único documento de referencia en Markdown.
 
-El archivo de salida es `context/pages/page-snapshot-{slug}.md` — un archivo neutral, solo de datos, diseñado para lectura humana y consumo posterior por habilidades como page-cro y seo-audit (modo URL específica).
+El archivo de salida es `contexto/paginas/snapshot-pagina-{slug}.md` — un archivo neutral, solo de datos, diseñado para lectura humana y consumo posterior por habilidades como page-cro, ai-seo y seo-audit (modo URL específica).
 
 ## Principios Editoriales
 
@@ -53,7 +53,7 @@ Solicita la fecha de referencia al usuario antes de iniciar cualquier extracció
 
 Acepta cualquier formato no ambiguo (ISO, fecha escrita, "fin del mes pasado", etc.) y confirma la fecha resuelta antes de continuar.
 
-Si ya existe un `Fecha de referencia` en `context/snapshot-config.md`, confirma con el usuario si se reutiliza o si desea actualizarla para este snapshot.
+Si ya existe un `Fecha de referencia` en `contexto/config-snapshot.md` (fallback inglés: `context/snapshot-config.md`), confirma con el usuario si se reutiliza o si desea actualizarla para este snapshot.
 
 Registra la fecha de referencia confirmada en los **Metadatos** del archivo de salida.
 
@@ -63,10 +63,10 @@ El slug se deriva de las dos últimas partes de la ruta de la URL. Si la URL tie
 
 | URL | Slug | Archivo |
 |---|---|---|
-| `/pricing` | `pricing` | `page-snapshot-pricing.md` |
-| `/blog/seo-audit-template` | `blog-seo-audit-template` | `page-snapshot-blog-seo-audit-template.md` |
-| `/features/analytics` | `features-analytics` | `page-snapshot-features-analytics.md` |
-| `/` | `home` | `page-snapshot-home.md` |
+| `/pricing` | `pricing` | `snapshot-pagina-pricing.md` |
+| `/blog/seo-audit-template` | `blog-seo-audit-template` | `snapshot-pagina-blog-seo-audit-template.md` |
+| `/features/analytics` | `features-analytics` | `snapshot-pagina-features-analytics.md` |
+| `/` | `home` | `snapshot-pagina-home.md` |
 
 Reglas:
 - Usar guion `-` como separador entre niveles de ruta
@@ -79,11 +79,22 @@ Reglas:
 
 ```text
 {dominio-o-proyecto}/
-  context/
-    snapshot-config.md
-    pages/
-      page-snapshot-{slug}.md
+  contexto/
+    config-snapshot.md
+    paginas/
+      snapshot-pagina-{slug}.md
 ```
+
+## Rutas de Archivos de Contexto (español primero, fallback en inglés)
+
+Los archivos de contexto usan nombres en español. Los nombres en inglés son la convención anterior (legado):
+
+| Español (actual) | Inglés (legado) |
+|---|---|
+| `contexto/paginas/snapshot-pagina-{slug}.md` | `context/pages/page-snapshot-{slug}.md` |
+| `contexto/config-snapshot.md` | `context/snapshot-config.md` |
+
+Al leer, buscar primero la ruta en español; si no existe, leer la equivalente en inglés y avisar al usuario que puede renombrarla. Al escribir, usar siempre la ruta en español — salvo que el árbol del proyecto siga en inglés: en ese caso ofrecer migrar (renombrar) antes de escribir; si el usuario declina, continuar escribiendo en el árbol inglés existente para no dividir archivos entre dos árboles.
 
 ## Alcance
 
@@ -181,7 +192,7 @@ Mismas reglas que site-snapshot: ejecutar una verificación previa, notificar al
 
 ### Paso 1: Definir la URL objetivo y la fecha de referencia
 
-Verificar si existe `context/snapshot-config.md`. Si existe, leerlo.
+Verificar si existe `contexto/config-snapshot.md` (fallback inglés: `context/snapshot-config.md`). Si existe, leerlo.
 
 Si no existe, seguir el mismo flujo de detección automática y consulta al usuario que site-snapshot.
 
@@ -258,3 +269,4 @@ El archivo `page-snapshot-pricing-example.md` (provisto como referencia durante 
 - **site-context** — contexto estratégico del sitio
 - **seo-audit** — diagnóstico SEO (el modo URL específica requiere este snapshot)
 - **page-cro** — análisis de conversión (requiere este snapshot)
+- **ai-seo** — auditoría AEO/GEO (el modo página publicada requiere este snapshot)

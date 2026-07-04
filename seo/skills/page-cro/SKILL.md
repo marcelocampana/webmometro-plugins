@@ -2,7 +2,7 @@
 name: page-cro
 description: "When the user wants to optimize, improve, or increase conversions on any marketing page — including homepage, landing pages, pricing pages, feature pages, or blog posts. Also use when the user says \"CRO,\" \"conversion rate optimization,\" \"this page isn't converting,\" \"improve conversions,\" \"why isn't this page working,\" \"my landing page sucks,\" \"nobody's converting,\" \"low conversion rate,\" \"bounce rate is too high,\" \"people leave without signing up,\" or \"this page needs work.\" Use this even if the user just shares a URL and asks for feedback — they probably want conversion help. For signup/registration flows, see signup-flow-cro. For post-signup activation, see onboarding-cro. For forms outside of signup, see form-cro. For popups/modals, see popup-cro. This skill requires a page snapshot to operate. If the page snapshot doesn't exist, the skill will ask the user to generate it first using the page-snapshot skill."
 metadata:
-  version: 2.0.0
+  version: 2.1.0
 ---
 
 # Page Conversion Rate Optimization (CRO)
@@ -16,18 +16,20 @@ This skill is the primary tool for analyzing and improving conversion on a page.
 page-cro requires a page snapshot to operate.
 
 **Always required:**
-- `context/pages/page-snapshot-{slug}.md` — factual page data (CTAs, interactions, friction signals, on-page elements, queries, performance)
+- `contexto/paginas/snapshot-pagina-{slug}.md` — factual page data (CTAs, interactions, friction signals, on-page elements, queries, performance)
 
 **Required when available:**
-- `context/site-context.md` — positioning, audience, goals, page role
-- `context/site-snapshot.md` — general acquisition context, traffic distribution
+- `contexto/contexto-sitio.md` — positioning, audience, goals, page role
+- `contexto/snapshot-sitio.md` — general acquisition context, traffic distribution
 
 **Optional (enriches analysis when available):**
-- `context/audience-acquisition-context.md` — channel fit, audience-channel mismatches
+- `contexto/contexto-adquisicion-audiencia.md` — channel fit, audience-channel mismatches
+
+**Path convention (Spanish-first with English fallback):** context files use Spanish names; the English names (`context/pages/page-snapshot-{slug}.md`, `context/site-context.md`, `context/site-snapshot.md`, `context/audience-acquisition-context.md`) are the legacy convention. When reading, look for the Spanish path first; if it doesn't exist, read the English equivalent and tell the user they can rename it.
 
 If the page snapshot doesn't exist, inform the user and ask them to generate it using the page-snapshot skill before continuing. Do not attempt to operate without it.
 
-If `site-context.md` or `site-snapshot.md` don't exist, the skill can operate with the page snapshot as base, but must declare that the analysis lacks strategic and site-level context.
+If `contexto-sitio.md` or `snapshot-sitio.md` don't exist, the skill can operate with the page snapshot as base, but must declare that the analysis lacks strategic and site-level context.
 
 ## Data Freshness
 
@@ -35,20 +37,20 @@ Check the `Extraction date` field in the `Metadata` section of the page snapshot
 
 ## Context Reading Order
 
-1. `context/pages/page-snapshot-{slug}.md` (required)
-2. `context/site-context.md`
-3. `context/audience-acquisition-context.md`
-4. `context/site-snapshot.md`
+1. `contexto/paginas/snapshot-pagina-{slug}.md` (required)
+2. `contexto/contexto-sitio.md`
+3. `contexto/contexto-adquisicion-audiencia.md`
+4. `contexto/snapshot-sitio.md`
 
 ## What to Take from Each Source
 
-**`page-snapshot-{slug}.md`:** Primary factual source. Use for: CTA hierarchy, interactions, friction signals (rage clicks, dead clicks, quick backs), channel and device context, on-page facts, heading structure, conversion actions, query intent landing on the page.
+**`snapshot-pagina-{slug}.md`:** Primary factual source. Use for: CTA hierarchy, interactions, friction signals (rage clicks, dead clicks, quick backs), channel and device context, on-page facts, heading structure, conversion actions, query intent landing on the page.
 
-**`site-context.md`:** Use for: positioning, audience, goals, the page's role within the site, promises, objections, differentiation. This context frames your CRO recommendations — without it, recommendations are generic rather than strategically aligned.
+**`contexto-sitio.md`:** Use for: positioning, audience, goals, the page's role within the site, promises, objections, differentiation. This context frames your CRO recommendations — without it, recommendations are generic rather than strategically aligned.
 
-**`audience-acquisition-context.md`:** Use for: understanding channel fit, detecting mismatches between audience/channel/proposition. If the page serves traffic from a `SEO-low-fit` audience, the problem might not be CRO at all.
+**`contexto-adquisicion-audiencia.md`:** Use for: understanding channel fit, detecting mismatches between audience/channel/proposition. If the page serves traffic from a `SEO-low-fit` audience, the problem might not be CRO at all.
 
-**`site-snapshot.md`:** Use for: general acquisition context, traffic distribution by channel, general site behavior, the page's relative role within the set of strategic URLs.
+**`snapshot-sitio.md`:** Use for: general acquisition context, traffic distribution by channel, general site behavior, the page's relative role within the set of strategic URLs.
 
 ## CRO Analysis Framework
 
@@ -241,6 +243,7 @@ Distinguish between:
 - **site-context** — strategic context for positioning and goals
 - **site-snapshot** — site-level acquisition context
 - **audience-demand-evaluation** — channel-fit context
+- **ai-seo** — for optimizing the same page for AI search citation (AEO/GEO)
 - **frontend-design** — for implementing visual changes after CRO direction is defined
 - **signup-flow-cro** — if the issue is in the signup process itself
 - **form-cro** — if forms on the page need optimization

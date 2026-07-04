@@ -14,7 +14,7 @@ user-facing output (skills instruct their output language explicitly):
 
 - **brand-voice-pro** — full-stack plugin: skills + agents + commands + MCP servers.
 - **design-system** — skills-only: design-system audit/docs + social carousel generation.
-- **seo** — skills-only: a 6-skill SEO suite (snapshots → audit/CRO/audience).
+- **seo** — skills-only: a 7-skill SEO suite (snapshots → audit/CRO/audience/AI-search).
 
 ## Layout & manifest hierarchy
 
@@ -52,18 +52,25 @@ user and invokes a skill, and the skill delegates heavy/autonomous work to subag
 ## Skills chain through shared context files
 
 Skills are not standalone — within a plugin they pass data via Markdown files under a
-project's `context/` directory (the skill looks in the *active project's* local `context/`
-first, not this repo). In the **seo** plugin specifically:
+project's `contexto/` directory (the skill looks in the *active project's* local `contexto/`
+first, not this repo). Context file names are Spanish-first with an English legacy fallback
+(`contexto/contexto-sitio.md` ← `context/site-context.md`, `contexto/snapshot-sitio.md` ←
+`context/site-snapshot.md`, `contexto/paginas/snapshot-pagina-{slug}.md` ←
+`context/pages/page-snapshot-{slug}.md`, etc.): skills read Spanish first, fall back to
+English suggesting a rename, and always write Spanish. In the **seo** plugin specifically:
 
 ```
 site-context + site-snapshot ─→ seo-audit / audience-demand-evaluation
-page-snapshot ────────────────→ page-cro
+page-snapshot ────────────────→ page-cro / ai-seo
 ```
 
 Snapshot skills (`site-snapshot`, `page-snapshot`) are strictly **data-only** — no
 interpretation, recommendations, or composite scores — because downstream analytical skills
-(`seo-audit`, `page-cro`, `audience-demand-evaluation`) read them and would inherit any bias.
-Preserve that separation when editing SEO skills.
+(`seo-audit`, `page-cro`, `audience-demand-evaluation`, `ai-seo`) read them and would inherit
+any bias. Preserve that separation when editing SEO skills. As a rule only snapshot skills
+query MCPs; the two bounded exceptions (with explicit execution limits) are
+`audience-demand-evaluation` (demand validation) and `ai-seo` (real AI-visibility
+verification, gated behind a cost confirmation).
 
 ## MCP dependencies
 

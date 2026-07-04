@@ -2,14 +2,14 @@
 name: site-snapshot
 description: "When the user wants to generate a factual data snapshot for an entire site or domain. Also use when the user mentions \"site snapshot,\" \"site report,\" \"domain snapshot,\" \"site data extraction,\" \"pull site data,\" \"generate site baseline,\" \"extract site metrics,\" or wants to consolidate analytics, search, performance, behavior and SEO data for a domain into a single reference document. This skill extracts data only — it does not diagnose, recommend, or interpret. For page-level snapshots, see page-snapshot. For SEO diagnosis, see seo-audit. For conversion analysis, see page-cro."
 metadata:
-  version: 1.1.0
+  version: 1.2.0
 ---
 
 # Site Snapshot
 
 You build a factual data snapshot for an entire site or domain, consolidating metrics from GA4, GSC, PageSpeed, Clarity and DataForSEO into a single Markdown reference document.
 
-The output is `context/site-snapshot.md` — a neutral, data-only file designed for human reading and downstream consumption by other skills (seo-audit, page-cro, site-context, audience-demand-evaluation).
+The output is `contexto/snapshot-sitio.md` — a neutral, data-only file designed for human reading and downstream consumption by other skills (seo-audit, page-cro, ai-seo, site-context, audience-demand-evaluation).
 
 ## Editorial Principles
 
@@ -48,22 +48,33 @@ Write all user-facing communication (explanations, questions, warnings, errors) 
 
 ```text
 {domain-or-project}/
-  context/
-    snapshot-config.md
-    site-snapshot.md
+  contexto/
+    config-snapshot.md
+    snapshot-sitio.md
 ```
 
 Rules:
 - Each domain or project has its own root folder
-- `context/` lives inside that root folder
-- Skills look first in the local `context/` of the active project
+- `contexto/` lives inside that root folder
+- Skills look first in the local `contexto/` of the active project
 - Canonical analytical content lives in Markdown
 - Do not generate JSON versions of snapshots
 - The `Source Inventory` section inside the snapshot serves as the traceability record — no separate manifest files
 
+## Context File Paths (Spanish-first with English fallback)
+
+Context files use Spanish names. English names are the legacy convention:
+
+| Spanish (current) | English (legacy) |
+|---|---|
+| `contexto/snapshot-sitio.md` | `context/site-snapshot.md` |
+| `contexto/config-snapshot.md` | `context/snapshot-config.md` |
+
+When reading, look for the Spanish path first; if it doesn't exist, read the English equivalent and tell the user they can rename it. When writing, always use the Spanish path — unless the project's existing tree is still in English, in which case offer to migrate (rename) before writing; if the user declines, keep writing in the existing English tree so files are never split across two trees.
+
 ## Snapshot Config
 
-`context/snapshot-config.md` stores non-sensitive identifiers: domain, market, language, property IDs, project IDs, strategic URL list.
+`contexto/config-snapshot.md` stores non-sensitive identifiers: domain, market, language, property IDs, project IDs, strategic URL list.
 
 Auto-detection rules:
 - The system can auto-detect: main domain, market, language
@@ -115,7 +126,7 @@ Ask the user for the reference date before starting any data extraction. If the 
 
 Accept any unambiguous format (ISO, written date, "fin del mes pasado", etc.) and confirm the resolved date before proceeding.
 
-Store the reference date in `snapshot-config.md` under `General` as `Fecha de referencia`.
+Store the reference date in `config-snapshot.md` under `General` as `Fecha de referencia`.
 
 ## Sources and Time Windows
 
@@ -169,7 +180,7 @@ All windows below are calculated backwards from the reference date provided by t
 
 ### Step 1: Define base inputs
 
-Check if `context/snapshot-config.md` exists. If so, read it.
+Check if `contexto/config-snapshot.md` exists (English fallback: `context/snapshot-config.md`). If so, read it.
 
 If not, attempt auto-detection for: main domain, market, language. For source identifiers (GA4 property, GSC site URL, Clarity project ID, DataForSEO target domain), ask the user.
 
@@ -177,7 +188,7 @@ If not, attempt auto-detection for: main domain, market, language. For source id
 
 If there is no curated list of strategic URLs, derive one automatically from: most visited pages, main landing pages, key business pages (home, pricing, product, demo, contact). Keep it manageable: 10-20 URLs.
 
-Save or update `context/snapshot-config.md`, including the confirmed `Fecha de referencia`.
+Save or update `contexto/config-snapshot.md`, including the confirmed `Fecha de referencia`.
 
 ### Step 2: Run source availability preflight
 
@@ -229,3 +240,4 @@ The file `site-snapshot-example.md` (provided as reference during skill creation
 - **audience-demand-evaluation** — demand and channel-fit assessment per audience
 - **seo-audit** — SEO diagnosis that consumes this snapshot
 - **page-cro** — conversion analysis that consumes this snapshot
+- **ai-seo** — AEO/GEO audit that consumes this snapshot for acquisition context

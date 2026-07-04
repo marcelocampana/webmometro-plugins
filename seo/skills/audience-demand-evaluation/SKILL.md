@@ -2,14 +2,14 @@
 name: audience-demand-evaluation
 description: "When the user wants to evaluate whether a target audience is reachable through organic search or needs alternative acquisition channels. Also use when the user mentions \"demand evaluation,\" \"audience demand,\" \"is there search demand,\" \"can we reach this audience with SEO,\" \"channel fit,\" \"acquisition channel,\" \"organic feasibility,\" \"is SEO the right channel,\" or wants to understand if low organic performance is due to execution problems or lack of demand. This skill uses MCPs for targeted demand validation queries — it is not a data extraction skill. For factual site data, see site-snapshot. For SEO diagnosis, see seo-audit."
 metadata:
-  version: 1.0.0
+  version: 1.1.0
 ---
 
 # Audience Demand Evaluation
 
 You evaluate, per audience, the potential organic demand, real SEO feasibility, and the most suitable acquisition channel or motion.
 
-The output is `context/audience-acquisition-context.md` — a reference document that seo-audit and page-cro can read to distinguish execution problems from demand limitations.
+The output is `contexto/contexto-adquisicion-audiencia.md` — a reference document that seo-audit, page-cro, and ai-seo can read to distinguish execution problems from demand limitations.
 
 ## Why This Skill Exists
 
@@ -26,8 +26,10 @@ Content inside tables stays in the language of the source or query.
 ## Context Prerequisites
 
 **Required (read):**
-- `context/site-context.md` — audiences, JTBD, pains, use cases
-- `context/site-snapshot.md` — GSC signals, organic visibility
+- `contexto/contexto-sitio.md` — audiences, JTBD, pains, use cases
+- `contexto/snapshot-sitio.md` — GSC signals, organic visibility
+
+**Path convention (Spanish-first with English fallback):** context files use Spanish names; the English names (`context/site-context.md`, `context/site-snapshot.md`, `context/audience-acquisition-context.md`) are the legacy convention. When reading, look for the Spanish path first; if it doesn't exist, read the English equivalent and tell the user they can rename it. When writing the output, always use the Spanish path — unless the project's existing tree is still in English, in which case offer to migrate (rename) before writing.
 
 If these files don't exist, ask the user to generate them first using site-context and site-snapshot.
 
@@ -36,7 +38,7 @@ If these files don't exist, ask the user to generate them first using site-conte
 
 ## Use of MCPs
 
-This skill is an exception to the general rule that only snapshots query MCPs. audience-demand-evaluation needs to validate demand hypotheses with data that is not in the snapshots:
+This skill is one of two bounded exceptions (alongside ai-seo) to the general rule that only snapshots query MCPs. audience-demand-evaluation needs to validate demand hypotheses with data that is not in the snapshots:
 
 - Search volume for keywords the site doesn't yet rank for (not in the snapshot's GSC data)
 - SERP competition and difficulty for hypothetical query families
@@ -52,7 +54,7 @@ These queries are targeted and bounded (see execution limits), not full dataset 
 
 For each audience:
 
-1. **Take definition from `site-context.md`** — audience, JTBD, pains, use cases
+1. **Take definition from `contexto-sitio.md`** — audience, JTBD, pains, use cases
 2. **Build query family hypotheses** — generate seed keywords for applicable families
 3. **Validate with DataForSEO** (volume, competition) and **GSC** (existing real traffic)
 4. **Separate existing demand from current capturability** — high volume doesn't mean the site can capture it; low GSC traffic might mean poor execution or no demand
@@ -100,7 +102,7 @@ If an audience produces no signals in GSC and no relevant volume in DataForSEO a
 
 ## Output Structure
 
-`context/audience-acquisition-context.md` must include:
+`contexto/contexto-adquisicion-audiencia.md` must include:
 
 1. **Metadata** — extraction date, site, audiences evaluated, sources used
 2. **Audience Definitions** — summary of each audience from site-context
