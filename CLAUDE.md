@@ -9,12 +9,13 @@ There is no build, test, or lint step — the "artifacts" are Markdown skills/ag
 and JSON manifests that Claude Code loads. Work here means authoring or editing those files
 and keeping the manifests valid and consistent.
 
-The marketplace currently ships three plugins, all authored in **Spanish neutro** for
+The marketplace currently ships four plugins, all authored in **Spanish neutro** for
 user-facing output (skills instruct their output language explicitly):
 
 - **brand-voice-pro** — full-stack plugin: skills + agents + commands + MCP servers.
 - **design-system** — skills-only: design-system audit/docs + social carousel generation.
 - **seo-suite** — skills-only: an 8-skill SEO suite (snapshots → audit/CRO/audience/AI-search, plus change tracking).
+- **utils** — skills-only: general-purpose personal utilities (cross-account activity log via `claude-activity-log`).
 
 ## Layout & manifest hierarchy
 

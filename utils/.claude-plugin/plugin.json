@@ -1,0 +1,10 @@
+{
+  "name": "utils",
+  "displayName": "Utils",
+  "version": "1.0.0",
+  "description": "Skills personales de utilidad general para Webmometro. Incluye el registro de actividad cross-cuenta (Claude Activity Log) y, a futuro, otras herramientas de productividad y mantenimiento del entorno de trabajo.",
+  "author": {
+    "name": "Webmometro"
+  },
+  "keywords": ["utils", "productividad", "activity-log", "logging", "registro", "workflow"]
+}
