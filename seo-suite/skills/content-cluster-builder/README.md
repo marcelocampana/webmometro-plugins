@@ -23,8 +23,9 @@ Di cualquiera de estas frases y el skill se activa automáticamente:
 **Solo el tema semilla.** Una palabra o frase es suficiente para arrancar.
 
 El skill lee el contexto del negocio (dominio, ubicación, keywords principales) desde
-`seo-tracking/config.md` si existe. Si no existe o es un proyecto nuevo, te preguntará esos datos
-una sola vez y los guardará para las próximas sesiones.
+`contexto/configuracion.md` —la misma config compartida que usa el resto de la suite SEO— si existe.
+Si no existe o es un proyecto nuevo, te ofrecerá generarla (vía `site-context`/`site-snapshot`) o te
+preguntará el mínimo una sola vez y lo guardará ahí para las próximas sesiones.
 
 No necesitas traer keyword research previo ni listados — el skill los construye solo.
 
@@ -104,4 +105,4 @@ para medir el impacto a 14 y 28 días. Puedes aceptar o saltar eso.
 - Traer keyword research propio — el skill lo hace
 - Elegir qué herramientas usar — lee las fuentes disponibles y avisa si alguna falla
 - Crear las notas a mano — las genera desde las plantillas con los wikilinks ya conectados
-- Repetir el contexto del negocio en cada sesión — lo lee de `seo-tracking/config.md`
+- Repetir el contexto del negocio en cada sesión — lo lee de `contexto/configuracion.md`

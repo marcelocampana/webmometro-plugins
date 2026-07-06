@@ -2,7 +2,7 @@
 
 Referencia de criterios y umbrales para el skill `content-cluster-builder`. Estos son defaults
 razonados, no reglas rígidas — el modelo los aplica con criterio y puede apartarse cuando el caso
-lo justifica. Los valores marcados como "(configurable)" pueden sobreescribirse en `config.md`.
+lo justifica. Los valores marcados como "(configurable)" pueden sobreescribirse en `contexto/configuracion.md`.
 
 ---
 

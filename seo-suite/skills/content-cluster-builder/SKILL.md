@@ -8,7 +8,7 @@ description: >
   "topic cluster" o "clúster SEO". Para registrar el impacto posterior de los artículos creados,
   ver seo-change-tracker.
 metadata:
-  version: 1.2.0
+  version: 1.3.0
 ---
 
 # Content Cluster Builder
@@ -19,15 +19,28 @@ entrega un plan auditable más las notas reales de Obsidian listas para redactar
 
 **El contexto del negocio siempre se lee del proyecto, nunca se asume.** Este skill funciona igual
 para una clínica estética que para un observatorio científico — la vertical, la ubicación y las
-keywords semilla vienen del `config.md` o de lo que el usuario responda al inicio.
+keywords semilla vienen de `contexto/configuracion.md` o de lo que el usuario responda al inicio.
 
 ---
 
+## Ubicación en el workspace del cliente
+
+Este skill opera en el **proyecto activo del cliente** (su vault o repo), no en el repo del plugin.
+Resuelve la raíz del cliente subiendo desde el directorio activo hasta encontrar una carpeta
+`contexto/` — igual que el resto de la suite SEO.
+
 ## Antes de empezar: contexto de negocio
 
-Leer **`seo-tracking/config.md`** si existe — es la fuente de verdad compartida del proyecto
-(dominio, GSC, GA4, ubicación SERP, keywords principales). Si no existe o le faltan campos, seguir
-la guía en **`references/contexto-negocio.md`**: preguntar el mínimo al usuario y persistirlo.
+El dominio y los identificadores de propiedad (GSC, GA4, ubicación/idioma para SERP, keywords
+principales) son **verdad compartida** y viven una sola vez en **`contexto/configuracion.md`**.
+Léelos **por puntero** desde ahí; nunca los copies a una config propia del cluster-builder. El
+contexto estratégico (vertical, audiencia, objetivos) se lee de **`contexto/sitio.md`** si existe.
+
+Si `contexto/configuracion.md` no existe todavía, dilo y ofrece crearlo (vía `site-context` /
+`site-snapshot`) antes de continuar, en vez de inventar una config paralela. Si el proyecto guarda
+esos datos con nombres/ubicaciones antiguas (p. ej. un `seo-tracking/config.md` en la raíz del
+proyecto), resuélvelos por rol y **ofrece migrarlos** a `contexto/configuracion.md`. La guía completa
+de resolución está en **`references/contexto-negocio.md`**.
 
 Si el usuario no proporcionó la semilla, pedirla. Con eso es suficiente para arrancar el Paso 1.
 
@@ -90,6 +103,12 @@ GSC). Filtrar las URLs cuyo slug o ruta se relacione semánticamente con la semi
 
 Este inventario alimenta directamente el coverage del Paso 4 y evita proponer temas duplicados.
 
+**Cruzar contra el registro de cambios SEO:** si existe `contexto/seo-tracking/cambios/`, leerlo
+(es verdad compartida cross-plugin, producida por `seo-change-tracker`) para no re-proponer un
+artículo o una optimización que ya fue creada o registrada. Un subtema con un cambio de área
+`contenido` ya registrado no es GAP: es contenido en seguimiento. Si la carpeta no existe, continuar
+sin ella (degradar explícitamente).
+
 Si el dominio no tiene sitemap accesible, informarlo y caer en GSC + SERP como mejor aproximación
 disponible — no bloquear el flujo. Para un inventario exhaustivo de sitios grandes, ofrecer el
 crawl con `onpage_*` de DataForSEO (consume créditos; ver `references/fuentes-datos-mcp.md`).
@@ -132,8 +151,8 @@ Esperar confirmación antes de continuar. El tipo confirmado es el contrato del 
 
 ### Paso 2: Filtrar, etiquetar intención y capturar la voz del buscador
 
-Eliminar keywords de marca, duplicados y las que caigan fuera de los umbrales de volumen/KD del
-`config.md` (o los defaults de `metodologia-cluster.md`). Etiquetar cada keyword con su intención:
+Eliminar keywords de marca, duplicados y las que caigan fuera de los umbrales de volumen/KD de
+`contexto/configuracion.md` (o los defaults de `metodologia-cluster.md`). Etiquetar cada keyword con su intención:
 informacional, comercial, transaccional o local.
 
 **Capturar la voz del buscador:** además del volumen, analizar *cómo* pregunta la gente —
@@ -145,7 +164,7 @@ bloques FAQ en el Paso 5 — el contenido debe responder el lenguaje real, no un
 ### Paso 3: Clusterizar por solapamiento de SERP + intención dominante
 
 Consultar el top-10 orgánico de Google en vivo para las keywords candidatas más prometedoras,
-geolocalizado según `config.md`. Agrupar por URLs compartidas en los resultados — no por similitud
+geolocalizado según `contexto/configuracion.md`. Agrupar por URLs compartidas en los resultados — no por similitud
 de texto. Ver criterios exactos en `references/metodologia-cluster.md`.
 
 Esta es la diferencia clave frente a enfoques semánticos: si Google muestra los mismos resultados,
@@ -264,8 +283,10 @@ Generar las notas usando las plantillas de `assets/`:
 - `assets/spoke.template.md` → una nota por spoke con link al pilar y a sus hermanos
 - `assets/mapa-cluster.template.md` → nota maestra del clúster con resumen, mapa y roadmap
 
-**Ubicación de las notas:** preguntar al usuario si no está claro, o inferir de la estructura del
-vault. Nunca crear notas en el directorio `.claude/`.
+**Ubicación de las notas:** si el proyecto usa el workspace estándar, el dominio de contenido es
+`web/contenido/` — usarlo como destino preferido. Si el proyecto es un vault de Obsidian con otra
+estructura, inferirla; ante la duda, preguntar al usuario. Nunca crear notas en el directorio
+`.claude/`.
 
 Los `[[wikilinks]]` deben usar el nombre exacto de la nota de destino. Verificar que ningún spoke
 quede huérfano (sin enlace desde el pilar) antes de dar la tarea por terminada.
@@ -283,7 +304,8 @@ Al terminar el Modo 2, ofrecer registrar el clúster como un cambio de área `co
 
 | Situación | Qué hacer |
 |---|---|
-| No hay `seo-tracking/config.md` | Seguir guía en `references/contexto-negocio.md` y crear contexto mínimo |
+| No existe `contexto/configuracion.md` | Decirlo y ofrecer generarlo vía `site-context`/`site-snapshot`, o seguir `references/contexto-negocio.md` para persistir el mínimo ahí; no inventar una config paralela |
+| Config en ubicación legada (`seo-tracking/config.md` en la raíz) | Resolverla por rol y ofrecer migrarla a `contexto/configuracion.md` |
 | Un MCP no responde | Dejar campo `null`, informar, continuar con fuentes disponibles |
 | La semilla devuelve <20 keywords | Avisar y preguntar si el usuario quiere ampliar o trabajar con lo disponible |
 | El clúster falla un gate de salud | Presentar el fallo con su causa y proponer cómo resolverlo |
@@ -296,4 +318,4 @@ Al terminar el Modo 2, ofrecer registrar el clúster como un cambio de área `co
 ## Idioma
 
 Comunicarse con el usuario en español neutro. Los H1/H2 y el contenido de las notas se generan en
-el idioma configurado en `config.md` (o español por defecto).
+el idioma configurado en `contexto/configuracion.md` (o español por defecto).

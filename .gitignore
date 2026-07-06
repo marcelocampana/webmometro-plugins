@@ -1,1 +1,5 @@
 .DS_Store
+
+# Python bytecode (los scripts de skills se ejecutan con python3; el bytecode es un artefacto local)
+__pycache__/
+*.pyc

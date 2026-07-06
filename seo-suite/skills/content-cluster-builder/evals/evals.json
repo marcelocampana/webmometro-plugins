@@ -27,18 +27,18 @@
     },
     {
       "id": "lee-config-existente",
-      "description": "Cuando existe seo-tracking/config.md, el skill debe leerlo y no preguntar el dominio/ubicación",
+      "description": "Cuando existe contexto/configuracion.md, el skill debe leerlo por puntero y no preguntar el dominio/ubicación",
       "input": "crea un clúster sobre HIFU 12D",
-      "context_files": ["seo-tracking/config.md"],
-      "expect_behavior": "El skill lee config.md y usa el dominio y la ubicación SERP que ya están ahí, sin pedírselos al usuario.",
+      "context_files": ["contexto/configuracion.md"],
+      "expect_behavior": "El skill lee contexto/configuracion.md y usa el dominio y la ubicación SERP que ya están ahí, sin pedírselos al usuario y sin crear una config paralela.",
       "tags": ["contexto", "config"]
     },
     {
       "id": "sin-config-pregunta-minimo",
-      "description": "Sin config.md, el skill debe preguntar el contexto mínimo del negocio antes de continuar",
+      "description": "Sin contexto/configuracion.md, el skill debe ofrecer generarla o preguntar el mínimo antes de continuar, sin inventar una config paralela",
       "input": "quiero un clúster de contenido sobre oncología preventiva",
       "context_files": [],
-      "expect_behavior": "El skill pregunta dominio, ubicación y/o keywords principales del negocio. No asume que es estética ni ningun rubro específico.",
+      "expect_behavior": "El skill ofrece generar contexto/configuracion.md (vía site-context/site-snapshot) o pregunta dominio, ubicación y/o keywords principales y los persiste ahí. No crea un seo-tracking/config.md paralelo ni asume que es estética ni ningún rubro específico.",
       "tags": ["contexto", "agnosticismo"]
     },
     {
