@@ -1,0 +1,88 @@
+{
+  "skill": "content-cluster-builder",
+  "version": "1.0.0",
+  "description": "Evals para verificar disparo correcto, agnosticismo del negocio y calidad del output. Usar con skill-creator.",
+  "cases": [
+    {
+      "id": "trigger-es-cluster",
+      "description": "Debe disparar cuando el usuario pide un clúster de contenido en español",
+      "input": "quiero crear un clúster de contenido sobre endolifting",
+      "expect_skill": "content-cluster-builder",
+      "must_not_use_skill": "build-clusters",
+      "tags": ["trigger", "idioma"]
+    },
+    {
+      "id": "trigger-es-pillar",
+      "description": "Debe disparar con 'pilar y spokes'",
+      "input": "necesito organizar el contenido en arquitectura pilar y spokes para el tema de implantes capilares",
+      "expect_skill": "content-cluster-builder",
+      "tags": ["trigger"]
+    },
+    {
+      "id": "trigger-es-autoridad",
+      "description": "Debe disparar con 'autoridad temática'",
+      "input": "cómo construimos autoridad temática alrededor de laser co2 fraccionado",
+      "expect_skill": "content-cluster-builder",
+      "tags": ["trigger"]
+    },
+    {
+      "id": "lee-config-existente",
+      "description": "Cuando existe seo-tracking/config.md, el skill debe leerlo y no preguntar el dominio/ubicación",
+      "input": "crea un clúster sobre HIFU 12D",
+      "context_files": ["seo-tracking/config.md"],
+      "expect_behavior": "El skill lee config.md y usa el dominio y la ubicación SERP que ya están ahí, sin pedírselos al usuario.",
+      "tags": ["contexto", "config"]
+    },
+    {
+      "id": "sin-config-pregunta-minimo",
+      "description": "Sin config.md, el skill debe preguntar el contexto mínimo del negocio antes de continuar",
+      "input": "quiero un clúster de contenido sobre oncología preventiva",
+      "context_files": [],
+      "expect_behavior": "El skill pregunta dominio, ubicación y/o keywords principales del negocio. No asume que es estética ni ningun rubro específico.",
+      "tags": ["contexto", "agnosticismo"]
+    },
+    {
+      "id": "agnosticismo-rubro",
+      "description": "El skill debe funcionar igual para un negocio de salud oncológica que para uno de estética",
+      "input": "construye un clúster sobre detección temprana de cáncer de mama",
+      "expect_behavior": "El skill ejecuta el mismo flujo de 7 pasos sin mencionar ni asumir la vertical estética. Los H1/H2 propuestos reflejan el rubro oncológico, no servicios estéticos.",
+      "must_not_contain": ["endolifting", "hifu", "láser", "estética"],
+      "tags": ["agnosticismo", "rubro"]
+    },
+    {
+      "id": "output-obsidian",
+      "description": "Las notas generadas deben tener frontmatter válido y wikilinks correctos",
+      "input": "crea el clúster de hifu 12d y materializa las notas en Obsidian",
+      "expect_behavior": "Se generan al menos 3 archivos .md: uno de tipo 'pilar', al menos 2 de tipo 'spoke', y uno de tipo 'mapa-cluster'. Todos tienen frontmatter con los campos del template. Los wikilinks del pilar apuntan a los nombres exactos de los spokes creados.",
+      "tags": ["output", "obsidian", "wikilinks"]
+    },
+    {
+      "id": "sin-huerfanos",
+      "description": "Ningún spoke debe quedar sin enlace desde el pilar al materializar",
+      "input": "genera el clúster de endolifting con 4 spokes",
+      "expect_behavior": "El mapa de enlazado incluye cada spoke en la lista de links del pilar. El scorecard confirma 0 huérfanos.",
+      "tags": ["output", "enlazado", "gates"]
+    },
+    {
+      "id": "degradacion-mcp-caido",
+      "description": "Si DataForSEO no responde, el skill no se bloquea",
+      "input": "crea un clúster sobre rejuvenecimiento facial (simular DataForSEO caído)",
+      "expect_behavior": "El skill informa que DataForSEO no está disponible, continúa con GSC y análisis semántico manual, y genera un plan marcado con las fuentes que faltaron. No termina con error ni deja el proceso incompleto.",
+      "tags": ["degradacion", "mcp"]
+    },
+    {
+      "id": "aprobacion-antes-de-notas",
+      "description": "El skill debe presentar el plan y esperar aprobación antes de crear notas",
+      "input": "crea un clúster sobre hifu y ya genera las notas directamente",
+      "expect_behavior": "El skill presenta el mapa del clúster (pilar + spokes, roadmap, scorecard) y pregunta al usuario si aprueba antes de crear los archivos .md. No materializa a ciegas.",
+      "tags": ["flujo", "aprobacion"]
+    },
+    {
+      "id": "valida-intencion-url-pilar",
+      "description": "Cuando el término cabeza tiene SERP transaccional y el sitio ya tiene una página transaccional que convierte, el skill NO debe nominarla pilar informativo ni proponer reconvertirla en guía. Debe auditarla, detectar el alineado SERP-página y presentar el branch Opción A (pilar transaccional) / Opción B (hub informativo separado) antes de continuar.",
+      "input": "crea un clúster de contenido sobre laser co2 fraccionado para clinicadrazaror.cl — ya tienen una página de servicio en /tratamientos/esteticos/laser-co2-fraccionado que convierte bien (5% conv rate)",
+      "expect_behavior": "El skill abre la URL existente, la clasifica como transaccional + alineada con la SERP, y en el Paso 5 presenta explícitamente las dos opciones (pilar transaccional vs hub informativo separado). No propone reconvertirla en guía informativa. El gate 'Coherencia de intención' aparece como OK si se elige Opción A, o como pendiente de decisión si no se ha elegido.",
+      "tags": ["intencion", "transaccional", "gate", "regresion"]
+    }
+  ]
+}

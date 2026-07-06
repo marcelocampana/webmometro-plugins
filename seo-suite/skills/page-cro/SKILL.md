@@ -166,6 +166,8 @@ For every page analyzed, apply the UX lens defined in [references/ux-lens.md](re
 
 The UX analysis is integrated into the CRO output — it is not a separate deliverable. UX findings feed directly into the "UX Findings" section of the output.
 
+When technical friction surfaces as a conversion factor (slow load, layout shift on interaction), rate the page's PageSpeed/CWV data from the snapshot using the suite's canonical performance reference — thresholds and lab-vs-field reading rules — at [seo-audit/references/rendimiento-web.md](../seo-audit/references/rendimiento-web.md). Do not re-derive thresholds here.
+
 ---
 
 ## Output Format

@@ -200,7 +200,7 @@ Every antes→después rewrite in the recommendations:
 
 This skill audits AEO/GEO only. Do not duplicate; refer:
 
-- Technical SEO (crawlability, indexation, Core Web Vitals, sitemaps) → **seo-audit**
+- Technical SEO (crawlability, indexation, Core Web Vitals, sitemaps) → **seo-audit** (performance thresholds and lab-vs-field rules live in its [rendimiento-web.md](../seo-audit/references/rendimiento-web.md))
 - Conversion problems (CTAs, friction, value proposition) → **page-cro**
 - "Is there demand at all?" → **audience-demand-evaluation**
 - Writing or rewriting full content → a content-creation workflow (e.g., the brand-voice-pro plugin's brand-voice-enforcement skill, if installed). This skill only produces targeted example rewrites as evidence for its findings.

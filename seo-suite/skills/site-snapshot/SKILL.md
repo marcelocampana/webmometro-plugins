@@ -144,7 +144,13 @@ All windows below are calculated backwards from the reference date provided by t
 
 **GSC:** resumen por período, top queries por clics, queries con posición promedio 4-20, top páginas por clics, **top 20 páginas por clics (últimos 90 días) con clics, CTR e impresiones**, tendencia mensual (12 meses), resumen de cobertura, detalle de cobertura.
 
-**PageSpeed:** snapshots por URL estratégica y dispositivo, field data cuando esté disponible.
+**PageSpeed:** snapshots por URL estratégica y dispositivo, field data cuando esté disponible. Extraer con el script compartido del plugin, una vez por URL estratégica:
+
+```bash
+python3 "<ruta-del-plugin>/scripts/pagespeed_field.py" <url> --strategy both --json
+```
+
+El script (PSI v5 + CrUX) resuelve la Google API key desde `GOOGLE_API_KEY` o `~/.config/claude-seo/google-api.json` y devuelve números crudos (lab + field), sin ratings. **Degradación explícita:** si sale con `error: no_api_key` (código 3) o falla la cuota, usar el fallback `mcp__dataforseo__on_page_lighthouse` (lab-only, sin CrUX) y registrar en el Inventario de fuentes que PageSpeed quedó lab-only. No abortar el snapshot.
 
 **Clarity:** resumen por período, mix de dispositivos, páginas por señales de frustración, scroll depth en páginas estratégicas.
 

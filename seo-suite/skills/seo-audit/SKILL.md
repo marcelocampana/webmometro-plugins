@@ -178,19 +178,25 @@ Reporting "no schema found" based solely on `web_fetch` or `curl` leads to false
 
 ### Site Speed & Core Web Vitals
 
-**Core Web Vitals**
-- LCP (Largest Contentful Paint): < 2.5s
-- INP (Interaction to Next Paint): < 200ms
-- CLS (Cumulative Layout Shift): < 0.1
+Rate at the 75th percentile. **Field data (CrUX) is the verdict; lab data (Lighthouse) is
+diagnostic only.** If the snapshot has only lab data (field marked unavailable because no Google
+API key was configured), rate provisionally and say so — never present a lab number as real-user
+performance.
 
-**Speed Factors**
-- Server response time (TTFB)
-- Image optimization
-- JavaScript execution
-- CSS delivery
-- Caching headers
-- CDN usage
-- Font loading
+**Core Web Vitals** (Good / Needs Improvement / Poor)
+- LCP (Largest Contentful Paint): ≤ 2.5s / 2.5–4.0s / > 4.0s
+- INP (Interaction to Next Paint): ≤ 200ms / 200–500ms / > 500ms
+- CLS (Cumulative Layout Shift): ≤ 0.1 / 0.1–0.25 / > 0.25
+
+A page passes CWV only when LCP, INP, and CLS are **all** in Good.
+
+**Supporting metrics:** FCP (≤ 1.8s good), TTFB (≤ 0.8s good). **Speed factors:** server response
+time, image optimization, JavaScript execution, CSS delivery, caching headers, CDN, font loading.
+
+For the full threshold tables, the lab-vs-field reading rules, and diagnosis→fix guidance with
+code examples (LCP element, INP, CLS, render-blocking, fonts, caching), see
+[references/rendimiento-web.md](references/rendimiento-web.md). Performance fixes carry
+`area: tecnico` in the recommended-actions checklist.
 
 ### Mobile-Friendliness
 
@@ -431,6 +437,7 @@ For each issue:
 ## References
 
 - [AI Writing Detection](references/ai-writing-detection.md): Common AI writing patterns to avoid (em dashes, overused phrases, filler words)
+- [Web Performance & Core Web Vitals](references/rendimiento-web.md): Canonical threshold tables, lab-vs-field reading rules, and diagnosis→fix guidance for PageSpeed/CWV data (this is the suite's owner for performance interpretation)
 - For AI search optimization (AEO, GEO, LLMO, AI Overviews), see the **ai-seo** skill
 
 ---

@@ -231,7 +231,22 @@ Consultar usando las fechas exactas calculadas: resumen de URL por período, con
 
 ### Paso 6: Extraer PageSpeed para la URL
 
-Ejecutar: móvil y escritorio. Registrar: métricas de laboratorio, datos de campo cuando estén disponibles.
+Ejecutar móvil y escritorio con el script compartido del plugin:
+
+```bash
+python3 "<ruta-del-plugin>/scripts/pagespeed_field.py" <url> --strategy both --json
+```
+
+El script (PSI v5 + CrUX) resuelve la Google API key desde `GOOGLE_API_KEY` o
+`~/.config/claude-seo/google-api.json`. Devuelve números crudos, sin ratings — la interpretación
+vive en la capa analítica, no en el snapshot.
+
+Registrar: métricas de laboratorio (`lab`) y datos de campo CrUX (`field`) cuando estén disponibles.
+
+**Degradación explícita:** si el script sale con `error: no_api_key` (código 3) o falla la cuota,
+usar el fallback `mcp__dataforseo__on_page_lighthouse` (Lighthouse lab-only, sin datos de campo
+CrUX) y **anotar en el Inventario de Fuentes** que PageSpeed quedó lab-only y que CrUX no está
+disponible. No abortar el snapshot por esto.
 
 ### Paso 7: Extraer datos de Clarity para la URL
 

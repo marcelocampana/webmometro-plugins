@@ -57,6 +57,21 @@ Cada servidor requiere sus propias credenciales (API keys de DataForSEO, OAuth p
 GSC/GA4). Configúralos vía `claude mcp` o `/mcp` en una sesión interactiva antes de usar la
 suite. Si falta una fuente, los skills degradan de forma explícita en lugar de fallar.
 
+### PageSpeed / Core Web Vitals de campo (opcional)
+
+Los snapshots (`site-snapshot`, `page-snapshot`) extraen PageSpeed con el script compartido
+`scripts/pagespeed_field.py` (PSI v5 + datos de campo CrUX, solo stdlib, sin `pip install`). Para
+obtener **datos de campo reales (CrUX)** necesita una Google API key gratuita de PageSpeed
+Insights, resuelta por convención desde **fuera del repo**:
+
+1. Variable de entorno `GOOGLE_API_KEY`, o
+2. Campo `api_key` en `~/.config/claude-seo/google-api.json`.
+
+La key nunca vive en el plugin. **Sin key**, el script degrada y los snapshots caen al fallback
+`mcp__dataforseo__on_page_lighthouse` (Lighthouse **lab-only**, sin CrUX), registrándolo en el
+Inventario de fuentes. La interpretación de estos datos (umbrales, rating bueno/malo) vive en la
+capa analítica: `seo-audit/references/rendimiento-web.md`.
+
 Como regla, solo los skills de snapshot consultan MCPs. Hay **dos excepciones acotadas**,
 ambas con límites de ejecución explícitos y datos que no existen en ningún snapshot:
 `audience-demand-evaluation` (validación de demanda: volumen y competencia) y `ai-seo`
