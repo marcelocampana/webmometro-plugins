@@ -17,7 +17,7 @@ campo en `null`, informarlo al usuario y continuar. Nunca bloquear el flujo por 
 | Sugerencias long-tail | `mcp__dataforseo__labs_google_keyword_suggestions` | Variantes de la semilla con volumen y KD |
 | Volumen + KD + CPC | `mcp__dataforseo__keywords_google_ads_search_volume` | Validar volumen de keywords ya identificadas |
 | Preguntas PAA | `mcp__dataforseo__labs_google_keyword_ideas` | Con `include_serp_info=true` captura People Also Ask |
-| Keywords reales del sitio | `mcp__gsc__search_analytics` | Filtrar por dominio del `config.md`; devuelve queries reales con impresiones y posición |
+| Keywords reales del sitio | `mcp__gsc__search_analytics` | Filtrar por dominio del `contexto/configuracion.md`; devuelve queries reales con impresiones y posición |
 
 Orden sugerido: empezar con `related_keywords` + `keyword_suggestions` → enriquecer con `search_volume` → complementar con GSC.
 
@@ -65,11 +65,11 @@ preguntas reales. Fuentes y tabla completa en `references/voz-del-buscador.md`:
 
 | Datos | Herramienta MCP | Notas |
 |---|---|---|
-| Top-10 orgánico por keyword | `mcp__dataforseo__serp_google_organic_live` | Usar `location_code` y `language_code` de `config.md`; correr para las 20–30 keywords de mayor potencial, no todas |
+| Top-10 orgánico por keyword | `mcp__dataforseo__serp_google_organic_live` | Usar `location_code` y `language_code` de `contexto/configuracion.md`; correr para las 20–30 keywords de mayor potencial, no todas |
 | Intención por keyword (confirmación) | `mcp__dataforseo__labs_google_search_intent` | Opcional: corroborar la intención inferida manualmente con el modelo |
 
 Parámetros que deben ser consistentes entre llamadas (mismos que el `seo-change-tracker` usa):
-`location_code` desde `config.md` → `ubicacion_serp.ciudad`; `language_code` desde `config.md` → `ubicacion_serp.idioma`.
+`location_code` desde `contexto/configuracion.md` → `ubicacion_serp.ciudad`; `language_code` desde `contexto/configuracion.md` → `ubicacion_serp.idioma`.
 
 Para ahorrar créditos: agrupar primero por intención (Paso 2) y correr SERP solo para las dudas de
 si dos keywords deben ir juntas o separadas.
@@ -107,7 +107,7 @@ SERP objetivo contra la SERP de las URLs propias que ya rankean:
 
 | Datos | Herramienta | Notas |
 |---|---|---|
-| Top-10 de la keyword de la pieza nueva | `mcp__dataforseo__serp_google_organic_live` | Mismos `location_code`/`language_code` del `config.md`; reutilizar las SERPs ya traídas en el Paso 3 si están disponibles |
+| Top-10 de la keyword de la pieza nueva | `mcp__dataforseo__serp_google_organic_live` | Mismos `location_code`/`language_code` del `contexto/configuracion.md`; reutilizar las SERPs ya traídas en el Paso 3 si están disponibles |
 | Top-10 de la keyword de la URL propia existente | `mcp__dataforseo__serp_google_organic_live` | Igual; comparar los dos conjuntos de URLs |
 
 Calcular el overlap = (URLs compartidas en el top-10) / 10. Si supera el 40%, marcar
