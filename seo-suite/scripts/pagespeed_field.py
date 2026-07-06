@@ -10,8 +10,10 @@ No depende de paquetes externos (solo stdlib: urllib) para no requerir `pip inst
 máquina del usuario, siguiendo el mismo criterio que scripts/generar_reporte.py del tracker.
 
 Credencial (Google API key para PSI/CrUX), en este orden:
-  1. Variable de entorno GOOGLE_API_KEY
-  2. Campo "api_key" en ~/.config/claude-seo/google-api.json
+  1. Variable de entorno GOOGLE_API_KEY (la key en crudo)
+  2. Variable de entorno CLAUDE_SEO_GOOGLE_API (ruta a un archivo JSON, o a un directorio que
+     contenga google-api.json) — para credenciales guardadas fuera de la ubicación por defecto
+  3. Campo "api_key" en ~/.config/claude-seo/google-api.json (ubicación por defecto)
 La key NUNCA vive en el plugin ni en el repo; se resuelve por convención desde fuera.
 
 Uso:
@@ -32,7 +34,12 @@ import urllib.request
 from pathlib import Path
 
 PSI_ENDPOINT = "https://www.googleapis.com/pagespeedonline/v5/runPagespeed"
-CONFIG_PATH = Path.home() / ".config" / "claude-seo" / "google-api.json"
+CONFIG_FILENAME = "google-api.json"
+
+# Ubicación por defecto, genérica (sin rutas personales para que el plugin sea compartible).
+# Cada usuario apunta a SU credencial vía la env var CLAUDE_SEO_GOOGLE_API o GOOGLE_API_KEY
+# (ver README de seo-suite). La key vive siempre fuera del repo.
+DEFAULT_CONFIG_PATH = Path.home() / ".config" / "claude-seo" / CONFIG_FILENAME
 
 # Métricas de campo (CrUX) que reportamos, con su clave en la respuesta PSI.
 FIELD_METRICS = {
@@ -55,19 +62,36 @@ LAB_AUDITS = {
 }
 
 
+def _read_key_from_file(path):
+    """Lee el campo api_key de un JSON. Devuelve la key o None si no existe/está malformado."""
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        key = data.get("api_key")
+        return key.strip() if key else None
+    except (json.JSONDecodeError, OSError):
+        return None
+
+
 def resolve_api_key():
-    """Devuelve la Google API key desde env o ~/.config, o None si no está configurada."""
+    """
+    Devuelve la Google API key resolviéndola por convención, o None si no está configurada.
+    Orden: GOOGLE_API_KEY (crudo) → CLAUDE_SEO_GOOGLE_API (ruta) → ubicación por defecto.
+    """
     key = os.environ.get("GOOGLE_API_KEY")
     if key:
         return key.strip()
-    if CONFIG_PATH.exists():
-        try:
-            data = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
-            key = data.get("api_key")
-            if key:
-                return key.strip()
-        except (json.JSONDecodeError, OSError):
-            return None
+
+    override = os.environ.get("CLAUDE_SEO_GOOGLE_API")
+    if override:
+        path = Path(override).expanduser()
+        if path.is_dir():
+            path = path / CONFIG_FILENAME
+        if path.exists():
+            return _read_key_from_file(path)
+
+    if DEFAULT_CONFIG_PATH.exists():
+        return _read_key_from_file(DEFAULT_CONFIG_PATH)
+
     return None
 
 

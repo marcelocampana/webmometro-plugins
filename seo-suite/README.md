@@ -62,15 +62,51 @@ suite. Si falta una fuente, los skills degradan de forma explícita en lugar de 
 Los snapshots (`site-snapshot`, `page-snapshot`) extraen PageSpeed con el script compartido
 `scripts/pagespeed_field.py` (PSI v5 + datos de campo CrUX, solo stdlib, sin `pip install`). Para
 obtener **datos de campo reales (CrUX)** necesita una Google API key gratuita de PageSpeed
-Insights, resuelta por convención desde **fuera del repo**:
+Insights. **La key nunca vive en el plugin** — se resuelve por convención desde fuera del repo,
+en este orden:
 
-1. Variable de entorno `GOOGLE_API_KEY`, o
-2. Campo `api_key` en `~/.config/claude-seo/google-api.json`.
+1. `GOOGLE_API_KEY` — la key en crudo, como variable de entorno.
+2. `CLAUDE_SEO_GOOGLE_API` — variable de entorno con la **ruta** a un archivo JSON (o a un
+   directorio que contenga `google-api.json`). Es el override para guardar la credencial en otra
+   ubicación sin tocar el código — útil al compartir el plugin.
+3. `~/.config/claude-seo/google-api.json` — **ubicación por defecto**. Si guardas la key aquí, el
+   script la encuentra sin ninguna configuración extra (ni env var ni dotfiles).
 
-La key nunca vive en el plugin. **Sin key**, el script degrada y los snapshots caen al fallback
+**Setup por defecto (recomendado, cero mantenimiento):**
+
+1. Botón **"Get a Key"** en https://developers.google.com/speed/docs/insights/v5/get-started
+   (crea el proyecto y habilita la PageSpeed Insights API en un paso). Copia la cadena `AIza…`.
+2. Guárdala en la ubicación por defecto, con permisos restrictivos:
+   ```bash
+   mkdir -p ~/.config/claude-seo
+   printf '{\n  "api_key": "TU_KEY"\n}\n' > ~/.config/claude-seo/google-api.json
+   chmod 600 ~/.config/claude-seo/google-api.json
+   ```
+3. Verifica (una URL, sin costo) — debe devolver `field` (CrUX) además de `lab`:
+   ```bash
+   python3 seo-suite/scripts/pagespeed_field.py https://www.google.com --strategy mobile --json
+   ```
+
+**Guardar la key en otra ubicación** (p. ej. una carpeta de credenciales propia): deja el JSON
+donde quieras y exporta la ruta en tu perfil de shell (`~/.zshenv`, `~/.zshrc`…):
+```bash
+export CLAUDE_SEO_GOOGLE_API="/ruta/a/tu/carpeta-de-credenciales"   # dir con google-api.json
+# o directo al archivo:
+export CLAUDE_SEO_GOOGLE_API="/ruta/a/tu/google-api.json"
+```
+
+**Mantenimiento:** ninguno en la práctica. Las API keys de Google **no caducan** y el tier
+gratuito (25.000 solicitudes/día) sobra para snapshots. Solo la reemplazas si decides **rotarla**
+por seguridad (generas otra y sobrescribes el archivo).
+
+**Sin key**, el script degrada y los snapshots caen al fallback
 `mcp__dataforseo__on_page_lighthouse` (Lighthouse **lab-only**, sin CrUX), registrándolo en el
 Inventario de fuentes. La interpretación de estos datos (umbrales, rating bueno/malo) vive en la
 capa analítica: `seo-audit/references/rendimiento-web.md`.
+
+**Detalle de la API a tener en cuenta:** CrUX entrega el CLS de campo **multiplicado por 100**
+(un `5` crudo en la respuesta = un CLS de 0.05). El umbral se evalúa contra 0.1 en la capa
+analítica; el script reporta el valor crudo de Google sin transformarlo.
 
 Como regla, solo los skills de snapshot consultan MCPs. Hay **dos excepciones acotadas**,
 ambas con límites de ejecución explícitos y datos que no existen en ningún snapshot:

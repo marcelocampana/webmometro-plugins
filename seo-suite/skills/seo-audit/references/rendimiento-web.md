@@ -137,6 +137,7 @@ Cache-Control: public, max-age=31536000, immutable
 ## Official references (indexable)
 
 - PageSpeed Insights: https://pagespeed.web.dev/ · https://developers.google.com/speed/docs/insights/v5/about
+- Obtener la API key (botón "Get a Key"): https://developers.google.com/speed/docs/insights/v5/get-started
 - Core Web Vitals: https://web.dev/vitals/ · thresholds: https://web.dev/defining-core-web-vitals-thresholds/
 - CrUX (field data): https://developer.chrome.com/docs/crux/
 - Optimize LCP: https://web.dev/optimize-lcp/ · INP: https://web.dev/optimize-inp/ · CLS: https://web.dev/optimize-cls/
