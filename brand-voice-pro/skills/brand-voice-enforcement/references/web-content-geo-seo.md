@@ -138,6 +138,13 @@ Especially important for YMYL (Your Money or Your Life) topics — health, finan
 
 - Show direct **experience** with the topic where applicable.
 - Back significant claims with **named experts or primary sources** (not "a study").
+- **Cite the primary source, not a relaying medium.** When a claim reaches you through an outlet
+  that is merely *relaying* it — a magazine, newsletter, aggregator, or news site (including the
+  brand's own publication) — attribute it to the **original source**: the issuing body, the study
+  with year, or the named person who said it. The relaying outlet may be added as a
+  **complementary link** for verification and traffic, never as the attribution of origin. If the
+  primary-source link isn't available while drafting, mark it (e.g. `[PENDIENTE-enlace-…]`) rather
+  than defaulting the attribution to the outlet.
 - Include an **authorship note** (name, role, credential) when the format allows.
 - State the **dates** of data in the text itself, and acknowledge limits when relevant
   ("data available is from [year]; more recent figures may exist").
@@ -178,6 +185,13 @@ Especially important for YMYL (Your Money or Your Life) topics — health, finan
   where they apply, not only grouped in a "Related articles" block at the foot. When the project
   has an internal-linking map with suggested anchors, use those anchors.
 - Anchor text is **descriptive** (not "click here").
+- **Invite deeper reading with woven links, not meta-phrases.** Place the link on the natural
+  anchor; do **not** announce the cross-reference with phrases like "this is covered in detail in
+  the guide on…" / "see our article about…". A pointer that doesn't fit naturally in the body
+  belongs in the related-articles list at the foot, not as a narrated aside.
+- **Never expose internal content-architecture labels in reader-facing text.** Taxonomy or CMS
+  terms (pillar/spoke/hub/cluster, internal IDs, file names) must not appear in the visible text —
+  including the related-articles list. Use natural display text / link aliases.
 - Note any already-published pages that should be updated to link back to this new piece.
 
 ## 11. Images & media
@@ -243,7 +257,10 @@ After drafting, report briefly:
 | Fact-first, voice-after (neutral claim opens each section) | ✅ / ⚠️ / ⛔ | |
 | Readability / visual breaks (lists, tables, no walls of prose) | ✅ / ⚠️ / ⛔ | |
 | Internal links woven into the body (not only at the foot) | ✅ / ⚠️ / ⛔ | |
+| Internal links without meta-phrases ("covered in the guide on…") | ✅ / ⚠️ / ⛔ | |
+| No internal-architecture labels in visible text (pillar/spoke/hub) | ✅ / ⚠️ / ⛔ | |
 | Attribution without redundancy (1st full, then short form) | ✅ / ⚠️ / ⛔ | |
+| Primary source cited (not a relaying medium; outlet = complementary link) | ✅ / ⚠️ / ⛔ | |
 
 > Sources/claims are governed by the citation rule in the brand guidelines (e.g. "every figure
 > carries a named source"). This module adds **no** separate claim-validation mechanism — rigorous
