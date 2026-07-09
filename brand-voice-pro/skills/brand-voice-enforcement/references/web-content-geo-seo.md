@@ -224,16 +224,37 @@ Purpose, in priority order: (1) give the reader **visual breaks** while reading 
 prose), (2) make the content **scannable** (the eye can skim it), (3) make the **key data quick to
 look up**.
 
+**Structure is earned, not presumed.** A list or table is never added because you *believe* it
+helps, to fill space, or out of SEO habit — only when it adds **real value to the reader**: there
+is a genuine enumeration or a genuine contrast of comparable data underneath. When there is, use
+structure; when there isn't, prose.
+
 - No stretch runs more than ~3–4 paragraphs of continuous prose without a visual break: a list, a
   comparison table, a callout/blockquote, or a highlighted data point.
 - Turn any enumeration of **3+ parallel items** (options, steps, requirements, signals) into a
   list.
 - Turn any contrast of **2+ entities across 2+ dimensions** (e.g. option A/B/C, before/after, two
-  opposing approaches) into a **comparison table**.
-- **Voice wins:** lists and tables give rhythm, they don't replace the brand's reflective prose.
-  Don't fragment narrative/emotional content into bullets when it loses meaning once chopped up.
+  opposing approaches) into a **comparison table**. Run this as an explicit test **per section**,
+  not as a vibe over the whole piece: if a section lays out N options against M criteria (e.g. "what
+  determines the price": factors × how each affects it), it has earned a table — render it as one.
+- **Voice wins — but that is not a blanket license for prose.** Lists and tables give rhythm; they
+  never replace the brand's *reflective* prose — philosophy, positioning, first-person narrative,
+  emotional or judgment-bearing content — which must not be chopped into bullets. But a brand's
+  stylistic preference for flowing prose does **not** exempt genuinely comparable data (a 2+×2+
+  contrast, a set of parallel items) from becoming a table or list. Prose is the home of narrative
+  and judgment; structure is the home of comparable data. Keep each in its own home — don't let a
+  brand's prose voice annex data that the reader needs to scan, and don't let a table fragment a
+  reflective passage. When two brand/format signals conflict, surface the trade-off explicitly
+  rather than resolving it silently toward prose.
 - **Anti-overuse:** no more than ~1 table per 2–3 sections; too many tables tire the reader as much
   as too much prose.
+- **Why structure also helps discovery (GEO) — a by-product, never the justification:** a well-formed
+  comparison table makes the data *extractable*. AI answer engines (Google AI Overviews, ChatGPT,
+  Perplexity, Claude) and Google featured snippets lift structured data more readily than prose, and
+  tables map directly onto comparative queries ("X vs Y", "how much does it cost", "which is
+  better"). This visibility gain is a **consequence** of a table that already earned its place on
+  reader value — it is never a reason to add one. A filler table helps no one: not the reader, not
+  the engine. The value rule and the visibility gain point the same way.
 
 ---
 

@@ -2,7 +2,7 @@
 name: seo-audit
 description: "When the user wants to audit, review, or diagnose SEO issues on their site. Also use when the user mentions \"SEO audit,\" \"technical SEO,\" \"why am I not ranking,\" \"SEO issues,\" \"on-page SEO,\" \"meta tags review,\" \"SEO health check,\" \"my traffic dropped,\" \"lost rankings,\" \"not showing up in Google,\" \"site isn't ranking,\" \"Google update hit me,\" \"page speed,\" \"core web vitals,\" \"crawl errors,\" or \"indexing issues.\" Use this even if the user just says something vague like \"my SEO is bad\" or \"help with SEO\" — start with an audit. For AI search optimization, see ai-seo. This skill requires context files (site-context, site-snapshot) to operate. If they don't exist, the skill will ask the user to generate them first using the corresponding snapshot and context skills."
 metadata:
-  version: 2.2.0
+  version: 2.3.0
 ---
 
 # SEO Audit
@@ -33,7 +33,7 @@ This skill operates in a **shared client workspace**. Resolve the client root by
 
 **Flexible resolver:** these are the canonical Spanish paths. If a project uses a legacy name/location (`contexto/contexto-sitio.md`, `context/site-context.md`, `context/pages/page-snapshot-{slug}.md`, a `reportes/contexto/{mes}/` layout), resolve by role and offer to migrate before writing; never assume a fixed alternate name.
 
-**Output:** persist the audit report to `web/seo/informes/{periodo}/auditoria-seo.md` (full-site) or `web/seo/informes/{periodo}/auditoria-seo-{slug}.md` (URL-specific), in addition to summarizing in chat. `{periodo}` = `YYYY-MM` of the snapshot used.
+**Output:** every run persists **two linked artifacts** — a short executive report and an extended technical report — plus a chat summary. Full-site mode writes `web/seo/informes/{periodo}/Auditoría SEO Informe Ejecutivo.md` and `…/Auditoría SEO Informe Extendido.md`; URL-specific mode appends the page slug: `…/Auditoría SEO Informe Ejecutivo — {slug}.md` and `…/Auditoría SEO Informe Extendido — {slug}.md`. `{periodo}` = `YYYY-MM` of the snapshot used. See **Output Format** for the structure of each and how they link.
 
 If required files don't exist, inform the user which ones are missing and ask them to generate them using the corresponding skills (site-snapshot, `/page-snapshot`, site-context) before continuing. Do not attempt to operate without them.
 
@@ -392,37 +392,56 @@ code examples (LCP element, INP, CLS, render-blocking, fonts, caching), see
 
 ## Output Format
 
-The report is written in Spanish neutro (headers translated) and saved to `web/seo/informes/{periodo}/auditoria-seo.md` (or `auditoria-seo-{slug}.md` in URL-specific mode), plus a chat summary.
+An SEO audit has three readers with different needs: a **decision-maker** who must know what to do, an **implementer** who needs the technical detail and evidence, and the **change-tracker** that consumes the action list. Serving all three in one document is exactly what produces a bloated report that serves none of them well — the reader who just wants to decide drowns in evidence, and the detail that matters gets diluted.
 
-**Contextualización**
-- Strategic context used and extraction date
-- Factual snapshot used and extraction date
-- Demand/channel-fit signals (if `contexto/audiencia-canales.md` exists)
-- Prior-knowledge signals (if `contexto/antecedentes/` exists): already-agreed fixes, known strengths/weaknesses
-- Primary problem type assessment: technical, on-page, content, coverage, or demand
+So the skill **always writes two linked artifacts**, both in Spanish neutro (headers translated), every run:
 
-**Resumen Ejecutivo**
-- Overall health assessment
-- Top 3-5 priority issues
-- Quick wins identified
+- **Executive report** — the primary deliverable, what gets read and handed to the decision-maker.
+- **Full technical report** — the complete diagnosis and evidence, backing the executive.
 
-**Hallazgos Técnicos SEO**
-For each issue:
-- **Problema**: What's wrong
-- **Impacto**: SEO impact (Alto/Medio/Bajo)
-- **Evidencia**: How you found it
-- **Solución**: Specific recommendation
-- **Prioridad**: 1-5 or Alta/Media/Baja
+Each executive finding links to its expanded section in the full report, so "more detail" is one click away and nothing is lost. The chat summary mirrors the **executive** report and points to the full one.
 
-**Hallazgos On-Page** — Same format. When suggesting **title tag or meta description copy**, respect the brand voice guardrail (approved terminology, no prohibited terms) and note that final on-brand copy is produced by the **brand-voice-enforcement** skill; give only directional examples here.
+### Files (always write both)
 
-**Hallazgos de Contenido** — Same format
+Full-site mode:
+- `web/seo/informes/{periodo}/Auditoría SEO Informe Ejecutivo.md` — executive
+- `web/seo/informes/{periodo}/Auditoría SEO Informe Extendido.md` — extended technical
 
-**Plan de Acción Priorizado**
-1. Critical fixes (blocking indexation/ranking)
-2. High-impact improvements
-3. Quick wins (easy, immediate benefit)
-4. Long-term recommendations
+URL-specific mode (append the page slug):
+- `web/seo/informes/{periodo}/Auditoría SEO Informe Ejecutivo — {slug}.md` — executive
+- `web/seo/informes/{periodo}/Auditoría SEO Informe Extendido — {slug}.md` — extended technical
+
+`{periodo}` = `YYYY-MM` of the snapshot used. These are human-readable Obsidian note names (the file name is the note title in the vault); keep them exactly as written, accents included.
+
+### Artifact 1 — Executive report (the default read)
+
+Audience: a technical decision-maker ("técnico CEO") who needs to know **what to do**, framed in business terms — not technical compliance. Keep it to roughly **1–2 pages, and make it stand on its own** without the full report. This discipline is the whole point: any technical detail that isn't a decision input belongs in the full report, not here. When in doubt about whether something goes in the executive, ask "does the decision-maker need this to decide or act?" — if not, it goes in the full report.
+
+Structure:
+
+1. **Metadatos** (compact) — strategic context + factual snapshot used, with their extraction dates; primary problem type (technical / on-page / content / coverage / demand); skill version. Keep the >30-day freshness warning if it applies.
+2. **Veredicto** (3–4 lines) — overall health, what's solid, what's urgent.
+3. **Lo que importa** (max 3–5) — the findings that actually move the business. Each is a **compact block, not the 5-field technical format**:
+   - *Qué pasa* — one plain-language line.
+   - *Impacto en el negocio* — tie it to the site's goal/conversion from `contexto/sitio.md` (e.g. agendamientos/WhatsApp, leads, ventas), not "canonical tags."
+   - *Qué hacer* — the action in one line.
+   - *Esfuerzo* — rough: bajo / medio / alto.
+   - *Prioridad* — Alta / Media / Baja.
+   - `→ ver detalle` — link to this finding's anchor in the full report (see **Linking** below).
+4. **Decisiones que bloquean** (0–3) — decisions the reader must make before work can start (e.g. "¿la URL X es solo para Ads o debe rankear?"). Surface them here, up front. Never bury a "definir con el equipo" inside a finding — that silently stalls execution on day one.
+5. **Plan en secuencia** — ordered by dependency, each step with a suggested owner (dev / marketing / decisor), effort, and a verifiable **done-criterion** ("hecho =", e.g. "`curl -I /home` devuelve 301 a `/`"). Ordering matters: if fixing A might be the cause of B, A goes first, and say so.
+6. **Checklist de acciones** — the parseable checklist (see SEO Change Tracking): each action with `slug` · `area` · `target_url` · `prioridad`. Unchanged — this is what seo-change-tracker reconciles.
+7. **Cierre** — link to the full report and offer to expand any finding or produce a single-topic deep-dive.
+
+### Artifact 2 — Extended technical report (backing detail)
+
+The complete diagnosis: Contextualización, Resumen Ejecutivo, Hallazgos Técnicos / On-Page / Contenido (each finding with the five fields **Problema / Impacto / Evidencia / Solución / Prioridad**), and Plan de Acción Priorizado. It is the executive report **plus** all evidence and technical reasoning — the same findings, fully worked. Every finding carries a stable anchor keyed to its action `slug` so the executive can link into it.
+
+For the exact full-report template, the finding-anchor convention, the execution-layer field spec (owner / effort / done-criterion / what-to-measure), and the optional single-topic expansion, read **[references/plantillas-informe.md](references/plantillas-informe.md)** when you write this artifact.
+
+### Linking executive → full
+
+Give each finding in the extended report a stable anchor keyed to its action `slug`, and link to it from the matching executive finding. In an **Obsidian vault** (detectable by a `.obsidian/` folder at the client root — the common case here), use a block anchor on its own line directly under the finding heading (`^{slug}`, e.g. `^urls-planas-sin-metadata` — Obsidian renders it literally if appended to the heading line), and link from the executive as `[[Auditoría SEO Informe Extendido#^urls-planas-sin-metadata|→ ver detalle]]`. A block anchor survives even if the heading is later reworded. If the vault is **not** Obsidian, fall back to a standard Markdown heading link `[→ ver detalle](Auditoría SEO Informe Extendido.md#heading-slug)`. In URL-specific mode, link to `Auditoría SEO Informe Extendido — {slug}` instead.
 
 ## Diagnostic Rules
 
@@ -436,6 +455,7 @@ For each issue:
 
 ## References
 
+- [Plantillas de Informe](references/plantillas-informe.md): Full-report template, the executive→full finding-anchor convention, the execution-layer field spec, and the single-topic expansion. Read this when writing the full technical artifact.
 - [AI Writing Detection](references/ai-writing-detection.md): Common AI writing patterns to avoid (em dashes, overused phrases, filler words)
 - [Web Performance & Core Web Vitals](references/rendimiento-web.md): Canonical threshold tables, lab-vs-field reading rules, and diagnosis→fix guidance for PageSpeed/CWV data (this is the suite's owner for performance interpretation)
 - For AI search optimization (AEO, GEO, LLMO, AI Overviews), see the **ai-seo** skill
