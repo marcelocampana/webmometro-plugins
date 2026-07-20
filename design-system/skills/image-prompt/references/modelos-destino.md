@@ -8,16 +8,33 @@ Este archivo describe **comportamientos**, no versiones. Los modelos cambian de 
 
 | Familia | Cómo prefiere el prompt | Prompt negativo | Notas |
 |---|---|---|---|
-| Tipo Midjourney | frase descriptiva compacta, buen rendimiento con estilo declarado; los parámetros van al final con `--` | vía parámetro propio, no como bloque de texto | fuerte carácter estético propio; conviene contrarrestarlo con instrucciones concretas si se busca neutralidad |
-| Tipo difusión abierta (SD, SDXL y derivados) | etiquetas separadas por comas, orden por importancia; admite pesos | sí, como campo separado y muy efectivo | el más sensible al orden y a la sintaxis de peso |
-| Tipo Flux | prosa natural y larga, entiende relaciones espaciales descritas en lenguaje corriente | poco o nulo efecto | responde mal a listas de etiquetas sueltas; premia la frase bien construida |
+| Tipo Midjourney | frase descriptiva compacta, buen rendimiento con estilo declarado; los parámetros van al final con `--` | sí, inline con `--no` en el mismo texto | fuerte carácter estético propio; conviene contrarrestarlo con instrucciones concretas si se busca neutralidad |
+| Tipo difusión abierta (SD, SDXL y derivados) | etiquetas separadas por comas, orden por importancia; admite pesos | sí, muy efectivo; se integra con la línea `Negative prompt:` | el más sensible al orden y a la sintaxis de peso |
+| Tipo Flux | prosa natural y larga, entiende relaciones espaciales descritas en lenguaje corriente | poco o nulo efecto; redactar en positivo | responde mal a listas de etiquetas sueltas; premia la frase bien construida |
 | Tipo conversacional (DALL·E, Imagen, Nano Banana y similares) | instrucción en lenguaje natural, como se le explicaría a una persona | no admite; se expresa como instrucción positiva | suele reescribir el prompt internamente; conviene ser explícito con lo que **no** debe aparecer, en positivo |
 
 **Cuando el usuario no dice a qué modelo apunta:** entregar en prosa descriptiva. Es lo que funciona razonablemente en las cuatro familias, y ofrecer la adaptación a una concreta.
 
-## Negativos: cómo expresarlos
+## Negativos: siempre dentro de la misma salida
 
-En las familias que no admiten prompt negativo, no escribir "sin X" y esperar que funcione: en varias arquitecturas mencionar un concepto lo introduce. Convertir la negación en afirmación:
+El negativo **nunca se entrega en un bloque aparte**. El usuario debe poder copiar una sola vez. Cómo se integra depende de la familia:
+
+| Familia | Cómo integrarlo en el mismo texto |
+|---|---|
+| Tipo Midjourney | al final de la misma línea, con `--no elemento, elemento`, junto al resto de parámetros (`--ar 3:2 --no texto, marca de agua`) |
+| Tipo difusión abierta | en una segunda línea del mismo bloque, con la etiqueta literal `Negative prompt:`. Es el formato de metadatos que estas interfaces reconocen al pegar el bloque completo, de modo que reparten cada parte en su campo |
+| Tipo Flux | no hay campo negativo: las exclusiones se redactan en positivo dentro de la prosa |
+| Tipo conversacional | no hay campo negativo: las exclusiones se redactan en positivo dentro de la instrucción |
+
+Ejemplo de salida única para difusión abierta — un solo bloque, un solo copiado:
+
+```
+retrato de una mujer de unos 60 años, 85 mm, f/2, luz de ventana lateral suave, fondo disuelto
+Negative prompt: manos deformes, texto, marca de agua, firma
+Steps: 30, CFG scale: 6, Size: 832x1216
+```
+
+En las familias sin campo negativo, no escribir "sin X" y esperar que funcione: en varias arquitecturas mencionar un concepto lo introduce. Convertir la negación en afirmación:
 
 | En vez de | Escribir |
 |---|---|

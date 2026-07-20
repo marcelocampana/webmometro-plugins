@@ -2,7 +2,7 @@
 name: image-prompt
 description: Convierte una idea simple en un prompt completo y profesional para modelos de generación de imágenes (Midjourney, Flux, SDXL, DALL·E, Imagen, Nano Banana y similares), respetando la identidad visual del cliente. Activar cuando el usuario pida "un prompt para generar una imagen", "escribe el prompt", "mejora este prompt", "necesito una imagen de X", "cómo le pido esto a Midjourney/Flux/DALL·E", "haz que se vea más profesional o más realista", "prompt para un render", "prompt para una ilustración", "prompt para un banner, portada o hero"; o cuando entregue una descripción breve de una imagen esperando que alguien la desarrolle. También activar cuando aporte contexto externo — URL, PDF, brief creativo, manual de marca, imagen de referencia — para que la imagen respete una identidad visual. NO activar cuando el usuario pida diseñar un carrusel completo para redes (eso corresponde a carousel-design), ni cuando pida redactar texto o copy, ni cuando quiera generar la imagen final con una herramienta ya conectada sin pasar por el prompt.
 metadata:
-  version: 1.1.0
+  version: 1.2.0
 ---
 
 # Generación de prompts de imagen
@@ -144,12 +144,12 @@ Si el prompt pide texto legible dentro de la imagen, declararlo entre comillas y
 
 ### 7. Entregar
 
-1. **El prompt**, en bloque de código para copiar sin ruido.
-2. **Prompt negativo**, solo si el modelo destino lo admite.
-3. **Parámetros sugeridos** — relación de aspecto y ajustes del modelo destino.
-4. **Decisiones tomadas** — tres o cuatro líneas: tipo detectado, qué se infirió, qué palanca tocar para variar el resultado. Breve; el usuario quiere el prompt, no el ensayo. Si se generó sin marca, decirlo aquí.
+1. **Un único bloque de código** con todo lo copiable: el prompt, el negativo si el modelo lo admite, y los parámetros. El usuario copia una sola vez y pega una sola vez.
+2. **Decisiones tomadas** — tres o cuatro líneas fuera del bloque: tipo detectado, qué se infirió, qué palanca tocar para variar el resultado. Breve; el usuario quiere el prompt, no el ensayo. Si se generó sin marca, decirlo aquí.
 
-Si el usuario no dijo a qué modelo apunta, entregar el prompt en prosa descriptiva —que funciona en todas las familias— y ofrecer adaptarlo.
+**Regla de salida única:** nunca entregar el negativo ni los parámetros en un bloque aparte. Se integran dentro del mismo texto con la sintaxis que el modelo destino entiende — `--no` al final en las familias que lo soportan, una línea `Negative prompt:` en las que parsean ese formato al pegar, y exclusiones redactadas en positivo dentro de la prosa en las que no tienen negativo. Ver `references/modelos-destino.md`.
+
+Si el usuario no dijo a qué modelo apunta, entregar el prompt en prosa descriptiva —que funciona en todas las familias, con las exclusiones ya redactadas en positivo— y ofrecer adaptarlo.
 
 **Variantes:** ofrecerlas una sola vez, al final, sin imponerlas: "¿Quieres variantes de encuadre, de luz o de estilo?".
 
