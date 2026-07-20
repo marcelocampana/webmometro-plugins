@@ -2,7 +2,7 @@
 name: image-prompt
 description: Convierte una idea simple en un prompt completo y profesional para modelos de generación de imágenes (Midjourney, Flux, SDXL, DALL·E, Imagen, Nano Banana y similares), respetando la identidad visual del cliente. Activar cuando el usuario pida "un prompt para generar una imagen", "escribe el prompt", "mejora este prompt", "necesito una imagen de X", "cómo le pido esto a Midjourney/Flux/DALL·E", "haz que se vea más profesional o más realista", "prompt para un render", "prompt para una ilustración", "prompt para un banner, portada o hero"; o cuando entregue una descripción breve de una imagen esperando que alguien la desarrolle. También activar cuando aporte contexto externo — URL, PDF, brief creativo, manual de marca, imagen de referencia — para que la imagen respete una identidad visual. NO activar cuando el usuario pida diseñar un carrusel completo para redes (eso corresponde a carousel-design), ni cuando pida redactar texto o copy, ni cuando quiera generar la imagen final con una herramienta ya conectada sin pasar por el prompt.
 metadata:
-  version: 1.4.0
+  version: 1.5.0
 ---
 
 # Generación de prompts de imagen
@@ -23,7 +23,7 @@ Las tres fallas, en orden de gravedad:
 2. **Relleno** — adjetivos de calidad apilados (`ultra detailed, 8k, masterpiece, award winning`) sobre un tipo de imagen donde no aplican. Diluye la señal.
 3. **Vaguedad** — `bonito`, `moderno`, `impactante`. No dirige nada.
 
-Los bloques del paso 6 son un **inventario disponible, no una plantilla a rellenar**. Un icono plano no lleva ISO ni profundidad de campo. Un retrato fotográfico no lleva "low poly". Usar solo lo que el tipo de imagen justifica.
+Los bloques del paso 7 son un **inventario disponible, no una plantilla a rellenar**. Un icono plano no lleva ISO ni profundidad de campo. Un retrato fotográfico no lleva "low poly". Usar solo lo que el tipo de imagen justifica.
 
 ## Fuente de verdad visual
 
@@ -33,6 +33,7 @@ Este skill delega las decisiones visuales a la identidad del cliente. Cuando una
 
 - Para resolver la marca, crear la identidad visual e ingerir contexto externo: leer `references/identidad-visual.md`
 - Para clasificar el tipo de imagen y saber qué bloques aplica: leer `references/tipos-de-imagen.md`
+- Para inferir el destino de la pieza y lo que fija (formato, fondo, márgenes): leer `references/destino-de-pieza.md`
 - Para inferir elementos narrativos y proponer las alternativas de composición: leer `references/direccion-creativa.md`
 - Para cámara, lente, exposición y esquemas de luz coherentes: leer `references/parametros-fotograficos.md` (solo en tipos fotográficos o fotorrealistas)
 - Para elegir estilo y su vocabulario: leer `references/estilos-visuales.md`
@@ -91,14 +92,30 @@ Interpretar y sintetizar; nunca copiar fragmentos largos ni volcar información 
 
 Un conflicto entre los niveles 1 y 2 no se resuelve en silencio: si el usuario pide algo que su propia marca prohíbe, decirlo y preguntar cuál prevalece.
 
-### 4. Preguntar solo lo que bloquea
+### 4. Determinar el destino de la pieza
+
+Para qué se usará la imagen gobierna el formato, el tratamiento del fondo, el espacio reservado para texto y los márgenes. **Inferirlo, no preguntarlo**: el workspace suele contener la respuesta.
+
+Cascada de señales, en orden. La primera que resuelve, gana:
+
+1. **Lo que dijo el usuario** — "para el hero", "para el post de Instagram", "para el fondo de la portada".
+2. **Los segmentos reconocibles de la ruta**, en cualquier posición. Un segmento `carruseles` resuelve el destino esté donde esté, y las señales de dominio y de rol **se componen**: `carruseles/pieza-x/recursos/fondos/` es un fondo para un carrusel, no solo una cosa ni la otra.
+3. **Los archivos vecinos** — un `Brief.md` o un HTML con `.slide` señalan carrusel; un `.md` de artículo señala contenido web.
+4. **La delegación** — si otro skill invocó a este, su dominio es el destino.
+5. **Sin señal** → una sola pregunta, con opciones cerradas.
+
+Consultar `references/destino-de-pieza.md` para la tabla de segmentos, las variables que cada destino fija y el tratamiento del fondo.
+
+El destino inferido se declara al entregar, junto al resto de inferencias, para que el usuario pueda corregirlo sin rehacer el trabajo.
+
+### 5. Preguntar solo lo que bloquea
 
 Rellenar los vacíos con inferencias razonables. Preguntar **únicamente** cuando el vacío pueda producir una imagen inservible.
 
 Bloquea y merece pregunta:
 
 - El tipo de imagen es ambiguo entre opciones muy distintas (paso 2).
-- El uso final define el formato y no se puede deducir (¿story vertical o hero horizontal?).
+- El destino no se pudo inferir en el paso 4 y el formato depende de él.
 - Hay una contradicción entre fuentes que no se puede resolver.
 - Falta un dato factual que no se puede inventar: qué producto exacto, qué persona, qué lugar real.
 
@@ -106,7 +123,7 @@ No bloquea — inferir y seguir: hora del día, dirección de luz, paleta dentro
 
 Máximo **dos preguntas**, una por turno. Las inferencias hechas se declaran al entregar.
 
-### 5. Proponer direcciones creativas — antes de escribir el prompt
+### 6. Proponer direcciones creativas — antes de escribir el prompt
 
 No se entrega un prompt definitivo sin que el usuario haya elegido dirección. Presentar **tres alternativas de composición** y esperar su elección.
 
@@ -127,7 +144,7 @@ Las tres alternativas deben separarse por un **eje declarado** (escala, punto de
 
 **Cuándo no aplica:** los tipos sin narrativa —iconografía, packshot puro sobre fondo neutro, infografía de estructura fija— no admiten tres direcciones distintas. Ahí proponer una sola aproximación en dos líneas, confirmarla y seguir.
 
-### 6. Construir el prompt por bloques
+### 7. Construir el prompt por bloques
 
 El orden importa: los modelos pesan más lo que va primero, así que **el sujeto y la acción van al inicio** y los atributos técnicos al final.
 
@@ -151,7 +168,7 @@ El orden importa: los modelos pesan más lo que va primero, así que **el sujeto
 
 **j. Formato** — orientación, relación de aspecto, resolución sugerida, margen de seguridad y espacio reservado para texto o logo si la pieza lo lleva. Ver `references/modelos-destino.md`.
 
-### 7. Verificar antes de entregar
+### 8. Verificar antes de entregar
 
 Pasar el prompt por la checklist de `references/consistencia.md`. Como mínimo:
 
@@ -164,7 +181,7 @@ Pasar el prompt por la checklist de `references/consistencia.md`. Como mínimo:
 
 Si el prompt pide texto legible dentro de la imagen, declararlo entre comillas y en cantidad mínima, y advertir que la fidelidad tipográfica varía mucho entre modelos: lo confiable es dejar espacio libre y componer el texto después.
 
-### 8. Entregar
+### 9. Entregar
 
 **Destino por defecto: ChatGPT imágenes.** Salvo que el usuario nombre otro modelo, la entrega es **una sola instrucción en lenguaje natural**, redactada como se le explicaría a una persona. Sin prompt negativo, sin `--ar`, sin listas de parámetros sueltos: esa familia no tiene campo negativo y no lee sintaxis de banderas.
 
@@ -185,6 +202,6 @@ Entrega:
 
 **Guardado:** por defecto el prompt vive en el chat. Si el usuario pide guardarlo y hay workspace de cliente, guardarlo en `recursos/prompts-imagen/{slug}.md`.
 
-### 9. Iterar
+### 10. Iterar
 
 Cuando el usuario vuelve con un resultado que no le gustó, no reescribir el prompt entero. Identificar qué bloque falló y ajustar solo ese: mal encuadre → bloque b; se ve plano → bloque c; se ve de plástico → bloques f/g/h; el color no es de la marca → bloque e. Cambiar todo a la vez impide saber qué funcionó.

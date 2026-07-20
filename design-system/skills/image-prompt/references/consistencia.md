@@ -1,6 +1,6 @@
 # Consistencia — Tabla de incompatibilidades y checklist de cierre
 
-Aplicar en el paso 7, siempre, antes de entregar. Este pase es silencioso: no se reporta al usuario salvo que obligue a preguntar.
+Aplicar en el paso 8, siempre, antes de entregar. Este pase es silencioso: no se reporta al usuario salvo que obligue a preguntar.
 
 ## 1. Incompatibilidades duras
 
@@ -66,14 +66,16 @@ Verificar antes de entregar:
 - [ ] Ningún atributo genérico que el tipo de imagen no justifique.
 - [ ] Ningún término de la tabla de vaguedad sin resolver.
 - [ ] Los bloques que no aplican al tipo están **ausentes**, no negados.
-- [ ] El prompt corresponde a la dirección creativa que el usuario eligió en el paso 5.
+- [ ] El prompt corresponde a la dirección creativa que el usuario eligió en el paso 6.
 - [ ] Cada elemento de contexto se puede justificar en una frase, y no hay más de dos.
 - [ ] Si hay parámetros fotográficos, son coherentes entre sí (apertura, ISO, velocidad, focal).
 - [ ] La paleta respeta la identidad visual, o se declara que se generó sin marca.
 - [ ] Se cumplen las restricciones sobre personas, IA, legales y médicas.
 - [ ] Ningún estilo prohibido por la marca aparece, ni en el prompt ni en las variantes.
 - [ ] No se pide imitar a un artista vivo ni a un estudio en activo.
-- [ ] El formato y la relación de aspecto corresponden al uso final declarado.
+- [ ] El formato y la relación de aspecto corresponden al destino determinado en el paso 4.
+- [ ] El tratamiento del fondo corresponde al destino: a sangre, con fondo propio o recortable.
+- [ ] Si la pieza debe ser recortable, se pidió en positivo — fondo liso y contrastado — nunca "sin fondo".
 - [ ] Si la pieza lleva texto encima, hay espacio negativo reservado para él.
 
 ## 5. Texto dentro de la imagen

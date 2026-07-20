@@ -1,6 +1,6 @@
 # Dirección creativa — Inferir elementos narrativos y proponer alternativas
 
-Aplicar en el paso 5 del flujo, antes de escribir ningún prompt.
+Aplicar en el paso 6 del flujo, antes de escribir ningún prompt.
 
 El objetivo de este paso no es adornar la imagen: es que la composición **argumente el mensaje**. Una imagen bien dirigida comunica su idea aunque se le quite el texto que la acompaña.
 
@@ -8,7 +8,7 @@ El objetivo de este paso no es adornar la imagen: es que la composición **argum
 
 Antes de imaginar nada, responder en una sola frase: **qué debe entender quien vea la imagen**. No qué aparece en ella — qué comprende.
 
-Si el usuario no lo ha dicho, deducirlo del encargo y del contexto recogido en el paso 3. Si el encargo es puramente descriptivo ("una foto de una taza") y no hay mensaje detrás, decirlo y proponer direcciones por criterio estético, sin forzar una lectura conceptual que nadie pidió.
+Si el usuario no lo ha dicho, deducirlo del encargo, del contexto recogido en el paso 3 y del destino determinado en el paso 4. Si el encargo es puramente descriptivo ("una foto de una taza") y no hay mensaje detrás, decirlo y proponer direcciones por criterio estético, sin forzar una lectura conceptual que nadie pidió.
 
 ## 2. Identificar el concepto que sostiene el mensaje
 

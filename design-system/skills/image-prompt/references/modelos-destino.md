@@ -1,6 +1,6 @@
 # Modelos destino y formato
 
-Aplicar en el bloque **j** del paso 6 y al entregar (paso 8).
+Aplicar en el bloque **j** del paso 7 y al entregar (paso 9).
 
 Este archivo describe **comportamientos**, no versiones. Los modelos cambian de número cada pocos meses; lo que se mantiene es la familia de comportamiento. Si el usuario nombra un modelo que no aparece aquí, ubicarlo por comportamiento preguntando o probando, no asumir.
 
@@ -15,7 +15,7 @@ Consecuencias prácticas al redactar:
 - **El formato va en palabras.** "En formato vertical 9:16, con espacio libre en el tercio superior para un titular", no `--ar 9:16`.
 - **Reescribe el prompt internamente** antes de generar. Por eso conviene ser explícito y concreto: lo ambiguo lo resuelve por su cuenta, y no siempre como conviene.
 - **Es de las mejores familias con texto dentro de la imagen**, pero sigue degradándose con frases largas. Una línea corta entre comillas, y el resto compuesto después.
-- **Admite conversación.** Si el resultado no convence, se puede pedir un ajuste sobre la imagen ya generada en vez de reescribir el prompt entero — que es justo lo que pide el paso 9 del flujo.
+- **Admite conversación.** Si el resultado no convence, se puede pedir un ajuste sobre la imagen ya generada en vez de reescribir el prompt entero — que es justo lo que pide el paso 10 del flujo.
 
 ## Otras familias
 
@@ -93,6 +93,6 @@ Pedir la resolución nativa del modelo y escalar después si hace falta; forzar 
 
 ## Iterar sobre un resultado
 
-En el destino por defecto no hay semilla que fijar. La vía de iteración es conversacional: pedir el ajuste sobre la imagen ya generada —"la misma imagen pero con la luz entrando desde la izquierda"— en lugar de reescribir y reenviar el prompt completo. Mantiene el resto de la composición y aísla el cambio, que es lo que pide el paso 9 del flujo.
+En el destino por defecto no hay semilla que fijar. La vía de iteración es conversacional: pedir el ajuste sobre la imagen ya generada —"la misma imagen pero con la luz entrando desde la izquierda"— en lugar de reescribir y reenviar el prompt completo. Mantiene el resto de la composición y aísla el cambio, que es lo que pide el paso 10 del flujo.
 
 En las familias que exponen la semilla, fijarla cumple la misma función y conviene recordarlo cuando el usuario nombre una de ellas.
