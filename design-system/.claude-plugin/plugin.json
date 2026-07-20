@@ -1,10 +1,10 @@
 {
   "name": "design-system",
   "displayName": "Design System",
-  "version": "1.0.0",
-  "description": "Toolkit de diseño visual para Webmometro. Audita, documenta y extiende design systems (consistencia de tokens, variantes de componentes, nuevos patrones) y produce carruseles publicables para Instagram, LinkedIn y Facebook respetando el sistema de diseño, la voz y el contexto de cada cliente.",
+  "version": "1.1.0",
+  "description": "Toolkit de diseño visual para Webmometro. Audita, documenta y extiende design systems (consistencia de tokens, variantes de componentes, nuevos patrones), produce carruseles publicables para Instagram, LinkedIn y Facebook, y genera prompts de dirección de arte para modelos de generación de imágenes, siempre respetando el sistema de diseño, la voz y el contexto de cada cliente.",
   "author": {
     "name": "Webmometro"
   },
-  "keywords": ["design-system", "design-tokens", "components", "carousel", "social-media", "branding", "ui"]
+  "keywords": ["design-system", "design-tokens", "components", "carousel", "social-media", "branding", "ui", "image-prompt", "ai-images", "art-direction"]
 }
