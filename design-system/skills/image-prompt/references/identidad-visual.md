@@ -18,7 +18,7 @@ Viven ambas en `contexto/marca/` y tienen roles distintos. Ninguna sustituye a l
 
 | Archivo | Qué aporta | Si falta |
 |---|---|---|
-| `identidad-visual.md` | paleta, estilo fotográfico, iconografía, restricciones sobre personas e IA, legales y médicas | **bloquea** — ver sección 3 |
+| `identidad-visual-imagenes.md` | paleta, estilo fotográfico, iconografía, restricciones sobre personas e IA, legales y médicas | **bloquea** — ver sección 3 |
 | `brand-voice-guidelines.md` | arquetipo, valores, formalidad y energía, terminología prohibida | se anota y se sigue |
 
 ### Resolver la voz de marca por puntero
@@ -49,11 +49,11 @@ El archivo de voz es verbal: no contiene un solo color. Lo aprovechable es semá
 
 Estas traducciones son inferencias, no datos. Cuando la identidad visual diga otra cosa, manda la identidad visual.
 
-## 3. Crear `identidad-visual.md` cuando falta
+## 3. Crear `identidad-visual-imagenes.md` cuando falta
 
 El bloqueo del paso 1 ofrece cuatro salidas. Tres construyen el archivo; la cuarta lo omite.
 
-**Ruta A — el usuario entrega un documento guía.** Puede ser PPTX, PDF, imagen de referencia, manual de identidad o URL. Para PPTX existe `../../carousel-design/scripts/extract_pptx_guide.py`. Para URL, WebFetch. Extraer, volcar en la plantilla de la sección 4 y guardar en `contexto/marca/identidad-visual.md`.
+**Ruta A — el usuario entrega un documento guía.** Puede ser PPTX, PDF, imagen de referencia, manual de identidad o URL. Para PPTX existe `../../carousel-design/scripts/extract_pptx_guide.py`. Para URL, WebFetch. Extraer, volcar en la plantilla de la sección 4 y guardar en `contexto/marca/identidad-visual-imagenes.md`.
 
 **Ruta B — desde cero.** Preguntar, **una por turno**, sin agrupar:
 
@@ -75,12 +75,12 @@ Si ya existe un sistema de diseño documentado del cliente en el proyecto, leerl
 
 Al cerrar cualquier ruta, resumir en máximo 6 bullets y avanzar.
 
-## 4. Plantilla de `identidad-visual.md`
+## 4. Plantilla de `identidad-visual-imagenes.md`
 
 Los nombres de campo replican los del sistema de diseño de cliente ya usado en este plugin, para que ambos sean interoperables. Omitir los campos sin dato en lugar de dejar marcadores vacíos.
 
 ```markdown
-# Identidad visual — [Cliente]
+# Identidad Visual — Imágenes · [Cliente]
 
 ## Sistema Visual
 

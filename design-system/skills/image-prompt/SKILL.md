@@ -2,7 +2,7 @@
 name: image-prompt
 description: Convierte una idea simple en un prompt completo y profesional para modelos de generación de imágenes (Midjourney, Flux, SDXL, DALL·E, Imagen, Nano Banana y similares), respetando la identidad visual del cliente. Activar cuando el usuario pida "un prompt para generar una imagen", "escribe el prompt", "mejora este prompt", "necesito una imagen de X", "cómo le pido esto a Midjourney/Flux/DALL·E", "haz que se vea más profesional o más realista", "prompt para un render", "prompt para una ilustración", "prompt para un banner, portada o hero"; o cuando entregue una descripción breve de una imagen esperando que alguien la desarrolle. También activar cuando aporte contexto externo — URL, PDF, brief creativo, manual de marca, imagen de referencia — para que la imagen respete una identidad visual. NO activar cuando el usuario pida diseñar un carrusel completo para redes (eso corresponde a carousel-design), ni cuando pida redactar texto o copy, ni cuando quiera generar la imagen final con una herramienta ya conectada sin pasar por el prompt.
 metadata:
-  version: 1.0.0
+  version: 1.1.0
 ---
 
 # Generación de prompts de imagen
@@ -46,7 +46,7 @@ Este skill delega las decisiones visuales a la identidad del cliente. Cuando una
 
 Antes de escribir nada, resolver la identidad visual. Leer `references/identidad-visual.md` para el procedimiento completo.
 
-Resumen: localizar la raíz del cliente subiendo desde el directorio activo hasta encontrar `contexto/`, y buscar `contexto/marca/identidad-visual.md`.
+Resumen: localizar la raíz del cliente subiendo desde el directorio activo hasta encontrar `contexto/`, y buscar `contexto/marca/identidad-visual-imagenes.md`.
 
 **Si existe:** leerlo entero, confirmar en una frase y avanzar al paso 2.
 
