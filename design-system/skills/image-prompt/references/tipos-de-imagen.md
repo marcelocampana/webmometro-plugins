@@ -1,6 +1,6 @@
 # Tipos de imagen — Taxonomía y perfil de bloques
 
-Esta referencia gobierna el paso 2 del flujo. El tipo determina qué bloques del paso 5 aplican, qué vocabulario usar y cuánto detalle es útil.
+Esta referencia gobierna el paso 2 del flujo. El tipo determina qué bloques del paso 6 aplican, qué vocabulario usar y cuánto detalle es útil.
 
 Regla general: **los bloques que no aplican no se escriben en versión suave — se omiten.** Poner "sin profundidad de campo" en un vector plano introduce un concepto óptico donde no lo había.
 

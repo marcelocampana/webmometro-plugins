@@ -2,7 +2,7 @@
 name: image-prompt
 description: Convierte una idea simple en un prompt completo y profesional para modelos de generación de imágenes (Midjourney, Flux, SDXL, DALL·E, Imagen, Nano Banana y similares), respetando la identidad visual del cliente. Activar cuando el usuario pida "un prompt para generar una imagen", "escribe el prompt", "mejora este prompt", "necesito una imagen de X", "cómo le pido esto a Midjourney/Flux/DALL·E", "haz que se vea más profesional o más realista", "prompt para un render", "prompt para una ilustración", "prompt para un banner, portada o hero"; o cuando entregue una descripción breve de una imagen esperando que alguien la desarrolle. También activar cuando aporte contexto externo — URL, PDF, brief creativo, manual de marca, imagen de referencia — para que la imagen respete una identidad visual. NO activar cuando el usuario pida diseñar un carrusel completo para redes (eso corresponde a carousel-design), ni cuando pida redactar texto o copy, ni cuando quiera generar la imagen final con una herramienta ya conectada sin pasar por el prompt.
 metadata:
-  version: 1.3.0
+  version: 1.4.0
 ---
 
 # Generación de prompts de imagen
@@ -23,7 +23,7 @@ Las tres fallas, en orden de gravedad:
 2. **Relleno** — adjetivos de calidad apilados (`ultra detailed, 8k, masterpiece, award winning`) sobre un tipo de imagen donde no aplican. Diluye la señal.
 3. **Vaguedad** — `bonito`, `moderno`, `impactante`. No dirige nada.
 
-Los bloques del paso 5 son un **inventario disponible, no una plantilla a rellenar**. Un icono plano no lleva ISO ni profundidad de campo. Un retrato fotográfico no lleva "low poly". Usar solo lo que el tipo de imagen justifica.
+Los bloques del paso 6 son un **inventario disponible, no una plantilla a rellenar**. Un icono plano no lleva ISO ni profundidad de campo. Un retrato fotográfico no lleva "low poly". Usar solo lo que el tipo de imagen justifica.
 
 ## Fuente de verdad visual
 
@@ -33,6 +33,7 @@ Este skill delega las decisiones visuales a la identidad del cliente. Cuando una
 
 - Para resolver la marca, crear la identidad visual e ingerir contexto externo: leer `references/identidad-visual.md`
 - Para clasificar el tipo de imagen y saber qué bloques aplica: leer `references/tipos-de-imagen.md`
+- Para inferir elementos narrativos y proponer las alternativas de composición: leer `references/direccion-creativa.md`
 - Para cámara, lente, exposición y esquemas de luz coherentes: leer `references/parametros-fotograficos.md` (solo en tipos fotográficos o fotorrealistas)
 - Para elegir estilo y su vocabulario: leer `references/estilos-visuales.md`
 - Para verificar el prompt antes de entregar: leer `references/consistencia.md`
@@ -105,7 +106,28 @@ No bloquea — inferir y seguir: hora del día, dirección de luz, paleta dentro
 
 Máximo **dos preguntas**, una por turno. Las inferencias hechas se declaran al entregar.
 
-### 5. Construir el prompt por bloques
+### 5. Proponer direcciones creativas — antes de escribir el prompt
+
+No se entrega un prompt definitivo sin que el usuario haya elegido dirección. Presentar **tres alternativas de composición** y esperar su elección.
+
+Cada alternativa propone una lectura visual distinta del mismo mensaje, y describe:
+
+- **Qué se ve** — la escena y cómo se dispone el sujeto en ella.
+- **Uso del espacio** — encuadre, escala del sujeto, dónde queda el aire.
+- **Narrativa visual** — qué cuenta la imagen, qué momento captura.
+- **Elementos de contexto** — los objetos, escenarios o signos que acompañan al sujeto, y **qué aporta cada uno al mensaje**.
+
+**Los elementos de contexto nunca son decorativos.** Se infieren del contenido que la imagen debe comunicar: el skill destila el mensaje, identifica el concepto que lo sostiene y busca manifestaciones concretas y verosímiles de ese concepto que puedan convivir con el sujeto en la escena. Un elemento que no se pueda justificar en una frase —qué idea refuerza— no entra en la propuesta.
+
+Las tres alternativas deben separarse por un **eje declarado** (escala, punto de vista, grado de abstracción, quién protagoniza), no ser variaciones tibias de la misma idea. El método de inferencia, los ejes de diferenciación y los clichés a evitar están en `references/direccion-creativa.md`.
+
+**Formato:** tres opciones con nombre corto y dos o tres líneas cada una. Compacto, comparable de un vistazo. Cerrar con una sola pregunta:
+
+> "¿Con cuál seguimos? También puedes mezclar elementos de varias."
+
+**Cuándo no aplica:** los tipos sin narrativa —iconografía, packshot puro sobre fondo neutro, infografía de estructura fija— no admiten tres direcciones distintas. Ahí proponer una sola aproximación en dos líneas, confirmarla y seguir.
+
+### 6. Construir el prompt por bloques
 
 El orden importa: los modelos pesan más lo que va primero, así que **el sujeto y la acción van al inicio** y los atributos técnicos al final.
 
@@ -129,7 +151,7 @@ El orden importa: los modelos pesan más lo que va primero, así que **el sujeto
 
 **j. Formato** — orientación, relación de aspecto, resolución sugerida, margen de seguridad y espacio reservado para texto o logo si la pieza lo lleva. Ver `references/modelos-destino.md`.
 
-### 6. Verificar antes de entregar
+### 7. Verificar antes de entregar
 
 Pasar el prompt por la checklist de `references/consistencia.md`. Como mínimo:
 
@@ -142,7 +164,7 @@ Pasar el prompt por la checklist de `references/consistencia.md`. Como mínimo:
 
 Si el prompt pide texto legible dentro de la imagen, declararlo entre comillas y en cantidad mínima, y advertir que la fidelidad tipográfica varía mucho entre modelos: lo confiable es dejar espacio libre y componer el texto después.
 
-### 7. Entregar
+### 8. Entregar
 
 **Destino por defecto: ChatGPT imágenes.** Salvo que el usuario nombre otro modelo, la entrega es **una sola instrucción en lenguaje natural**, redactada como se le explicaría a una persona. Sin prompt negativo, sin `--ar`, sin listas de parámetros sueltos: esa familia no tiene campo negativo y no lee sintaxis de banderas.
 
@@ -163,6 +185,6 @@ Entrega:
 
 **Guardado:** por defecto el prompt vive en el chat. Si el usuario pide guardarlo y hay workspace de cliente, guardarlo en `recursos/prompts-imagen/{slug}.md`.
 
-### 8. Iterar
+### 9. Iterar
 
 Cuando el usuario vuelve con un resultado que no le gustó, no reescribir el prompt entero. Identificar qué bloque falló y ajustar solo ese: mal encuadre → bloque b; se ve plano → bloque c; se ve de plástico → bloques f/g/h; el color no es de la marca → bloque e. Cambiar todo a la vez impide saber qué funcionó.

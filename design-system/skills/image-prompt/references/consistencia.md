@@ -1,6 +1,6 @@
 # Consistencia — Tabla de incompatibilidades y checklist de cierre
 
-Aplicar en el paso 6, siempre, antes de entregar. Este pase es silencioso: no se reporta al usuario salvo que obligue a preguntar.
+Aplicar en el paso 7, siempre, antes de entregar. Este pase es silencioso: no se reporta al usuario salvo que obligue a preguntar.
 
 ## 1. Incompatibilidades duras
 
@@ -66,6 +66,8 @@ Verificar antes de entregar:
 - [ ] Ningún atributo genérico que el tipo de imagen no justifique.
 - [ ] Ningún término de la tabla de vaguedad sin resolver.
 - [ ] Los bloques que no aplican al tipo están **ausentes**, no negados.
+- [ ] El prompt corresponde a la dirección creativa que el usuario eligió en el paso 5.
+- [ ] Cada elemento de contexto se puede justificar en una frase, y no hay más de dos.
 - [ ] Si hay parámetros fotográficos, son coherentes entre sí (apertura, ISO, velocidad, focal).
 - [ ] La paleta respeta la identidad visual, o se declara que se generó sin marca.
 - [ ] Se cumplen las restricciones sobre personas, IA, legales y médicas.

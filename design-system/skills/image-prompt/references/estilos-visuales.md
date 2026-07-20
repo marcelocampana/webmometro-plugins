@@ -1,6 +1,6 @@
 # Estilos visuales — Catálogo y vocabulario
 
-Aplicar en el bloque **d** del paso 5.
+Aplicar en el bloque **d** del paso 6.
 
 ## Reglas de uso
 
