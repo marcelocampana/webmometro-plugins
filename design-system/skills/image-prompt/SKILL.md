@@ -2,7 +2,7 @@
 name: image-prompt
 description: Convierte una idea simple en un prompt completo y profesional para modelos de generación de imágenes (Midjourney, Flux, SDXL, DALL·E, Imagen, Nano Banana y similares), respetando la identidad visual del cliente. Activar cuando el usuario pida "un prompt para generar una imagen", "escribe el prompt", "mejora este prompt", "necesito una imagen de X", "cómo le pido esto a Midjourney/Flux/DALL·E", "haz que se vea más profesional o más realista", "prompt para un render", "prompt para una ilustración", "prompt para un banner, portada o hero"; o cuando entregue una descripción breve de una imagen esperando que alguien la desarrolle. También activar cuando aporte contexto externo — URL, PDF, brief creativo, manual de marca, imagen de referencia — para que la imagen respete una identidad visual. NO activar cuando el usuario pida diseñar un carrusel completo para redes (eso corresponde a carousel-design), ni cuando pida redactar texto o copy, ni cuando quiera generar la imagen final con una herramienta ya conectada sin pasar por el prompt.
 metadata:
-  version: 1.5.0
+  version: 1.6.0
 ---
 
 # Generación de prompts de imagen
@@ -91,6 +91,14 @@ Interpretar y sintetizar; nunca copiar fragmentos largos ni volcar información 
 5. Buenas prácticas de dirección de arte, fotografía e ilustración
 
 Un conflicto entre los niveles 1 y 2 no se resuelve en silencio: si el usuario pide algo que su propia marca prohíbe, decirlo y preguntar cuál prevalece.
+
+**Revisar la clasificación del paso 2.** El contexto puede contradecir el tipo elegido antes de leerlo. El caso más frecuente: un artículo o brief cuyo contenido comunicaría mejor como **infografía** que como imagen ilustrativa.
+
+Si el material contiene datos comparables, un proceso con pasos, una comparación, una cronología, una jerarquía o una relación causa-efecto, **ofrecer la infografía** aunque el usuario no la haya pedido — salvo que haya dicho explícitamente qué tipo quiere. Una sola pregunta, sin insistir:
+
+> "El contenido tiene [los cinco pasos del proceso / la comparación entre A y B / la evolución 2019-2025]. Eso funcionaría mejor como infografía que como imagen ilustrativa. ¿La planteamos así, o prefieres la imagen?"
+
+Las señales que la justifican, las que no, y la advertencia sobre el texto dentro de infografías generadas están en `references/tipos-de-imagen.md`. Si el usuario acepta, volver al paso 2 y reclasificar antes de seguir.
 
 ### 4. Determinar el destino de la pieza
 

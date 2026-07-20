@@ -60,6 +60,45 @@ Ninguno admite **f**, ni bokeh, ni texturas fotorrealistas. La legibilidad manda
 
 Para infografía e iconografía, el bloque **j (formato)** es tan importante como la escena: área segura, espacio para texto y tamaño mínimo de lectura.
 
+## Infografía — cuándo proponerla
+
+La infografía es el único tipo que conviene **ofrecer de oficio**. Cuando el paso 3 lee un artículo, un brief o un informe, evaluar si el contenido pide una infografía en lugar de una imagen ilustrativa, y proponerlo aunque el usuario no lo haya pedido. Si el usuario ya dijo qué tipo quiere, respetarlo y no insistir.
+
+**Señales que la justifican** — el contenido tiene estructura que una imagen ilustrativa desperdiciaría:
+
+| Señal en el contenido | Subtipo que pide |
+|---|---|
+| Pasos ordenados, un procedimiento, un antes y un después | diagrama de proceso o flujo |
+| Dos o más opciones con atributos comparables | tabla o cuadro comparativo |
+| Fechas, hitos, evolución en el tiempo | cronología |
+| Cifras, porcentajes, proporciones, series | visualización de datos |
+| Categorías que contienen subcategorías | jerarquía o taxonomía |
+| Causa y efecto, dependencias entre partes | diagrama de relaciones |
+| Distribución territorial | mapa temático |
+| Partes de un objeto o sistema | despiece o diagrama anotado |
+
+**Señales que no la justifican** — proponerla aquí solo produce una pieza vacía:
+
+- Texto narrativo, opinión o testimonio sin estructura interna.
+- Un dato suelto: no necesita infografía, necesita un número grande y bien compuesto.
+- Contenido emocional o de marca, donde la fuerza está en la imagen y no en el orden.
+- Menos de tres elementos que ordenar: una lista de dos cosas no es una infografía.
+
+### La advertencia que hay que dar al proponerla
+
+Una infografía vive de sus etiquetas, y **los modelos de imagen generan texto ilegible** en cuanto pasa de unas pocas palabras. Prometer una infografía completa generada de una sola pasada es prometer algo que no va a salir.
+
+Al ofrecerla, decir cómo se va a producir realmente. Dos vías, en orden de fiabilidad:
+
+1. **Componer, no generar.** Producir la infografía como pieza compuesta —HTML o vector— donde la tipografía es real, legible y respeta las fuentes de la marca. Un modelo de imagen puede aportar los iconos o una ilustración de apoyo, no la estructura.
+2. **Base visual sin texto.** Generar con el modelo solo el fondo, la escena o los elementos gráficos, reservando el espacio de las etiquetas, y componer el texto encima después.
+
+Nunca pedir al modelo una infografía con sus rótulos y esperar que sean legibles. Si el usuario insiste en generarla de una pasada, hacerlo con el mínimo texto posible y advertir que los rótulos habrá que rehacerlos.
+
+### Al construir el prompt
+
+Lo que importa en una infografía es el **orden de lectura**, no el detalle: por dónde entra el ojo, cómo avanza, dónde termina. Declarar la estructura (columnas, franjas, radial, línea temporal), la jerarquía entre niveles, la separación entre grupos y el espacio reservado para cada etiqueta. Paleta corta y funcional: el color debe distinguir categorías, no decorar.
+
 ## Familia 3D
 
 | Tipo | Bloques que pesan | Qué omitir | Vocabulario propio |

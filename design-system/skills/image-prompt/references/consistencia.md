@@ -77,6 +77,7 @@ Verificar antes de entregar:
 - [ ] El tratamiento del fondo corresponde al destino: a sangre, con fondo propio o recortable.
 - [ ] Si la pieza debe ser recortable, se pidió en positivo — fondo liso y contrastado — nunca "sin fondo".
 - [ ] Si la pieza lleva texto encima, hay espacio negativo reservado para él.
+- [ ] Si el contexto justificaba una infografía, se ofreció; y si es infografía, se declaró cómo se produce el texto.
 
 ## 5. Texto dentro de la imagen
 
