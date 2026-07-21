@@ -10,7 +10,7 @@ Este skill opera en el **proyecto activo del cliente** (su vault o repo), no en 
 
 No usar una ruta relativa al directorio de trabajo del agente: en Cowork el agente corre desde una caché de plugin, no desde el proyecto del usuario.
 
-Si no aparece ninguna carpeta `contexto/` al subir, no hay workspace de cliente. Ir directo al paso 3 de esta referencia (creación) con la pregunta de las cuatro salidas.
+Si no aparece ninguna carpeta `contexto/` al subir, no hay workspace de cliente. Ir directo al paso 3 de esta referencia (creación) con la pregunta de las cuatro salidas — con una diferencia: **sin workspace, la identidad construida vive solo en la sesión**. Se usa para el prompt y, al terminar, se ofrece guardarla si el usuario indica una carpeta. Nunca escribir en el directorio de trabajo del agente: es una caché de plugin, no el proyecto del usuario.
 
 ## 2. Las dos fuentes de marca
 
@@ -53,19 +53,17 @@ Estas traducciones son inferencias, no datos. Cuando la identidad visual diga ot
 
 El bloqueo del paso 1 ofrece cuatro salidas. Tres construyen el archivo; la cuarta lo omite.
 
-**Ruta A — el usuario entrega un documento guía.** Puede ser PPTX, PDF, imagen de referencia, manual de identidad o URL. Para PPTX existe `../../carousel-design/scripts/extract_pptx_guide.py`. Para URL, WebFetch. Extraer, volcar en la plantilla de la sección 4 y guardar en `contexto/marca/identidad-visual-imagenes.md`.
+**Ruta A — el usuario entrega un documento guía.** Puede ser PPTX, PDF, imagen de referencia, manual de identidad o URL. Para PPTX existe `../../carousel-design/scripts/extract_pptx_guide.py`. Para URL, WebFetch. Extraer, volcar en la plantilla de la sección 4 y guardar en `contexto/marca/identidad-visual-imagenes.md` — solo si hay workspace; sin él, mantenerla en la sesión (ver sección 1).
 
-**Ruta B — desde cero.** Preguntar, **una por turno**, sin agrupar:
+**Ruta B — desde cero.** Preguntar los cuatro puntos **en un solo mensaje** — es la misma información y cuesta un turno en vez de cuatro:
 
-> "¿Qué colores usa la marca? Dame los hex si los tienes, o descríbelos y los aproximo."
+> "Para armar la identidad visual necesito cuatro cosas:
+> 1. ¿Qué colores usa la marca? Dame los hex si los tienes, o descríbelos y los aproximo.
+> 2. ¿Cómo son sus imágenes? Por ejemplo: fotografía documental o de estudio, ilustración plana, 3D; con personas o sin ellas.
+> 3. ¿Hay restricciones sobre imágenes generadas con IA, sobre mostrar personas, o claims legales o médicos que respetar?
+> 4. ¿En qué formatos se publicará normalmente? Vertical de redes, horizontal web, cuadrado, impresión."
 
-> "¿Cómo son las imágenes de la marca? Por ejemplo: fotografía documental o de estudio, ilustración plana, 3D; con personas o sin ellas."
-
-> "¿Hay restricciones sobre imágenes generadas con IA, sobre mostrar personas, o claims legales o médicos que respetar?"
-
-> "¿En qué formatos se publicará normalmente? Vertical de redes, horizontal web, cuadrado, impresión."
-
-Si el usuario responde "no" a las restricciones, continuar sin insistir.
+Si responde solo algunas, trabajar con lo respondido e inferir el resto declarándolo; no perseguir las que faltan. Si responde "no" a las restricciones, continuar sin insistir.
 
 **Ruta C — mixta.** Combinar A y B según lo que falte.
 
@@ -128,6 +126,8 @@ Cuando la identidad visual declare alguna de estas, se aplican aunque el usuario
 - **Restricciones sobre personas** — consentimiento, representación de pacientes, menores, grupos vulnerables.
 - **Legales y médicas** — claims que la imagen no puede insinuar visualmente (resultados garantizados, antes/después, eficacia).
 - **Estilos prohibidos** — si la marca excluye un estilo, no proponerlo ni siquiera como variante.
+
+**Excepción única: infografía y texto sobre imágenes.** Si la identidad visual prohíbe texto sobre imágenes y el usuario pide una infografía, la restricción **no aplica**: una infografía exige texto por definición, y aplicar la regla haría la pieza imposible. En ese caso manda este skill sobre la regla del cliente. Anotar en la entrega que se aplicó la excepción. (La misma excepción está declarada en `tipos-de-imagen.md` (§ Infografía — cuándo proponerla); mantener ambas sincronizadas.)
 
 ## 6. Ingesta de contexto externo
 

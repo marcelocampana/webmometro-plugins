@@ -84,20 +84,15 @@ La infografía es el único tipo que conviene **ofrecer de oficio**. Cuando el p
 - Contenido emocional o de marca, donde la fuerza está en la imagen y no en el orden.
 - Menos de tres elementos que ordenar: una lista de dos cosas no es una infografía.
 
-### La advertencia que hay que dar al proponerla
-
-Una infografía vive de sus etiquetas, y **los modelos de imagen generan texto ilegible** en cuanto pasa de unas pocas palabras. Prometer una infografía completa generada de una sola pasada es prometer algo que no va a salir.
-
-Al ofrecerla, decir cómo se va a producir realmente. Dos vías, en orden de fiabilidad:
-
-1. **Componer, no generar.** Producir la infografía como pieza compuesta —HTML o vector— donde la tipografía es real, legible y respeta las fuentes de la marca. Un modelo de imagen puede aportar los iconos o una ilustración de apoyo, no la estructura.
-2. **Base visual sin texto.** Generar con el modelo solo el fondo, la escena o los elementos gráficos, reservando el espacio de las etiquetas, y componer el texto encima después.
-
-Nunca pedir al modelo una infografía con sus rótulos y esperar que sean legibles. Si el usuario insiste en generarla de una pasada, hacerlo con el mínimo texto posible y advertir que los rótulos habrá que rehacerlos.
-
 ### Al construir el prompt
 
-Lo que importa en una infografía es el **orden de lectura**, no el detalle: por dónde entra el ojo, cómo avanza, dónde termina. Declarar la estructura (columnas, franjas, radial, línea temporal), la jerarquía entre niveles, la separación entre grupos y el espacio reservado para cada etiqueta. Paleta corta y funcional: el color debe distinguir categorías, no decorar.
+El skill entrega **el prompt de la infografía**, como con cualquier otro tipo — no la construye ni propone componerla fuera del modelo.
+
+Lo que importa en una infografía es el **orden de lectura**, no el detalle: por dónde entra el ojo, cómo avanza, dónde termina. Declarar la estructura (columnas, franjas, radial, línea temporal), la jerarquía entre niveles, la separación entre grupos, y **todos los rótulos con su texto exacto entre comillas** — títulos, etiquetas, cifras. ChatGPT imágenes, el destino por defecto, renderiza texto bien; en una infografía las etiquetas son el contenido, así que la regla general de texto mínimo (`consistencia.md` (§ Texto dentro de la imagen)) **no aplica a este tipo**. Paleta corta y funcional: el color debe distinguir categorías, no decorar.
+
+**Advertencia al entregar** (no al ofrecer): pedir al usuario que **revise la ortografía del resultado** — la IA puede introducir errores o faltas en los rótulos generados, y en una infografía un rótulo mal escrito invalida la pieza. Si un rótulo sale mal, la corrección es conversacional: pedir el ajuste sobre la imagen generada, no regenerar entera.
+
+**Excepción de marca**: si la identidad visual del cliente prohíbe texto sobre imágenes, esa restricción no aplica cuando se pide una infografía — el tipo la exige por definición; manda este skill y se anota en la entrega. (Declarada también en `resolver-marca.md` (§ Restricciones que no se negocian); mantener ambas sincronizadas.)
 
 ## Familia 3D
 

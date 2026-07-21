@@ -25,51 +25,42 @@ Aplicar en el bloque **d** del paso 7.
 
 ## Ilustración y pintura
 
+El vocabulario de los estilos que son también tipos —ilustración editorial, acuarela, óleo, pintura digital, lápiz, carboncillo— vive en `tipos-de-imagen.md` (§ Familia ilustración y pintura). Aquí solo los que no están en la taxonomía:
+
 | Estilo | Rasgos que lo definen |
 |---|---|
-| Ilustración editorial | síntesis conceptual, paleta limitada, planos de color, metáfora visual |
-| Acuarela | pigmento diluido, bordes húmedos y sangrados, blancos reservados, papel con grano |
-| Óleo | empaste visible, pincelada direccional, veladuras, claroscuro |
-| Pintura digital | volumen por valores, luz ambiental, acabado limpio, pincel visible o no según acabado |
-| Lápiz | línea de contorno, valor por trama, soporte visible |
-| Carboncillo | negro profundo, difuminado, trazo ancho, alto contraste |
 | Tinta / entintado | línea firme, negros planos, tramas para el gris |
 | Serigrafía | pocas tintas planas, registro ligeramente desplazado, textura de malla |
 | Collage | recortes con borde duro, mezcla de texturas y escalas, composición manual |
 
 ## Gráficos
 
+Vector/flat, low poly, isométrico y pixel art viven en `tipos-de-imagen.md` (§ Familia gráfica y geométrica). Aquí solo los que no están en la taxonomía:
+
 | Estilo | Rasgos que lo definen |
 |---|---|
-| Vector | formas limpias, contornos definidos, escalable, sin textura |
-| Flat design | color plano, sin degradados ni sombras realistas, geometría simple |
 | Material / semiplano | color plano con sombra sutil y jerarquía por elevación |
 | Minimalista | pocos elementos, espacio negativo amplio, paleta corta, una sola idea |
-| Isométrico | proyección a 30°, sin punto de fuga, modularidad |
-| Low poly | facetas visibles, sombreado por cara, silueta reconocible |
 | Line art | línea de grosor uniforme, sin relleno, alta legibilidad |
 | Brutalista | tipografía dominante, contraste extremo, composición cruda |
 
 ## 3D
 
+3D realista, clay render y render arquitectónico viven en `tipos-de-imagen.md` (§ Familia 3D). Aquí solo los que no están en la taxonomía:
+
 | Estilo | Rasgos que lo definen |
 |---|---|
-| 3D realista | materiales PBR, oclusión ambiental, iluminación HDRI, imperfección de superficie |
-| Clay render | material único mate, monocromo, luz suave envolvente, sin textura |
 | Toon / cel 3D | sombreado en bandas, contorno marcado, paleta plana |
-| Render arquitectónico | luz natural difusa, materiales reales, escala humana, verticales corregidas |
 | Producto 3D | fondo infinito, luz de estudio simulada, reflejos controlados |
 
 ## Estilizados y de género
 
+Anime, manga y cómic viven en `tipos-de-imagen.md` (§ Familia estilizada). Aquí solo los que no están en la taxonomía:
+
 | Estilo | Rasgos que lo definen |
 |---|---|
-| Anime | línea limpia, sombreado en dos tonos, ojos expresivos, fondo pictórico |
-| Manga | blanco y negro, tramas, alto contraste, dinamismo de línea |
 | Animación clásica | formas redondeadas, expresión exagerada, color saturado, contorno suave |
 | Animación de estudio japonés | fondos pictóricos detallados, luz natural cálida, paleta suave, naturaleza presente |
-| Cómic | viñeta, entintado grueso, color por zonas, acción congelada |
-| Pixel art | rejilla visible, paleta reducida, sin antialiasing, resolución baja deliberada |
 | Steampunk | latón, engranajes, vapor, paleta sepia y cobre, estética victoriana-industrial |
 | Cyberpunk | noche urbana, neón saturado, lluvia, contraste alto, densidad tecnológica |
 | Retrofuturismo | paleta de época, formas aerodinámicas, optimismo tecnológico anacrónico |

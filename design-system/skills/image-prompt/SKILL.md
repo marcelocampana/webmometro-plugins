@@ -1,8 +1,8 @@
 ---
 name: image-prompt
-description: Convierte una idea simple en un prompt completo y profesional para modelos de generación de imágenes (Midjourney, Flux, SDXL, DALL·E, Imagen, Nano Banana y similares), respetando la identidad visual del cliente. Activar cuando el usuario pida "un prompt para generar una imagen", "escribe el prompt", "mejora este prompt", "necesito una imagen de X", "cómo le pido esto a Midjourney/Flux/DALL·E", "haz que se vea más profesional o más realista", "prompt para un render", "prompt para una ilustración", "prompt para un banner, portada o hero"; o cuando entregue una descripción breve de una imagen esperando que alguien la desarrolle. También activar cuando aporte contexto externo — URL, PDF, brief creativo, manual de marca, imagen de referencia — para que la imagen respete una identidad visual. NO activar cuando el usuario pida diseñar un carrusel completo para redes (eso corresponde a carousel-design), ni cuando pida redactar texto o copy, ni cuando quiera generar la imagen final con una herramienta ya conectada sin pasar por el prompt.
+description: Convierte una idea simple en un prompt de dirección de arte listo para pegar en ChatGPT imágenes (destino por defecto; también adapta a Midjourney, Flux, SDXL y similares si se nombran), respetando la identidad visual del cliente. Infiere el tipo de imagen y el destino de la pieza desde el workspace, propone direcciones creativas de composición antes de escribir, y ofrece infografía cuando el contenido lo justifica. Activar cuando el usuario pida "un prompt para generar una imagen", "escribe el prompt", "mejora este prompt", "necesito una imagen de X", "cómo le pido esto a ChatGPT/Midjourney/Flux", "haz que se vea más profesional o más realista", "prompt para un render", "prompt para una ilustración", "prompt para una infografía", "prompt para un banner, portada o hero"; o cuando entregue una descripción breve de una imagen esperando que alguien la desarrolle. También activar cuando aporte contexto externo — URL, PDF, brief creativo, manual de marca, imagen de referencia — para que la imagen respete una identidad visual. NO activar cuando el usuario pida diseñar un carrusel completo para redes (eso corresponde a carousel-design), ni cuando pida redactar texto o copy, ni cuando quiera generar la imagen final con una herramienta ya conectada sin pasar por el prompt.
 metadata:
-  version: 1.6.0
+  version: 1.7.0
 ---
 
 # Generación de prompts de imagen
@@ -31,7 +31,7 @@ Este skill delega las decisiones visuales a la identidad del cliente. Cuando una
 
 ## Recursos
 
-- Para resolver la marca, crear la identidad visual e ingerir contexto externo: leer `references/identidad-visual.md`
+- Para resolver la marca, crear la identidad visual e ingerir contexto externo: leer `references/resolver-marca.md`
 - Para clasificar el tipo de imagen y saber qué bloques aplica: leer `references/tipos-de-imagen.md`
 - Para inferir el destino de la pieza y lo que fija (formato, fondo, márgenes): leer `references/destino-de-pieza.md`
 - Para inferir elementos narrativos y proponer las alternativas de composición: leer `references/direccion-creativa.md`
@@ -44,9 +44,13 @@ Este skill delega las decisiones visuales a la identidad del cliente. Cuando una
 
 ## Flujo
 
+**Sobre las pausas.** Varios pasos pueden detenerse a preguntar. La regla que las gobierna todas: **cada pausa debe mejorar el prompt resultante**. La calidad manda sobre la velocidad — si falta contexto que la afecta, se pide. Lo que nunca se pregunta es lo que ya está respondido en el workspace, en la conversación o en las fuentes aportadas.
+
+**Carril exprés — solo a petición explícita.** Si el usuario pide velocidad ("rápido", "sin preguntas", "dame el prompt ya"), saltar toda pausa: generar con criterio propio de dirección de arte y declarar todas las inferencias al entregar. No activarlo por iniciativa propia.
+
 ### 1. Resolver la marca — bloqueante
 
-Antes de escribir nada, resolver la identidad visual. Leer `references/identidad-visual.md` para el procedimiento completo.
+Antes de escribir nada, resolver la identidad visual. Leer `references/resolver-marca.md` para el procedimiento completo.
 
 Resumen: localizar la raíz del cliente subiendo desde el directorio activo hasta encontrar `contexto/`, y buscar `contexto/marca/identidad-visual-imagenes.md`.
 
@@ -62,7 +66,7 @@ Resumen: localizar la raíz del cliente subiendo desde el directorio activo hast
 > - Tengo algo parcial y completamos el resto preguntando
 > - Sin marca: genera el prompt igual, con criterio propio"
 
-Registrar la respuesta. Si elige "sin marca", no volver a preguntar en la sesión y declararlo al entregar. Las otras tres rutas están en `references/identidad-visual.md`.
+Registrar la respuesta. Si elige "sin marca", no volver a preguntar en la sesión y declararlo al entregar. Las otras tres rutas están en `references/resolver-marca.md`.
 
 La voz de marca (`brand-voice-guidelines.md`) es complemento, no requisito: aporta arquetipo, formalidad y terminología prohibida. Si falta, seguir y anotarlo.
 
@@ -80,7 +84,7 @@ Consultar `references/tipos-de-imagen.md`.
 
 Revisar qué aporta el usuario antes de inventar nada: adjuntos (PDF, Word, presentaciones, briefs), URLs —leerlas con WebFetch—, imágenes de referencia y diseños existentes.
 
-Interpretar y sintetizar; nunca copiar fragmentos largos ni volcar información que no afecte a la imagen. Procedimiento en `references/identidad-visual.md`.
+Interpretar y sintetizar; nunca copiar fragmentos largos ni volcar información que no afecte a la imagen. Procedimiento en `references/resolver-marca.md`.
 
 **Jerarquía cuando las fuentes se contradicen:**
 
@@ -98,7 +102,7 @@ Si el material contiene datos comparables, un proceso con pasos, una comparació
 
 > "El contenido tiene [los cinco pasos del proceso / la comparación entre A y B / la evolución 2019-2025]. Eso funcionaría mejor como infografía que como imagen ilustrativa. ¿La planteamos así, o prefieres la imagen?"
 
-Las señales que la justifican, las que no, y la advertencia sobre el texto dentro de infografías generadas están en `references/tipos-de-imagen.md`. Si el usuario acepta, volver al paso 2 y reclasificar antes de seguir.
+Las señales que la justifican, las que no, y cómo se construye su prompt (con todos los rótulos, texto exacto entre comillas) están en `references/tipos-de-imagen.md` (§ Infografía — cuándo proponerla). Si el usuario acepta, volver al paso 2 y reclasificar antes de seguir.
 
 ### 4. Determinar el destino de la pieza
 
@@ -129,11 +133,13 @@ Bloquea y merece pregunta:
 
 No bloquea — inferir y seguir: hora del día, dirección de luz, paleta dentro de la marca, lente, apertura, materiales, ambiente.
 
-Máximo **dos preguntas**, una por turno. Las inferencias hechas se declaran al entregar.
+Máximo **dos preguntas de relleno en este paso** — el techo es local: las pausas de marca (paso 1), infografía (paso 3) y dirección creativa (paso 6) tienen su propia justificación y no cuentan aquí. Las inferencias hechas se declaran al entregar.
 
 ### 6. Proponer direcciones creativas — antes de escribir el prompt
 
 No se entrega un prompt definitivo sin que el usuario haya elegido dirección. Presentar **tres alternativas de composición** y esperar su elección.
+
+**Salvo que la composición ya venga dada.** Si el usuario describió escena, encuadre y disposición ("una doctora de espaldas mirando por la ventana, plano medio, luz de tarde"), proponerle tres alternativas es deshacer su dirección, no aportarle: confirmar su composición en una línea y construir sobre ella. Las tres alternativas son para cuando la composición está abierta.
 
 Cada alternativa propone una lectura visual distinta del mismo mensaje, y describe:
 
@@ -187,7 +193,7 @@ Pasar el prompt por la checklist de `references/consistencia.md`. Como mínimo:
 - La paleta, el estilo y las restricciones de marca se respetan — incluidas las de personas, IA, legales y médicas.
 - El formato corresponde al uso final declarado.
 
-Si el prompt pide texto legible dentro de la imagen, declararlo entre comillas y en cantidad mínima, y advertir que la fidelidad tipográfica varía mucho entre modelos: lo confiable es dejar espacio libre y componer el texto después.
+Si el prompt pide texto legible dentro de la imagen, aplicar las reglas de `references/consistencia.md` (§ Texto dentro de la imagen).
 
 ### 9. Entregar
 
@@ -195,7 +201,7 @@ Si el prompt pide texto legible dentro de la imagen, declararlo entre comillas y
 
 Eso obliga a tres cosas:
 
-- **Las exclusiones se redactan en positivo, dentro de la propia instrucción.** Nunca "sin fondo desordenado", sino "sobre un fondo liso y despejado". Mencionar un elemento para negarlo tiende a introducirlo.
+- **Las exclusiones se redactan en positivo, dentro de la propia instrucción.** La regla y su tabla de conversión viven en `references/modelos-destino.md` (§ Negativos: siempre dentro de la misma salida).
 - **El formato se dice con palabras** — "en formato vertical 9:16", "composición horizontal panorámica" — no con parámetros.
 - **Los datos técnicos se integran en la frase**, no como lista. "Fotografiado con un teleobjetivo de 85 mm y diafragma abierto, con el fondo desenfocado" funciona; `85mm, f/2, bokeh` se lee como ruido.
 

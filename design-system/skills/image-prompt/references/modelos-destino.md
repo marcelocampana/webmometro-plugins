@@ -14,7 +14,7 @@ Consecuencias prácticas al redactar:
 - **No hay campo negativo.** Todo lo que no debe aparecer se expresa afirmando lo que sí hay. Ver la tabla de conversión más abajo.
 - **El formato va en palabras.** "En formato vertical 9:16, con espacio libre en el tercio superior para un titular", no `--ar 9:16`.
 - **Reescribe el prompt internamente** antes de generar. Por eso conviene ser explícito y concreto: lo ambiguo lo resuelve por su cuenta, y no siempre como conviene.
-- **Es de las mejores familias con texto dentro de la imagen**, pero sigue degradándose con frases largas. Una línea corta entre comillas, y el resto compuesto después.
+- **Es de las mejores familias con texto dentro de la imagen.** Las reglas de cuánto y cómo pedirlo viven en `consistencia.md` (§ Texto dentro de la imagen); para infografías aplica su propio régimen en `tipos-de-imagen.md` (§ Infografía — cuándo proponerla).
 - **Admite conversación.** Si el resultado no convence, se puede pedir un ajuste sobre la imagen ya generada en vez de reescribir el prompt entero — que es justo lo que pide el paso 10 del flujo.
 
 ## Otras familias
@@ -80,12 +80,7 @@ Si la identidad visual declara `Formatos habituales`, esos mandan sobre esta tab
 
 ## Margen de seguridad y espacio para texto
 
-Cuando la pieza vaya a llevar texto, logo o interfaz encima, reservarlo **en la composición**, no recortarlo después:
-
-- Declarar explícitamente dónde va el espacio libre: "espacio negativo amplio en el tercio superior", "zona lisa a la izquierda para titular".
-- En vertical de redes, los extremos superior e inferior quedan tapados por la interfaz: no poner ahí el punto de interés.
-- Si lleva logo, reservar una esquina con fondo de bajo contraste para que el logo sea legible.
-- Pedir el sujeto ligeramente descentrado cuando el texto ocupará un lado.
+Las reglas de reserva de espacio (dónde declarar el aire, extremos tapados por la interfaz, esquina del logo, sujeto descentrado) viven en `destino-de-pieza.md` (§ Reglas al reservar espacio para texto o logo).
 
 ## Resolución
 

@@ -75,6 +75,15 @@ La relación de aspecto sale de la tabla de `modelos-destino.md`; aquí se fija 
 
 Si la identidad visual del cliente declara `Formatos habituales` o `Area segura`, esos valores mandan sobre esta tabla.
 
+### Reglas al reservar espacio para texto o logo
+
+Este es el hogar único de estas reglas; los demás archivos apuntan aquí. Reservar el espacio **en la composición**, no recortando después:
+
+- Declarar explícitamente dónde va el espacio libre: "espacio negativo amplio en el tercio superior", "zona lisa a la izquierda para titular".
+- En vertical de redes, los extremos superior e inferior quedan tapados por la interfaz: no poner ahí el punto de interés.
+- Si lleva logo, reservar una esquina con fondo de bajo contraste para que el logo sea legible.
+- Pedir el sujeto ligeramente descentrado cuando el texto ocupará un lado.
+
 ## 5. Tratamiento del fondo
 
 Tres tratamientos posibles, y el destino elige:
@@ -85,7 +94,7 @@ Tres tratamientos posibles, y el destino elige:
 
 ### Cuando la pieza debe ser recortable
 
-`carousel-design` distingue "figura recortada" (PNG con alfa) de "foto con fondo", y son modos compositivos incompatibles. Si el destino es una figura recortada, el prompt debe pedirlo — pero **nunca en negativo**: "sin fondo" es exactamente la formulación que la regla del skill prohíbe, y tiende a producir el fondo que niega.
+`carousel-design` distingue "figura recortada" (PNG con alfa) de "foto con fondo", y son modos compositivos incompatibles. Si el destino es una figura recortada, el prompt debe pedirlo — pero nunca como "sin fondo": la regla de redactar exclusiones en positivo vive en `modelos-destino.md` (§ Negativos: siempre dentro de la misma salida).
 
 Dos vías, según el modelo destino:
 

@@ -83,6 +83,10 @@ Cerrar con una sola pregunta que permita elegir o combinar. Si el usuario mezcla
 
 ## 8. Cuándo este paso no aplica
 
-Los tipos sin narrativa no admiten tres direcciones distintas: iconografía, packshot puro sobre fondo neutro, retrato de ficha. En esos casos proponer una sola aproximación en dos líneas, confirmarla y avanzar. Forzar tres alternativas donde no las hay produce diferencias cosméticas y hace perder el tiempo al usuario.
+Dos casos, por razones distintas:
+
+**La composición ya viene dada.** Si el usuario describió escena, encuadre y disposición, su dirección manda: confirmarla en una línea y construir el prompt sobre ella. Proponerle tres alternativas encima de una composición explícita la deshace en vez de servirla. El trabajo del skill ahí es ejecutar bien lo pedido — luz, color, técnica — no rediseñarlo.
+
+**Tipos sin narrativa.** Iconografía, packshot puro sobre fondo neutro, retrato de ficha no admiten tres direcciones distintas. Proponer una sola aproximación en dos líneas, confirmarla y avanzar. Forzar tres alternativas donde no las hay produce diferencias cosméticas y hace perder el tiempo al usuario.
 
 **La infografía es un caso aparte.** No admite alternativas narrativas, pero sí de **estructura**, y la elección es sustantiva: los mismos datos leídos en columnas, en línea temporal o en disposición radial producen lecturas distintas y jerarquías distintas. Cuando el tipo sea infografía, las tres alternativas se separan por estructura y orden de lectura en lugar de por narrativa, y cada una declara por dónde entra el ojo y cómo avanza.

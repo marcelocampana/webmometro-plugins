@@ -4,7 +4,7 @@ Aplicar en el paso 8, siempre, antes de entregar. Este pase es silencioso: no se
 
 ## 1. Incompatibilidades duras
 
-Cada fila es una combinación que el modelo no puede satisfacer. Si aparecen las dos, elegir una y eliminar la otra.
+Cada fila es una combinación que el modelo no puede satisfacer. Si aparecen las dos, elegir una y eliminar la otra. La tabla vive aquí completa porque la checklist la necesita junta; la explicación física de las filas fotográficas está en `parametros-fotograficos.md` — al editar una, actualizar la otra.
 
 | Instrucción | Incompatible con | Por qué |
 |---|---|---|
@@ -58,7 +58,9 @@ Si alguno de estos términos sobrevive al borrador, sustituirlo por su versión 
 
 ## 4. Checklist de cierre
 
-Verificar antes de entregar:
+Dos bloques con métodos de verificación distintos. El bloque A se comprueba **releyendo el prompt**; el bloque B se comprueba **contra la conversación y la identidad visual del cliente**.
+
+**A. Consistencia del prompt** (releer el texto):
 
 - [ ] El sujeto y la acción están en la primera frase del prompt.
 - [ ] Ninguna fila de la tabla de incompatibilidades aplica.
@@ -66,22 +68,26 @@ Verificar antes de entregar:
 - [ ] Ningún atributo genérico que el tipo de imagen no justifique.
 - [ ] Ningún término de la tabla de vaguedad sin resolver.
 - [ ] Los bloques que no aplican al tipo están **ausentes**, no negados.
-- [ ] El prompt corresponde a la dirección creativa que el usuario eligió en el paso 6.
-- [ ] Cada elemento de contexto se puede justificar en una frase, y no hay más de dos.
 - [ ] Si hay parámetros fotográficos, son coherentes entre sí (apertura, ISO, velocidad, focal).
-- [ ] La paleta respeta la identidad visual, o se declara que se generó sin marca.
-- [ ] Se cumplen las restricciones sobre personas, IA, legales y médicas.
-- [ ] Ningún estilo prohibido por la marca aparece, ni en el prompt ni en las variantes.
-- [ ] No se pide imitar a un artista vivo ni a un estudio en activo.
-- [ ] El formato y la relación de aspecto corresponden al destino determinado en el paso 4.
-- [ ] El tratamiento del fondo corresponde al destino: a sangre, con fondo propio o recortable.
 - [ ] Si la pieza debe ser recortable, se pidió en positivo — fondo liso y contrastado — nunca "sin fondo".
 - [ ] Si la pieza lleva texto encima, hay espacio negativo reservado para él.
-- [ ] Si el contexto justificaba una infografía, se ofreció; y si es infografía, se declaró cómo se produce el texto.
+- [ ] No se nombra a ningún artista ni estudio como referencia de imitación.
+
+**B. Cumplimiento de proceso y marca** (contrastar con la conversación y las guías):
+
+- [ ] El prompt corresponde a la dirección creativa que el usuario eligió en el paso 6 — o a la composición que él mismo describió.
+- [ ] Cada elemento de contexto se puede justificar en una frase, y no hay más de dos.
+- [ ] La paleta respeta la identidad visual, o se declara que se generó sin marca.
+- [ ] Se cumplen las restricciones sobre personas, IA, legales y médicas (con la excepción de infografía para texto-sobre-imágenes).
+- [ ] Ningún estilo prohibido por la marca aparece, ni en el prompt ni en las variantes.
+- [ ] El formato, la relación de aspecto y el tratamiento del fondo corresponden al destino determinado en el paso 4.
+- [ ] Si el contexto justificaba una infografía, se ofreció; y si es infografía, los rótulos llevan su texto exacto y se avisó de revisar la ortografía del resultado.
 
 ## 5. Texto dentro de la imagen
 
-Cuando el usuario pida un rótulo, titular o palabra legible dentro de la imagen:
+Hogar único de esta regla; los demás archivos apuntan aquí. **Excepción: la infografía tiene régimen propio** — sus rótulos van completos, con texto exacto, porque son el contenido; ver `tipos-de-imagen.md` (§ Infografía — cuándo proponerla).
+
+Para el resto de tipos, cuando el usuario pida un rótulo, titular o palabra legible dentro de la imagen:
 
 - Declararlo **entre comillas** y en la cantidad mínima: una línea corta, no un párrafo.
 - Ponerlo pronto en el prompt, no al final.
