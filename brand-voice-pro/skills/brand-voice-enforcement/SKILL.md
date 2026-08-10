@@ -11,7 +11,7 @@ description: >
   or "this doesn't sound on-brand". Not for generating guidelines from scratch
   (use guideline-generation) or discovering brand materials (use discover-brand).
 metadata:
-  version: 1.5.0
+  version: 1.6.0
 ---
 
 # Brand Voice Enforcement
@@ -57,11 +57,26 @@ Module (below) is applied during Step 4 in addition to everything else. For all 
 (emails, Slack messages, proposals, decks, social posts), skip the module entirely and follow
 the normal workflow unchanged.
 
-When flagged as web content, also record the piece's **target keyword** up front. Take it from
-the editorial brief or the content cluster it belongs to (e.g. the pillar/spoke topic) when one
-is provided; if it isn't stated anywhere, ask the user for it before drafting. The answer-first
-opening and the keyword-placement criteria both depend on knowing this keyword before the first
-sentence is written.
+**Shape of the piece.** Web content comes in two shapes, and they are drafted differently:
+
+- **Article-shaped** — blog post, article, guide, FAQ page, most web pages. The reader came to get
+  an answer. Apply the Web Content Module as written.
+- **Landing-shaped** — a landing page, or any page whose job is a single conversion. The reader came
+  to *decide*, not to read. Apply the module's **landing sub-mode** (`references/web-content-geo-seo.md`
+  §15): the unit of drafting is the **section with a conversion function**, not the extractable
+  passage.
+
+If the shape is ambiguous, ask which one it is — the difference changes the whole draft, not just
+its polish.
+
+**Target keyword.** For **article-shaped** pieces, record it up front: take it from the editorial
+brief or the content cluster it belongs to (e.g. the pillar/spoke topic) when one is provided; if it
+isn't stated anywhere, ask the user for it before drafting. The answer-first opening and the
+keyword-placement criteria both depend on knowing this keyword before the first sentence is written.
+
+For **landing-shaped** pieces the keyword is **optional** — a paid-traffic or outbound landing often
+has none. Use it if the brief or the landing blueprint supplies one; never block drafting to ask for
+it.
 
 ### 2. Apply Voice Constants
 
@@ -114,8 +129,11 @@ and answer-engine optimization to the draft **as it is written** — never bolte
 Voice always wins: GEO/SEO shapes structure and phrasing, but it never overrides the brand's
 voice, terminology, or tone.
 
-Read `references/web-content-geo-seo.md` for the full, business-agnostic criteria. While
-drafting, build in:
+Read `references/web-content-geo-seo.md` for the full, business-agnostic criteria.
+
+**If Step 1 flagged the piece as landing-shaped, go straight to §15 of that reference (landing
+sub-mode) — several of the criteria below are suspended there** and the drafting unit is the section,
+not the passage. The list that follows applies to article-shaped content. While drafting, build in:
 
 - **Answer-first opening** — lead with a self-contained ~40–60-word block that answers the main
   question in its first sentence and works the **exact target keyword** in within the first ~100
@@ -176,4 +194,4 @@ Open questions are unresolved brand positioning decisions flagged during guideli
 
 - **`references/voice-constant-tone-flexes.md`** — The "voice constant, tone flexes" mental model, "We Are / We Are Not" table structure, and tone-by-context matrix explanation
 - **`references/before-after-examples.md`** — Before/after content examples per content type showing enforcement in practice
-- **`references/web-content-geo-seo.md`** — GEO/AEO + on-page SEO criteria to apply while drafting web content (articles, blog posts, pages). Loaded only when Step 1 flags the request as web content.
+- **`references/web-content-geo-seo.md`** — GEO/AEO + on-page SEO criteria to apply while drafting web content (articles, blog posts, pages). Loaded only when Step 1 flags the request as web content. Its **§15 (landing sub-mode)** governs landing-shaped pieces: which criteria are suspended and how to draft section by section against a blueprint's copy contract.

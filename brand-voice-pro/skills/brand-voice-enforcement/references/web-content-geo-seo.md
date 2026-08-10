@@ -258,7 +258,77 @@ structure; when there isn't, prose.
 
 ---
 
+## 15. Landing sub-mode (pages whose job is a single conversion)
+
+Apply this section **instead of** the suspended criteria below whenever Step 1 flagged the piece as
+**landing-shaped**. Everything in §§1–14 not listed as suspended still governs.
+
+A landing page is not article-shaped. The reader did not arrive to get an answer — they arrived to
+**decide**. The unit of drafting is the **section with a conversion function**, not the extractable
+passage. Optimizing a landing for snippet extraction costs conversions without buying meaningful
+visibility: landings rarely rank for informational queries, and the space above the fold is worth
+more as a value proposition than as a lifted answer.
+
+### Suspended for landings
+
+| Criterion | Why it does not apply here |
+|---|---|
+| **§1 Answer-first lead** (40–60 words, keyword in first ~100) | The hero's job is to make the offer legible and the next step obvious. Prepending an answer block pushes the value proposition below the fold to win a snippet the page was never going to get. |
+| **§2 Quotable passages** (130–170 words) | Landing sections are short and directive. A citable block of prose works against scanning and against the CTA. |
+| **§6 FAQ section** | Not a default. A landing gets an objections/FAQ block only when the blueprint classified one as Esencial or Condicional — and **never** as the home of the objection that decides the sale. |
+| **§8 Keyword placement** | Optional. Apply only when a target keyword was actually supplied. |
+| **§10 Internal links** | A landing minimizes exits. Link only where the blueprint says a section requires it — not woven throughout the body. |
+
+### What still governs
+
+Voice and terminology from the guidelines, **§3** fact-first / voice-after, **§4** entity clarity,
+**§5** EEAT signals, **§7** title & meta, **§9** heading hierarchy, **§11** images and media, **§12**
+schema, and **§14** readability and visual breaks. A landing still has to be scannable, accurate and
+on-brand.
+
+### The drafting rule
+
+Draft **section by section, in the blueprint's order**, against the contract each section carries:
+
+- the **message** the section must land (not the text — the message)
+- the **required proof** it must cite
+- the approximate **length**
+- the **CTA** function and text
+
+Respect the classification. Do **not** write a section the blueprint marked *Excluida*, and do not
+promote a *Condicional* to a prominence its condition does not support.
+
+**Never invent evidence.** If a section's contract requires proof that does not exist — a testimonial,
+a figure, a client logo — leave a marked gap and say so. Copy that *sounds* like evidence is worse
+than an acknowledged hole, because it ships as a claim the business cannot back.
+
+If a contract is unwritable as specified (the proof is missing, or the message duplicates another
+section), **flag it back to the blueprint** rather than filling the space.
+
+### Order and deferral
+
+The blueprint may deliberately **defer or reframe** an answer — typically price, when the business
+quotes after an evaluation. That order is a decision, not an oversight: do not "helpfully" move the
+answer up because the reader asks it early. Two rules follow:
+
+- Where the blueprint says **defer with acknowledgement**, the acknowledgement is mandatory. Silently
+  omitting the topic turns deferral into concealment, which reads worse than the answer itself.
+- Where it says **reframe**, answer the reframed question with real substance ("how the price is
+  determined and what the evaluation includes"), never with an evasion in better prose.
+
+### When there is no blueprint
+
+Ask for the section list and each section's conversion function before drafting. **Do not fall back
+to the article shape** — that produces a page that reads well and converts poorly. The
+**landing-blueprint** skill (seo-suite) produces exactly this contract if the user wants one.
+
+---
+
 ## Coverage report (include in "Validate and Explain" for web content)
+
+**For landing-shaped pieces**, mark the criteria suspended by §15 as **n/a (landing)** rather than
+⛔ — a landing that correctly omits an answer-first lead has not failed a dimension. Report instead
+whether every section was drafted against its contract and which contracts had missing proof.
 
 After drafting, report briefly:
 

@@ -1,8 +1,9 @@
 # SEO Suite
 
-Suite de SEO de 7 skills que trabajan de forma encadenada: primero extraen datos
+Suite de SEO de 10 skills que trabajan de forma encadenada: primero extraen datos
 factuales y contexto estratégico, y luego los usan para diagnosticar, evaluar demanda de
-audiencia, optimizar conversión y optimizar para motores de búsqueda de IA (AEO/GEO).
+audiencia, planificar contenido, optimizar conversión, diseñar la arquitectura de landings
+y optimizar para motores de búsqueda de IA (AEO/GEO).
 Todo el output se genera en **español neutro**. Los skills operan dentro de un **workspace de
 cliente compartido** con otros plugins: el contexto estratégico y de marca vive una sola vez
 en la raíz del cliente (`contexto/`), y los datos e informes SEO viven por período bajo
@@ -18,8 +19,11 @@ en la raíz del cliente (`contexto/`), y los datos e informes SEO viven por per�
 | `page-snapshot` | Snapshot factual de datos de una URL específica → `web/seo/datos/{periodo}/paginas/snapshot-pagina-{slug}.md` |
 | `seo-audit` | Audita y diagnostica problemas SEO (crawlability, indexación, performance técnica, on-page, calidad de contenido) → `web/seo/informes/{periodo}/auditoria-seo.md` |
 | `audience-demand-evaluation` | Evalúa si una audiencia objetivo es alcanzable por búsqueda orgánica o necesita canales alternativos → `contexto/audiencia-canales.md` |
+| `content-cluster-builder` | Construye un clúster de contenido (pilar + spokes) con autoridad temática a partir de un tema semilla → plan auditable + notas en `web/contenido/` |
 | `page-cro` | Optimiza la conversión de páginas de marketing (homepage, landing, pricing, feature pages, blog) → `web/seo/informes/{periodo}/cro-{slug}.md` |
+| `landing-blueprint` | Decide qué secciones debe tener una landing y por qué, cruzando lo que pregunta el visitante con cuándo al negocio le conviene responder → `web/seo/informes/{periodo}/blueprint-landing-{slug}.md` |
 | `ai-seo` | Audita contenido (publicado o borrador) para que motores de IA lo citen — AEO/GEO, AI Overviews, menciones en LLMs — y verifica visibilidad real → `web/seo/informes/{periodo}/auditoria-aeo-{slug}.md` |
+| `seo-change-tracker` | Registra cambios SEO con baseline y checkpoints para medir su impacto, y genera reportes ejecutivos → `contexto/seo-tracking/` |
 
 ## Orden de uso recomendado
 
@@ -28,15 +32,21 @@ Los skills dependen de los archivos de contexto que generan otros. El flujo típ
 ```
 site-context  ─┐
 site-snapshot ─┼─→ seo-audit
-               └─→ audience-demand-evaluation
+               ├─→ audience-demand-evaluation
+               └─→ landing-blueprint ──→ brand-voice-enforcement (copy)
 
 page-snapshot ───→ page-cro / ai-seo
+
+contexto/seo-tracking/ ──→ (leído por los skills analíticos antes de recomendar)
+seo-change-tracker ──────→ registra la ejecución de los cambios recomendados
 ```
 
 1. **`site-context`** + **`site-snapshot`** — sientan la base (estrategia + datos del dominio).
 2. **`seo-audit`** y **`audience-demand-evaluation`** — consumen esa base para diagnosticar y evaluar demanda.
 3. **`page-snapshot`** → **`page-cro`** / **`ai-seo`** — para trabajo a nivel de página, primero el snapshot de la URL y luego la optimización de conversión o la auditoría AEO/GEO.
 4. **`ai-seo` en modo borrador** — audita contenido aún no publicado (gate pre-publicación) sin necesidad de snapshot.
+5. **`landing-blueprint`** — para una landing nueva o para auditar la arquitectura de una existente. Decide qué secciones deben existir; el copy lo escribe después `brand-voice-enforcement` (brand-voice-pro) consumiendo el contrato de copy por sección. Se distingue de `page-cro` así: el blueprint decide *qué secciones deben existir y por qué*; page-cro optimiza *una página que ya existe y tiene comportamiento medido*.
+6. **`seo-change-tracker`** — registra los cambios ejecutados para medir su impacto a 14 y 28 días.
 
 Los skills de snapshot solo extraen datos (no interpretan); los de análisis (audit, cro,
 audience, ai-seo) sí diagnostican y recomiendan, apoyándose en los snapshots para evitar sesgos.
@@ -108,11 +118,20 @@ capa analítica: `seo-audit/references/rendimiento-web.md`.
 (un `5` crudo en la respuesta = un CLS de 0.05). El umbral se evalúa contra 0.1 en la capa
 analítica; el script reporta el valor crudo de Google sin transformarlo.
 
-Como regla, solo los skills de snapshot consultan MCPs. Hay **dos excepciones acotadas**,
-ambas con límites de ejecución explícitos y datos que no existen en ningún snapshot:
-`audience-demand-evaluation` (validación de demanda: volumen y competencia) y `ai-seo`
-(verificación de visibilidad real en motores de IA vía los endpoints `ai_optimization` de
-DataForSEO y SERP; incluye un gate de confirmación antes de gastar llamadas facturables).
+Como regla, solo los skills de snapshot consultan MCPs. Hay **tres excepciones acotadas**,
+todas con límites de ejecución explícitos y datos que no existen en ningún snapshot:
+
+- `audience-demand-evaluation` — validación de demanda: volumen y competencia.
+- `ai-seo` — verificación de visibilidad real en motores de IA vía los endpoints `ai_optimization`
+  de DataForSEO y SERP; incluye un gate de confirmación antes de gastar llamadas facturables.
+- `landing-blueprint` — minería de las preguntas reales del buscador (PAA, sugerencias) cuando de
+  ellas depende una decisión de sección. **Con una condición previa: agotar primero las fuentes
+  locales** (snapshots, `audiencia-canales.md`, informes de clúster, antecedentes). Solo lo que
+  quede sin respaldo *y* cambie una clasificación califica como hueco investigable; techo de 10
+  llamadas y gate de confirmación.
+
+(`seo-change-tracker` también consulta MCPs, pero acotado a capturar baseline y checkpoints de las
+fuentes del área del cambio.)
 
 ## Workspace y estructura
 
@@ -126,14 +145,16 @@ nada se duplica.
     sitio.md                       estrategia, audiencia, objetivos            (site-context)
     configuracion.md               IDs GA4/GSC/Clarity/DataForSEO + URLs        (snapshots)
     audiencia-canales.md           demanda y channel-fit                       (audience-demand)
+    plantilla-landing.md           esqueleto de slots compartido por N landings (landing-blueprint)
     marca/                         voz de marca, guidelines                    (brand-voice-pro)
     antecedentes/                  informes previos / conocimiento del equipo  (aporta: equipo)
+    seo-tracking/                  registro de cambios SEO, continuo y sin período (seo-change-tracker)
   recursos/                     ← COMPARTIDO (logos, fuentes, iconos, imágenes)
   conocimiento/                 ← COMPARTIDO (bibliotecas de fuentes para citar/redactar; p. ej. revista-roc/)
   web/seo/                      ← DOMINIO SEO
     datos/{periodo}/               solo datos: snapshot-sitio.md, paginas/snapshot-pagina-{slug}.md
-    informes/{periodo}/            interpretación: auditoria-seo.md, cro-{slug}.md, auditoria-aeo-{slug}.md
-    tracking/                      registro de cambios SEO (seo-change-tracker)
+    informes/{periodo}/            interpretación: auditoria-seo.md, cro-{slug}.md,
+                                   blueprint-landing-{slug}.md, auditoria-aeo-{slug}.md
 ```
 
 - **`{periodo}` = `YYYY-MM`**, derivado de la fecha de referencia. Cada ciclo de trabajo escribe

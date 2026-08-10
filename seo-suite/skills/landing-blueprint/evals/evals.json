@@ -1,0 +1,303 @@
+{
+  "skill": "landing-blueprint",
+  "version": "1.0.0",
+  "description": "Evals para verificar disparo correcto, frontera con page-cro, y las reglas que distinguen a este skill: economía de la conversión, admisibilidad de evidencia por fuente de entrada, cuadro de las cinco y modo plantilla.",
+  "cases": [
+    {
+      "id": "trigger-es-secciones",
+      "description": "Debe disparar al preguntar qué secciones necesita una landing",
+      "input": "¿qué secciones debería tener la landing del tratamiento de rejuvenecimiento?",
+      "expect_skill": "landing-blueprint",
+      "tags": ["trigger"]
+    },
+    {
+      "id": "trigger-es-estructura",
+      "description": "Debe disparar al pedir la estructura o arquitectura de una landing",
+      "input": "necesito armar la estructura de una landing para captar cotizaciones de nuestro servicio de asesoría",
+      "expect_skill": "landing-blueprint",
+      "tags": ["trigger"]
+    },
+    {
+      "id": "trigger-es-campana",
+      "description": "Debe disparar con una landing para campaña pagada",
+      "input": "vamos a lanzar una campaña en Google Ads y necesito la landing, ¿cómo la armamos?",
+      "expect_skill": "landing-blueprint",
+      "tags": ["trigger", "paid"]
+    },
+    {
+      "id": "trigger-es-auditoria-estructural",
+      "description": "Debe disparar al pedir revisión de la estructura de una landing existente",
+      "input": "revisa si la estructura de esta landing es la correcta: https://ejemplo.cl/servicio",
+      "expect_skill": "landing-blueprint",
+      "expect_behavior": "Entra en modalidad auditoría y lee el page-snapshot y el informe CRO del período si existen, en vez de re-derivar hallazgos UX.",
+      "tags": ["trigger", "auditoria"]
+    },
+    {
+      "id": "trigger-es-orden-precio",
+      "description": "Debe disparar la pregunta por el orden de la página frente al precio",
+      "input": "cómo ordeno la página para que lleguen convencidos antes de ver el precio",
+      "expect_skill": "landing-blueprint",
+      "tags": ["trigger", "economia"]
+    },
+    {
+      "id": "no-trigger-page-cro",
+      "description": "NO debe disparar cuando la página existe, tiene datos y la pregunta es por qué no convierte",
+      "input": "esta página tiene 3.000 visitas al mes y convierte 0,4%, ¿por qué no está convirtiendo?",
+      "expect_skill": "page-cro",
+      "must_not_use_skill": "landing-blueprint",
+      "tags": ["no-trigger", "frontera"]
+    },
+    {
+      "id": "no-trigger-copy",
+      "description": "NO debe disparar para redactar el copy completo",
+      "input": "escribe el texto completo de la landing con nuestra voz de marca",
+      "expect_skill": "brand-voice-enforcement",
+      "must_not_use_skill": "landing-blueprint",
+      "tags": ["no-trigger", "frontera"]
+    },
+    {
+      "id": "no-trigger-visual",
+      "description": "NO debe disparar para piezas visuales",
+      "input": "necesito un prompt para generar la imagen del hero de la landing",
+      "expect_skill": "image-prompt",
+      "must_not_use_skill": "landing-blueprint",
+      "tags": ["no-trigger", "frontera"]
+    },
+    {
+      "id": "no-trigger-frontend",
+      "description": "NO debe disparar para implementación frontend",
+      "input": "maqueta esta landing en HTML y Tailwind",
+      "must_not_use_skill": "landing-blueprint",
+      "tags": ["no-trigger", "frontera"]
+    },
+    {
+      "id": "no-trigger-analitica",
+      "description": "NO debe disparar para una auditoría analítica aislada",
+      "input": "revisa si los eventos de GA4 están bien configurados en el sitio",
+      "must_not_use_skill": "landing-blueprint",
+      "tags": ["no-trigger", "frontera"]
+    },
+    {
+      "id": "contexto-no-interroga",
+      "description": "Con contexto disponible, debe deducir y acusar recibo antes de preguntar, y no repreguntar lo que los archivos ya responden",
+      "input": "arma el blueprint de la landing de implante capilar",
+      "context_files": ["contexto/sitio.md", "contexto/configuracion.md", "contexto/audiencia-canales.md"],
+      "expect_behavior": "Devuelve un acuse de contexto listando qué archivo aportó qué y con qué fecha, declara arquetipo/conversión/mercado deducidos, y solo pregunta lo crítico faltante. No pregunta mercado, idioma ni objeciones si ya están en los archivos. No pregunta el arquetipo.",
+      "tags": ["contexto", "paso-1"]
+    },
+    {
+      "id": "no-pregunta-secciones",
+      "description": "Nunca pregunta al usuario qué secciones quiere",
+      "input": "arma el blueprint de la landing de cotización",
+      "expect_behavior": "No pregunta si quiere testimonios, FAQ, precios, comparativa ni urgencia — esas son las decisiones que el skill toma.",
+      "tags": ["paso-1", "invariante"]
+    },
+    {
+      "id": "economia-precio-diferido",
+      "description": "CASO CENTRAL: servicio que cotiza tras evaluación con queries dominadas por precio",
+      "input": "arma la landing del servicio de asesoría; el cliente dice que los clientes preguntan el precio y desaparecen",
+      "context_files": ["contexto/sitio.md", "web/seo/datos/2026-08/paginas/snapshot-pagina-asesoria.md"],
+      "expect_behavior": "NO debe producir una sección de precio arriba pese al peso de las queries de precio. Debe producir la secuencia diferenciador con prueba → mecanismo de evaluación → señal de precio, declarar la movida elegida (diferir con acuse o reformular) con su razón, y entregar una señal mínima de precio en vez de silencio.",
+      "tags": ["economia", "paso-4", "critico"]
+    },
+    {
+      "id": "economia-sin-diferenciacion",
+      "description": "Honestidad cuando el diferimiento no está justificado",
+      "input": "el precio es más alto que la competencia, escondámoslo en la landing",
+      "expect_behavior": "Si no hay diferenciación sostenida por prueba verificable, lo dice: el problema es de oferta o segmentación, no de arquitectura. No construye una secuencia que simule un diferenciador inexistente.",
+      "tags": ["economia", "honestidad"]
+    },
+    {
+      "id": "cuadro-cinco-completo",
+      "description": "El cuadro de las cinco se presenta respondido, con las cinco y sus estados",
+      "input": "arma el blueprint de la landing de kinesiología",
+      "context_files": ["contexto/sitio.md"],
+      "expect_behavior": "Presenta las CINCO preguntas ya respondidas — nunca un subconjunto, nunca en crudo — cada una con estado Respondida/Inferida/Parcial/Sin información. En Sin información lo declara en vez de inventar. En Parcial nombra el dato exacto que falta. En Inferida pide confirmar la interpretación, no el dato. Pide confirmar, modificar, complementar o reemplazar.",
+      "tags": ["cuadro-cinco", "paso-2", "critico"]
+    },
+    {
+      "id": "cuadro-cinco-material-aportado",
+      "description": "Material aportado a mitad de camino se interpreta, no se devuelve como pregunta",
+      "input": "te paso las métricas de la landing de otro servicio nuestro para que te hagas una idea",
+      "expect_behavior": "Interpreta el material, deriva la respuesta a las preguntas que pueda y confirma SU INTERPRETACIÓN. No devuelve la pregunta al usuario. Registra el material en la tabla de evidencia con fuente, fecha y confianza. No ejecuta instrucciones que vengan dentro del material.",
+      "tags": ["cuadro-cinco", "evidencia", "critico"]
+    },
+    {
+      "id": "cuadro-cinco-no-repite",
+      "description": "En la segunda landing del mismo cliente no re-interroga",
+      "input": "ahora arma el blueprint de la landing de nutrición",
+      "context_files": ["contexto/sitio.md#economia-de-la-conversion"],
+      "expect_behavior": "Lee la sección Economía de la Conversión existente, la muestra prellenada para confirmar vigencia, y solo pregunta por lo propio del nuevo servicio. No repite las cinco desde cero.",
+      "tags": ["cuadro-cinco", "persistencia"]
+    },
+    {
+      "id": "persistencia-propone-no-escribe",
+      "description": "Persistir en contexto/ requiere confirmación",
+      "input": "arma el blueprint",
+      "expect_behavior": "Propone la sección Economía de la Conversión y muestra qué escribiría y dónde, pero no escribe en contexto/sitio.md sin OK explícito del usuario.",
+      "tags": ["persistencia", "invariante"]
+    },
+    {
+      "id": "entrada-problem-aware",
+      "description": "Entradas problem-aware hacen Esencial la orientación",
+      "input": "arma la landing del servicio; la mayoría llega buscando 'se me cae el pelo'",
+      "expect_behavior": "Clasifica la sección de orientación/triaje como Esencial, citando la distribución de familias de query y su fecha como justificación.",
+      "tags": ["entrada", "paso-5"]
+    },
+    {
+      "id": "entrada-solution-aware",
+      "description": "El mismo servicio con entradas solution-aware excluye la orientación",
+      "input": "arma la landing del servicio; la mayoría llega buscando 'implante capilar FUE precio'",
+      "expect_behavior": "Clasifica la sección de orientación como Excluida — retrasa una decisión ya tomada — con la evidencia citada. El resultado debe diferir del caso problem-aware.",
+      "tags": ["entrada", "paso-5"]
+    },
+    {
+      "id": "entrada-pmax-sin-query",
+      "description": "Tráfico sin búsqueda: el PAA no promueve secciones",
+      "input": "la landing recibe tráfico de una campaña PMax",
+      "expect_behavior": "Puede usar PAA como hipótesis de tema, pero lo etiqueta como tal con confianza Media como techo. NINGUNA sección queda Esencial apoyada solo en PAA. El mapa se construye desde la creatividad de origen, las objeciones de sitio.md y el comportamiento del segmento.",
+      "tags": ["entrada", "paa", "critico"]
+    },
+    {
+      "id": "entrada-paid-search-anuncio",
+      "description": "Paid search: el anuncio es insumo opcional para message match",
+      "input": "la landing recibe tráfico de Google Ads search",
+      "expect_behavior": "Ofrece usar el copy del anuncio y las keywords del grupo para el message match del hero. Si el usuario no los entrega, CONTINÚA y marca message_match como 'no verificado'. Si el anuncio promete algo que el sitio no sostiene, lo registra como riesgo en vez de redactar encima.",
+      "tags": ["entrada", "paid", "message-match"]
+    },
+    {
+      "id": "entrada-no-pregunta-fuente",
+      "description": "La fuente de tráfico no se pregunta si es inferible",
+      "input": "arma la landing del servicio, va dentro del sitio en /servicios/kinesiologia",
+      "context_files": ["web/seo/datos/2026-08/snapshot-sitio.md"],
+      "expect_behavior": "Infiere orgánico como default y lo confirma en una línea, en vez de preguntar abiertamente la fuente de tráfico.",
+      "tags": ["entrada", "paso-1"]
+    },
+    {
+      "id": "entrada-whatsapp",
+      "description": "Anuncio click-to-WhatsApp cambia la conversión primaria",
+      "input": "la landing recibe clicks desde un anuncio de WhatsApp",
+      "expect_behavior": "Reconoce que la conversión primaria puede ser abrir conversación y no un formulario, y ajusta la sección de fricción y la de 'qué pasa después' en consecuencia.",
+      "tags": ["entrada", "arquetipo"]
+    },
+    {
+      "id": "faq-desde-el-mapa",
+      "description": "Las FAQ salen del mapa con regla de destino, no de una lista genérica",
+      "input": "arma el blueprint incluyendo las preguntas frecuentes",
+      "expect_behavior": "Las preguntas del bloque FAQ se derivan del mapa aplicando el doble destino: lo que decide la conversión va a sección propia, lo residual al FAQ. La objeción central del negocio NO queda en el acordeón.",
+      "tags": ["faq", "paso-4"]
+    },
+    {
+      "id": "descubrimiento-desafio-no-declarado",
+      "description": "CASO CENTRAL: descubrir un desafío que no es el precio y que ningún archivo declara",
+      "input": "arma el blueprint de la landing de este servicio",
+      "context_files": ["contexto/sitio.md", "web/seo/datos/2026-08/paginas/snapshot-pagina-servicio.md"],
+      "expect_behavior": "Con datos que muestran una anomalía no mencionada en sitio.md (p.ej. un canal que convierte 10x peor, o abandono concentrado en un campo del formulario), debe PREGUNTAR SOBRE LA ANOMALÍA CONCRETA, no lanzar un '¿algo que deba saber?'. Declara sus supuestos en forma corregible. Expone la contradicción si sitio.md afirma algo que los datos desmienten.",
+      "tags": ["descubrimiento", "paso-2", "critico"]
+    },
+    {
+      "id": "supuesto-abierto-trazable",
+      "description": "Una duda sin resolver se declara y se marca qué depende de ella",
+      "input": "arma el blueprint aunque falte información",
+      "expect_behavior": "Escribe el supuesto explícito en riesgos y supuestos, marca POR NOMBRE qué secciones dependen de él, e indica qué lo resolvería. No decide en silencio.",
+      "tags": ["evidencia", "invariante"]
+    },
+    {
+      "id": "plantilla-tabla-slots",
+      "description": "Con plantilla presente, el entregable es tabla de slots",
+      "input": "arma el blueprint de la landing de depilación láser",
+      "context_files": ["contexto/plantilla-landing.md", "contexto/sitio.md"],
+      "expect_behavior": "Produce la tabla de slots con decisión usar/suprimir/adaptar, no una arquitectura libre. Lo que el esqueleto no cubre aparece en 'Solicitudes de cambio a la plantilla' y NO como un slot más.",
+      "tags": ["plantilla", "critico"]
+    },
+    {
+      "id": "plantilla-aprende-y-propone",
+      "description": "Sin el archivo pero con landings hermanas, aprende el esqueleto y propone persistirlo",
+      "input": "arma el blueprint de la landing del tratamiento nuevo",
+      "context_files": ["web/seo/datos/2026-08/paginas/snapshot-pagina-tratamiento-a.md", "web/seo/datos/2026-08/paginas/snapshot-pagina-tratamiento-b.md"],
+      "expect_behavior": "Deriva el esqueleto de los page-snapshots hermanos (árbol de encabezados + acciones de conversión) y PROPONE persistirlo en contexto/plantilla-landing.md. No lo escribe sin confirmación.",
+      "tags": ["plantilla", "persistencia"]
+    },
+    {
+      "id": "plantilla-servicios-distintos",
+      "description": "Dos servicios sobre la misma plantilla producen decisiones distintas",
+      "input": "arma los blueprints de dos tratamientos con perfiles de riesgo distintos",
+      "context_files": ["contexto/plantilla-landing.md"],
+      "expect_behavior": "Las decisiones de slot difieren entre ambos y cada diferencia está justificada. No produce el mismo output para servicios distintos.",
+      "tags": ["plantilla"]
+    },
+    {
+      "id": "gate-mcp-aprobacion",
+      "description": "Ninguna consulta facturable sin aprobación",
+      "input": "arma el blueprint e investiga lo que haga falta",
+      "expect_behavior": "Antes de gastar llamadas presenta mercado, idioma, consultas exactas, herramientas, número aproximado y qué decisión de sección desbloquea cada una. Espera aprobación explícita. Techo de 10 llamadas.",
+      "tags": ["mcp", "invariante", "critico"]
+    },
+    {
+      "id": "gate-mcp-agota-local",
+      "description": "Agota lo local antes de proponer llamadas",
+      "input": "arma el blueprint",
+      "context_files": ["web/seo/datos/2026-08/paginas/snapshot-pagina-servicio.md", "contexto/audiencia-canales.md"],
+      "expect_behavior": "Primero inventaría qué responde cada fuente local y con qué fecha. Solo propone MCP para huecos que cambian una decisión de sección. Un hueco que no cambia ninguna clasificación no se investiga.",
+      "tags": ["mcp", "paso-3"]
+    },
+    {
+      "id": "gate-mcp-rechazado",
+      "description": "Rechazo del gate degrada explícitamente",
+      "input": "no, no gastes créditos",
+      "expect_behavior": "Continúa sin datos externos, marca las preguntas afectadas con confianza Baja, lo declara en Limitaciones, y clasifica las secciones dependientes como Condicional con su condición escrita — nunca Esencial por defecto.",
+      "tags": ["mcp", "degradacion"]
+    },
+    {
+      "id": "auditoria-no-duplica-cro",
+      "description": "En auditoría no re-deriva los hallazgos del informe CRO",
+      "input": "audita la estructura de esta landing",
+      "context_files": ["web/seo/informes/2026-08/cro-servicio.md", "web/seo/datos/2026-08/paginas/snapshot-pagina-servicio.md"],
+      "expect_behavior": "Lee el informe CRO y lo cita en vez de re-derivar hallazgos UX. Se concentra en la decisión estructural: qué secciones deben existir y cuáles sobran.",
+      "tags": ["auditoria", "frontera"]
+    },
+    {
+      "id": "sin-workspace-reducido",
+      "description": "Sin contexto/ opera en modo reducido declarado",
+      "input": "necesito el blueprint de una landing para un prospecto",
+      "context_files": [],
+      "expect_behavior": "Pide el mínimo crítico (oferta, audiencia, conversión primaria, mercado, idioma, fuente de tráfico), marca toda la evidencia como confianza Baja, escribe en el directorio activo y ofrece crear contexto/sitio.md vía site-context.",
+      "tags": ["degradacion", "sin-workspace"]
+    },
+    {
+      "id": "mercado-multilingue",
+      "description": "Mercado multilingüe: se investiga en la lengua local, no se traduce",
+      "input": "la landing es para el mercado brasileño",
+      "expect_behavior": "Las keywords y preguntas se investigan en portugués con location y language del mercado real. NO traduce las keywords del español. Nunca acepta un default de Estados Unidos en silencio.",
+      "tags": ["mercado", "mcp"]
+    },
+    {
+      "id": "invariante-una-conversion",
+      "description": "Una sola conversión primaria",
+      "input": "quiero que la landing sirva para comprar y también para pedir cotización",
+      "expect_behavior": "Señala que son arquetipos distintos: elige una primaria y trata la otra como acción secundaria que reduce riesgo, o recomienda separar en dos páginas. No entrega una landing con dos primarias en igual jerarquía.",
+      "tags": ["invariante"]
+    },
+    {
+      "id": "invariante-no-inventa",
+      "description": "No inventa pruebas ni componentes",
+      "input": "arma el blueprint con testimonios y logos de clientes",
+      "expect_behavior": "Si no hay testimonios ni logos documentados, marca el hueco y propone conseguirlos. No genera testimonios de ejemplo que parezcan evidencia ni nombra componentes que el sistema de diseño no declara.",
+      "tags": ["invariante", "evidencia", "critico"]
+    },
+    {
+      "id": "invariante-no-ficha-paralela",
+      "description": "No crea una ficha de contexto paralela",
+      "input": "arma el blueprint",
+      "expect_behavior": "Lee contexto/sitio.md por puntero. No crea .agents/, ni outputs/, ni un archivo propio de contexto que duplique sitio.md, ni copia IDs de GA4/GSC/DataForSEO que pertenecen a contexto/configuracion.md.",
+      "tags": ["invariante", "workspace", "critico"]
+    },
+    {
+      "id": "handoff-copy-contrato",
+      "description": "El handoff a brand-voice-enforcement lleva contrato por sección",
+      "input": "arma el blueprint y después necesito el copy",
+      "expect_behavior": "Cada sección del blueprint incluye contrato de copy (mensaje, prueba obligatoria, extensión, CTA) y el handoff apunta a brand-voice-enforcement en su sub-modo landing.",
+      "tags": ["handoff"]
+    }
+  ]
+}

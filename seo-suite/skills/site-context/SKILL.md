@@ -2,7 +2,7 @@
 name: site-context
 description: "When the user wants to create, update, or review the strategic context for a site or project. Also use when the user mentions \"site context,\" \"strategic context,\" \"positioning,\" \"target audience,\" \"who is my customer,\" \"ICP,\" \"ideal customer profile,\" \"brand voice,\" \"differentiation,\" \"competitive landscape,\" or wants to establish foundational product and audience information that other skills can reference. This skill replaces product-marketing-context for site-level projects. Use it at the start of any new site project — it creates contexto/sitio.md that seo-audit, page-cro, ai-seo, and audience-demand-evaluation reference for strategic context. For factual site data, see site-snapshot. For audience demand evaluation, see audience-demand-evaluation."
 metadata:
-  version: 1.2.0
+  version: 1.3.0
 ---
 
 # Site Context
@@ -59,6 +59,7 @@ Los encabezados de sección en el archivo van en español neutro (el nombre en i
 12. **Objetivos** (Goals) — primary business goal, key conversion action, current metrics
 13. **Alcance del Sitio** (Site Scope) *(new)* — site type, main domain, technology stack, CMS, key integrations
 14. **URLs Estratégicas** (Strategic URLs) *(new)* — table of strategic pages with label, URL, page type, and role
+15. **Economía de la Conversión** (Conversion Economics) *(new)* — how the business actually sells and where deals die. Fields: sales mechanics (fixed price / range / quote after evaluation / subscription), whether a mandatory intermediate step exists before quoting, **where the business loses deals today**, known asymmetries (questions the visitor asks early that the business needs to answer later or reframe), what the visitor must believe for the killer objection to stop being fatal, and the proof that sustains it. Its usual producer is the **landing-blueprint** skill, which captures it through its discovery mechanisms and proposes it for confirmation — the same way the Voz de Marca section points to brand-voice-pro. Any skill may read it; page-cro and ai-seo benefit from it too.
 
 ## Auto-Draftable vs. User-Input Sections
 
@@ -81,6 +82,7 @@ When generating site-context for the first time from the site snapshot, not all 
 - Lenguaje del Cliente
 - Voz de Marca
 - Pruebas y Evidencia
+- Economía de la Conversión
 
 When the skill infers content for these sections, it must add a visible note indicating the content was inferred and needs user review. This distinction matters because downstream skills (seo-audit, page-cro) trust site-context as validated strategic truth — if inferred content goes unreviewed, it can lead to misaligned diagnoses.
 
@@ -107,6 +109,10 @@ Check if `contexto/sitio.md` exists (resolve the client root by walking up to `c
 - Read it and summarize what's captured
 - Ask which sections the user wants to update
 - Only gather info for those sections
+- **Preserve sections produced by other skills.** *Economía de la Conversión* (produced by
+  landing-blueprint) and the `Archivo de guías:` pointer (brand-voice-pro) may not be in your
+  drafting scope — never drop or duplicate them when rewriting the file. If the user explicitly
+  wants to edit one, do it, but don't recreate a parallel section alongside the existing one.
 
 **If it doesn't exist, offer two paths:**
 
@@ -153,3 +159,4 @@ Tell the user: "Los skills de diagnóstico (seo-audit, page-cro, ai-seo) y el sk
 - **seo-audit** — SEO diagnosis that reads this context for strategic alignment
 - **page-cro** — conversion analysis that reads this context for positioning and goals
 - **ai-seo** — AEO/GEO audit that reads this context for market, audience, and the brand voice pointer
+- **landing-blueprint** — landing architecture that reads this context and is the usual producer of the *Economía de la Conversión* section
