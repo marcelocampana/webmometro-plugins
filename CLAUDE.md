@@ -14,7 +14,7 @@ user-facing output (skills instruct their output language explicitly):
 
 - **brand-voice-pro** — full-stack plugin: skills + agents + commands + MCP servers.
 - **design-system** — skills-only: design-system audit/docs + social carousel generation.
-- **seo-suite** — skills-only: an 8-skill SEO suite (snapshots → audit/CRO/audience/AI-search, plus change tracking).
+- **seo-suite** — skills-only: a 10-skill SEO suite (snapshots → audit/CRO/audience/AI-search, plus content clusters, landing blueprints and change tracking).
 - **utils** — skills-only: general-purpose personal utilities (cross-account activity log via `claude-activity-log`).
 
 ## Layout & manifest hierarchy
@@ -64,6 +64,7 @@ directory until they find `contexto/` (they operate in the *active project*, not
     sitio.md                       estrategia/audiencia/objetivos   (produce: site-context)
     marca/                         voz de marca, guidelines         (produce: brand-voice-pro)
     audiencia-canales.md           demanda y channel-fit            (produce: audience-demand)
+    plantilla-landing.md           esqueleto de slots de landing    (produce: landing-blueprint)
     configuracion.md               IDs GA4/GSC/Clarity/DataForSEO + URLs
     antecedentes/                  informes previos del equipo (solo lectura; input cualitativo)
     seo-tracking/                  cambios SEO — continuo, sin período (produce: seo-change-tracker;
@@ -88,11 +89,20 @@ Reglas clave para editar skills:
 Flujo de la suite SEO:
 
 ```
-site-context + site-snapshot ─→ seo-audit / audience-demand-evaluation
+site-context + site-snapshot ─→ seo-audit / audience-demand-evaluation / landing-blueprint
 page-snapshot ────────────────→ page-cro / ai-seo
+landing-blueprint ────────────→ brand-voice-enforcement (copy, sub-modo landing)
 contexto/seo-tracking/ ───────→ (leído por los skills analíticos antes de recomendar/reportar)
 seo-change-tracker ───────────→ registra la ejecución de los cambios recomendados
 ```
+
+`landing-blueprint` decide **qué secciones debe tener una landing y por qué**, cruzando la demanda
+del visitante con la economía de conversión del negocio (cuándo conviene responder cada pregunta).
+Se distingue de `page-cro`: el blueprint decide la arquitectura; page-cro optimiza una página que ya
+existe y tiene comportamiento medido. En modo auditoría el blueprint **lee** `cro-{slug}.md` en vez
+de re-derivar sus hallazgos UX. Produce además la sección *Economía de la Conversión* de
+`contexto/sitio.md` (previa confirmación) y el esqueleto `contexto/plantilla-landing.md` cuando N
+landings comparten patrón.
 
 The analytical skills (`seo-audit`, `page-cro`, `ai-seo`, `audience-demand-evaluation`) read
 `contexto/seo-tracking/` **before** producing recommendations: to avoid re-proposing a change already
@@ -106,14 +116,24 @@ interpretation, recommendations, or composite scores — because downstream anal
 (`seo-audit`, `page-cro`, `audience-demand-evaluation`, `ai-seo`) read them and would inherit
 any bias. Snapshots and site-context never read `contexto/antecedentes/` nor
 `contexto/seo-tracking/` (both are interpretive). Preserve that separation when editing SEO skills.
-As a rule only snapshot skills query MCPs; the three bounded exceptions (with explicit execution
+As a rule only snapshot skills query MCPs; the four bounded exceptions (with explicit execution
 limits) are `audience-demand-evaluation` (demand validation), `ai-seo` (real AI-visibility
-verification, gated behind a cost confirmation), and `seo-change-tracker` (baseline/checkpoint
-capture, bounded to the sources of the changed area within the configured time window).
+verification, gated behind a cost confirmation), `seo-change-tracker` (baseline/checkpoint
+capture, bounded to the sources of the changed area within the configured time window), and
+`landing-blueprint` (searcher-question mining, capped at 10 calls behind a cost gate — and subject
+to a **prior condition: exhaust local sources first**; only a gap that both lacks local backing
+*and* would change a section's classification qualifies as investigable).
 
 Cross-plugin: the brand voice guidelines home is `contexto/marca/brand-voice-guidelines.md`
 (produced by **brand-voice-pro**), and the SEO analytical skills read it only as a guardrail,
 delegating on-brand copy production back to brand-voice-pro's `brand-voice-enforcement`.
+
+The tightest cross-plugin coupling is `landing-blueprint` → `brand-voice-enforcement`: the blueprint
+emits a **copy contract per section** (message, required proof, approximate length, CTA) and the
+writer consumes it through its **landing sub-mode** (§15 of `web-content-geo-seo.md`), which
+suspends the article-shaped criteria (answer-first lead, quotable passages, default FAQ, keyword
+placement, woven internal links) and drafts section by section instead. If you change the contract's
+fields on one side, update the other.
 
 ## MCP dependencies
 
