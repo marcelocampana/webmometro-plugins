@@ -1,0 +1,243 @@
+{
+  "skill_name": "task-flow",
+  "evals": [
+    {
+      "id": 1,
+      "name": "no-activar-sin-directorio-tareas",
+      "prompt": "Estoy revisando este componente y me acabo de acordar: anota que tengo que revisar los estilos del footer en algún momento.",
+      "expected_output": "El skill NO se activa y NO ofrece montar el sistema de tareas, porque el proyecto no tiene un directorio tareas/. La petición se atiende con la lista interna de tareas de Claude Code o con una respuesta normal. No se crea ningún archivo ni se menciona task-flow, tareas.md, revisar.md ni auditoria.md.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "no-activar-con-todo-efimero",
+      "prompt": "Vamos a refactorizar este módulo. Ve anotando los pasos que faltan mientras avanzamos para no perdernos: primero extraer la función, después actualizar los imports, y al final correr los tests.",
+      "expected_output": "El skill NO se activa: son pasos efímeros de la sesión en curso, no tareas del proyecto. Se usa la lista interna de tareas de Claude Code. No se escribe nada en tareas/ aunque el directorio exista.",
+      "files": [
+        "evals/fixtures/proyecto-en-curso/tareas/tareas.md",
+        "evals/fixtures/proyecto-en-curso/tareas/revisar.md",
+        "evals/fixtures/proyecto-en-curso/tareas/auditoria.md"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "modo-0-por-deteccion-propone-secciones",
+      "prompt": "Anota que hay que revisar que la versión de cada plugin coincida entre marketplace.json y su plugin.json, que ya se nos ha desincronizado dos veces.",
+      "expected_output": "Detecta que no existe tareas/ pero SÍ hubo una petición de tareas, así que entra al Modo 0. Avisa en una línea de que no hay sistema y propone las secciones iniciales en una tabla corta (derivadas del repo: una por plugin más General/Manifests), con la tarea dictada ya afinada como semilla y asignada a la sección de manifests o General. Espera el visto bueno antes de crear nada. La propuesta es ejecutiva: tabla más una pregunta, sin recapitular el contexto leído ni justificar en párrafos.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "afinar-enunciado-y-esperar-visto-bueno",
+      "prompt": "Anota una tarea: arreglar el menú.",
+      "expected_output": "NO escribe la fila todavía. Propone un enunciado afinado con verbo, objeto concreto y ámbito (por ejemplo 'Corregir el desplegable del menú en móvil (AppHeader.vue)' si el contexto lo respalda), sugiere la sección por el ámbito del cambio, y pide el visto bueno en una pregunta corta. Si el ámbito no se puede inferir del proyecto, pregunta cuál es en vez de inventarlo. Toda la respuesta cabe en pocas líneas.",
+      "files": [
+        "evals/fixtures/proyecto-en-curso/tareas/tareas.md",
+        "evals/fixtures/proyecto-en-curso/tareas/revisar.md",
+        "evals/fixtures/proyecto-en-curso/tareas/auditoria.md"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "siguiente-tarea-salta-bloqueada",
+      "prompt": "¿Qué sigue?",
+      "expected_output": "Lee la tabla ## Ahora de tareas/tareas.md y responde con la primera fila que NO esté Bloqueada, nombrando la tarea y su sección. Si la primera fila está Bloqueada, avisa de que lo está y por qué (su Nota) y propone la siguiente no bloqueada, sin tomarla. Es solo lectura: no modifica ningún archivo ni crea ninguna rama sin que se le pida.",
+      "files": [
+        "evals/fixtures/proyecto-en-curso/tareas/tareas.md"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "abrir-tarea-tres-movimientos",
+      "prompt": "Perfecto, abre esa tarea.",
+      "expected_output": "Ejecuta los tres movimientos en orden: (1) comprueba con git status y git fetch que main está limpia y actualizada, y crea la rama desde main con un nombre que describa la tarea — si main está desactualizada por un merge pendiente, avisa y decide antes de ramificar, sin ramificar de la rama previa; (2) anota el Inicio con fecha y hora obtenidas de date (nunca inventadas) y pone el estado en 🔵 En curso en la fila de su sección; (3) sube la fila a ## Ahora con su # de posición y pregunta al usuario en qué posición va. Nunca trabaja sobre main. Verificable con git branch --show-current y el diff de tareas/tareas.md.",
+      "files": [
+        "evals/fixtures/proyecto-en-curso/tareas/tareas.md"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "cerrar-tarea-cinco-movimientos",
+      "prompt": "Listo, ya quedó terminada.",
+      "expected_output": "Hace las tres confirmaciones por separado y en orden, sin fusionarlas ni darlas por supuestas: primero pregunta si la tarea queda cerrada; con el visto bueno ejecuta los cinco movimientos (estado a ✅ Completada con Completada y Duración rellenas; baja la fila al final de su sección; recalcula el total de la sección; borra la fila de ## Ahora migrando a Comentarios lo que valga de su Nota y renumera el # de las que queden; y archiva el comentario en tareas/historial/AAAA-MM.md dejando en la celda un resumen ≤240 chars más el enlace [detalle](...), creando el mensual y el directorio historial/ si no existen); después propone el commit; y solo después el merge a main. La Duración sale de git reflog/git log y descuenta pausas largas — si el intervalo cruzó una noche, se descuenta y se explica en Comentarios. Al terminar ofrece para revisar.md lo que el trabajo dejó pendiente, y para sin empezar la siguiente tarea.",
+      "files": [
+        "evals/fixtures/proyecto-en-curso/tareas/tareas.md",
+        "evals/fixtures/proyecto-en-curso/tareas/revisar.md",
+        "evals/fixtures/proyecto-en-curso/tareas/auditoria.md"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "recomendar-prioridad-sin-reordenar",
+      "prompt": "¿Qué debería priorizar ahora?",
+      "expected_output": "Recomienda un orden con su motivo (dependencias entre tareas, algo bloqueado, un cambio en código compartido que cerraría varias filas a la vez), en pocas líneas. NO reordena la tabla ## Ahora por iniciativa propia: la prioridad la determina el usuario. Si el orden actual tiene un conflicto real —la primera fila depende de una que está más abajo— lo señala explícitamente.",
+      "files": [
+        "evals/fixtures/proyecto-en-curso/tareas/tareas.md"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "hallazgo-lateral-a-revisar-sin-descarrilar",
+      "prompt": "(Trabajando en una tarea abierta) Oye, mientras mirabas eso me di cuenta de que el mismo componente tiene el color hardcodeado en dos sitios más.",
+      "expected_output": "Propone anotarlo en tareas/revisar.md en UNA línea, con la columna Origen indicando de qué tarea o archivo salió el hallazgo, y sigue con la tarea en curso sin abrir una deliberación. No escribe la fila sin visto bueno, y no lo añade a tareas.md: la IA no escribe en la lista principal por iniciativa propia.",
+      "files": [
+        "evals/fixtures/proyecto-en-curso/tareas/tareas.md",
+        "evals/fixtures/proyecto-en-curso/tareas/revisar.md",
+        "evals/fixtures/proyecto-en-curso/tareas/auditoria.md"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "ascenso-mueve-no-copia",
+      "prompt": "Sube a la lista principal lo que anotamos en por revisar sobre el color hardcodeado.",
+      "expected_output": "Pide aprobación, revisa el enunciado otra vez por si necesita más precisión para la cola de trabajo, y MUEVE la fila: la escribe en la sección correspondiente de tareas/tareas.md en estado Pendiente y sin Inicio, con su Motivo pasado a Comentarios, y la ELIMINA de revisar.md. No queda en las dos listas. No la sube a ## Ahora salvo que el usuario la priorice explícitamente.",
+      "files": [
+        "evals/fixtures/proyecto-en-curso/tareas/tareas.md",
+        "evals/fixtures/proyecto-en-curso/tareas/revisar.md",
+        "evals/fixtures/proyecto-en-curso/tareas/auditoria.md"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "auditoria-no-escribe-en-lista-principal",
+      "prompt": "/task-flow --auditoria",
+      "expected_output": "Recorre el proyecto por las áreas del checklist base que apliquen más las propias del proyecto, y escribe SOLO en tareas/auditoria.md. No toca tareas.md ni revisar.md. Descarta lo que ya esté en esas dos listas, incluido el historial de tareas ✅ Completada. Cada fila lleva Área, Severidad (alta/media/baja) y un Motivo con evidencia concreta (archivo y línea, o el comando que lo delata); una fila sin evidencia no se escribe. No convierte en tareas los marcadores de pendiente intencionales del proyecto (por ejemplo [PENDIENTE-validación] o TODO(nombre)). Entrega la tabla más un resumen de una línea por área, sin ascender ninguna fila y sin informe adicional.",
+      "files": [
+        "evals/fixtures/proyecto-en-curso/tareas/tareas.md",
+        "evals/fixtures/proyecto-en-curso/tareas/revisar.md",
+        "evals/fixtures/proyecto-en-curso/tareas/auditoria.md"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "detenerse-sin-git",
+      "prompt": "Abre la primera tarea de la lista.",
+      "expected_output": "Detecta que el directorio no es un repositorio git (git rev-parse --git-dir falla) y se detiene, explicándolo en una línea: el flujo se apoya en la rama por tarea y en tiempos verificables contra git reflog. No propone un modo degradado, no inventa marcas de tiempo y no abre la tarea.",
+      "files": []
+    },
+    {
+      "id": 13,
+      "name": "brevedad-ejecutiva",
+      "prompt": "Anota tres tareas: revisar el rendimiento de la home, actualizar las dependencias, y mejorar los textos de la página de contacto.",
+      "expected_output": "Propone las tres tareas afinadas en una tabla o lista compacta —una línea por tarea más su sección sugerida— y pide un único visto bueno. No dedica un párrafo de justificación a cada tarea, no recapitula el contexto leído ('he revisado las tres listas y el historial...'), no añade preámbulos ni cierres de cortesía. Si alguna necesita partirse en dos o ya existe en otra lista, lo dice en una línea junto a esa tarea.",
+      "files": [
+        "evals/fixtures/proyecto-en-curso/tareas/tareas.md",
+        "evals/fixtures/proyecto-en-curso/tareas/revisar.md",
+        "evals/fixtures/proyecto-en-curso/tareas/auditoria.md"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "migrar-formato-plano-a-directorio",
+      "prompt": "¿Qué sigue?",
+      "expected_output": "Detecta en el Paso 0 que existe un tareas.md plano en la raíz con su sección ## Ahora pero no el directorio tareas/. Lo identifica como el formato antiguo, lo dice en una línea y OFRECE migrarlo: git mv a tareas/tareas.md (con git mv, para no perder el historial del archivo) y crear revisar.md y auditoria.md desde sus esqueletos. Mientras el usuario no acepte, opera sobre el archivo donde está: responde la pregunta leyendo ese tareas.md sin duplicar la lista ni escribir en tareas/tareas.md, que todavía no existe. No toca el contenido existente (secciones, totales ni filas). Al migrar, además OFRECE dos cosas sin hacerlas por su cuenta: (a) sustituir las secciones de convenciones del pie —«Los estados» y «Cómo se llena esta lista»— por la leyenda breve del esqueleto, porque esas reglas ahora viven en el skill; y (b) archivar el comentario largo de la fila cerrada, que es donde está casi todo el peso de un tareas.md heredado. La columna # de ## Ahora no existe en el formato antiguo: se añade al migrar.",
+      "files": [
+        "evals/fixtures/formato-plano/tareas.md"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "ingesta-de-conversacion",
+      "prompt": "Hemos estado depurando el header toda la tarde. /task-flow --ingerir",
+      "expected_output": "Recorre la conversación previa y propone tareas de las TRES fuentes, no solo de lo que el usuario pidió: (a) lo que pidió y no se hizo, (b) **lo que la IA propuso antes** —recomendaciones y alternativas descartadas por tiempo—, y (c) lo que el trabajo destapó depurando, que es la que más rinde. Todo va a revisar.md con Origen = tema y fecha de la conversación, no «conversación» a secas. Propone en tabla compacta y ESPERA: no escribe ninguna fila sin visto bueno. Si no hay material, lo dice — una ingesta vacía es un resultado válido.",
+      "files": [
+        "evals/fixtures/con-historial/tareas/tareas.md",
+        "evals/fixtures/con-historial/tareas/revisar.md",
+        "evals/fixtures/con-historial/tareas/auditoria.md"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "ingesta-de-informe-externo",
+      "prompt": "Te paso el informe de la auditoría SEO que generó el otro skill: web/seo/informes/2026-08/auditoria.md. Agrega sus tareas.",
+      "expected_output": "Lee el archivo completo antes de proponer. Extrae SOLO las recomendaciones accionables: descarta los datos y el diagnóstico (un LCP de 4,2 s es un dato; «comprimir las imágenes del hero» es una tarea). Deduplica contra las tres listas Y el historial de tareas cerradas. Todo va a revisar.md —nunca directo a tareas.md— con Origen = ruta del archivo y su fecha. Las severidades del informe se conservan como texto en Motivo, sin traducirse a los cinco estados ni a la cola ## Ahora. Propone y espera.",
+      "files": [
+        "evals/fixtures/con-historial/tareas/tareas.md",
+        "evals/fixtures/con-historial/tareas/revisar.md",
+        "evals/fixtures/con-historial/tareas/auditoria.md"
+      ]
+    },
+    {
+      "id": 17,
+      "name": "cierre-archiva-el-comentario",
+      "prompt": "Listo, la tarea de «Sigue leyendo» ya quedó terminada.",
+      "expected_output": "Tras las tres confirmaciones, en el cierre de la fila: el comentario íntegro (condensado a un máximo de 900 chars) va a tareas/historial/2026-08.md bajo un ### con el ancla en kebab-case sin tildes, y en la celda Comentarios queda un resumen de MÁXIMO 240 chars más el enlace [detalle](historial/2026-08.md#...). Nunca la celda vacía ni solo el enlace. El resumen prioriza la trampa que costó encontrar, luego la decisión no evidente. Muestra el resumen en una línea para que el usuario lo corrija. No toca los comentarios de las tareas abiertas.",
+      "files": [
+        "evals/fixtures/con-historial/tareas/tareas.md",
+        "evals/fixtures/con-historial/tareas/revisar.md",
+        "evals/fixtures/con-historial/tareas/auditoria.md"
+      ]
+    },
+    {
+      "id": 18,
+      "name": "lectura-acotada-del-historial",
+      "prompt": "¿Qué decía el detalle de la tarea del índice móvil desplegable?",
+      "expected_output": "Abre el detalle porque el usuario lo pidió (caso 1 de la lista blanca) y lee SOLO la sección de su ancla, acotando la lectura de forma que corte en la siguiente cabecera — por ejemplo con `awk -v a='### convertir-el-indice-movil-en-un-desplegable' 'index($0,a)==1{f=1;print;next} f&&/^#/{exit} f' tareas/historial/2026-07.md`. NO usa un rango sed hasta el siguiente ### (el último comentario de la zona se desbordaría a ## Tareas archivadas) y NO hace cat ni Read del mensual completo: con varios comentarios acumulados eso cuesta más que el tareas.md que se quiso aligerar.",
+      "files": [
+        "evals/fixtures/con-historial/tareas/tareas.md",
+        "evals/fixtures/con-historial/tareas/historial/2026-07.md"
+      ]
+    },
+    {
+      "id": 19,
+      "name": "no-abrir-historial-al-contextualizar",
+      "prompt": "¿Qué sigue?",
+      "expected_output": "Responde con la primera fila no Bloqueada de ## Ahora leyendo los RESÚMENES de la celda Comentarios. NO abre ningún detalle del historial: la contextualización y las consultas están en la lista negra, y abrir un detalle ahí es exactamente lo que anula el ahorro. Es solo lectura.",
+      "files": [
+        "evals/fixtures/con-historial/tareas/tareas.md",
+        "evals/fixtures/con-historial/tareas/historial/2026-07.md"
+      ]
+    },
+    {
+      "id": 20,
+      "name": "caso-2-declarado-antes-de-abrir",
+      "prompt": "Voy a volver a tocar el índice móvil. ¿Hay algo que deba saber?",
+      "expected_output": "Cae en el caso 2 de la lista blanca (se va a tocar el mismo componente que el resumen nombra), así que abrir el detalle es legítimo — pero lo DICE en una línea antes de hacerlo («el resumen menciona la trampa de inheritAttrs; abro el detalle»), no lo abre en silencio. Y lee solo la sección del ancla. Si en cambio el resumen bastara, responde con él sin abrir nada.",
+      "files": [
+        "evals/fixtures/con-historial/tareas/tareas.md",
+        "evals/fixtures/con-historial/tareas/historial/2026-07.md"
+      ]
+    },
+    {
+      "id": 21,
+      "name": "etapa-2-mueve-la-fila-con-su-comentario",
+      "prompt": "Archiva las tareas cerradas que ya tengan más de un mes. (Hoy es 2026-10-15.)",
+      "expected_output": "Identifica las ✅ Completada cerradas hace más de un mes, PIDE CONFIRMACIÓN y solo entonces mueve la fila entera al mensual de su mes, junto al comentario que ya está ahí, bajo el mismo encabezado. La sección conserva su total acumulado (no lo recalcula a la baja) más el puntero «· N archivadas en [historial](...)». No toca tareas abiertas ni nada de revisar.md o auditoria.md.",
+      "files": [
+        "evals/fixtures/con-historial/tareas/tareas.md",
+        "evals/fixtures/con-historial/tareas/historial/2026-07.md"
+      ]
+    },
+    {
+      "id": 22,
+      "name": "no-archivar-sin-confirmacion",
+      "prompt": "Archiva lo antiguo. — Espera, no, déjalo como está.",
+      "expected_output": "Ofrece y, ante la negativa, NO toca ningún archivo: ni tareas.md ni el historial. `git diff` debe quedar vacío. No insiste ni vuelve a proponerlo en la misma sesión.",
+      "files": [
+        "evals/fixtures/con-historial/tareas/tareas.md",
+        "evals/fixtures/con-historial/tareas/historial/2026-07.md"
+      ]
+    },
+    {
+      "id": 23,
+      "name": "reversion-devuelve-el-comentario-integro",
+      "prompt": "Recupera la tarea del enlace del logo, la quiero volver a abrir.",
+      "expected_output": "La devuelve a su sección en tareas.md CON EL COMENTARIO ÍNTEGRO del historial, no con el resumen recortado, y la quita del mensual (de las dos zonas: su ### y su fila). Actualiza el total y el puntero de archivadas de la sección. El historial no es un destino de solo ida.",
+      "files": [
+        "evals/fixtures/con-historial/tareas/tareas.md",
+        "evals/fixtures/con-historial/tareas/historial/2026-07.md"
+      ]
+    },
+    {
+      "id": 24,
+      "name": "despacho-acotado",
+      "prompt": "Anota una tarea: revisar el contraste de los botones.",
+      "expected_output": "Lee el núcleo (SKILL.md) y SOLO references/modo-gestion.md. NO carga modo-auditoria.md, modo-inicio.md, modo-ingesta.md ni archivado.md, que no intervienen en anotar una tarea: cargarlas «por si acaso» es lo que anula el ahorro estructural del núcleo delgado. Propone el enunciado afinado con su sección y espera.",
+      "files": [
+        "evals/fixtures/con-historial/tareas/tareas.md",
+        "evals/fixtures/con-historial/tareas/revisar.md",
+        "evals/fixtures/con-historial/tareas/auditoria.md"
+      ]
+    }
+  ]
+}

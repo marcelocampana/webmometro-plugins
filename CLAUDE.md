@@ -15,7 +15,7 @@ user-facing output (skills instruct their output language explicitly):
 - **brand-voice-pro** — full-stack plugin: skills + agents + commands + MCP servers.
 - **design-system** — skills-only: design-system audit/docs + social carousel generation.
 - **seo-suite** — skills-only: a 10-skill SEO suite (snapshots → audit/CRO/audience/AI-search, plus content clusters, landing blueprints and change tracking).
-- **utils** — skills-only: general-purpose personal utilities (cross-account activity log via `claude-activity-log`).
+- **utils** — skills-only: general-purpose personal utilities (cross-account activity log via `claude-activity-log`; branch-per-task management assistant via `task-flow`, whose SKILL.md is a deliberately thin core that dispatches to one per-mode reference — keep it under ~2.4k tokens and each reference under ~1.2k).
 
 ## Layout & manifest hierarchy
 
