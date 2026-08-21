@@ -67,6 +67,9 @@ diga dónde se sigue su trabajo. Es información, no un hueco:
 
 > Sin tareas propias. Lo compartido se sigue en «Componentes», porque el cambio vive ahí.
 
+**Este criterio decide qué secciones existen; su persistencia —incluso vacías de tareas activas—
+vive en `tareas/secciones.md`.** Ver `secciones-catalogo.md`.
+
 ## Qué proponer al usuario
 
 Una tabla corta y una pregunta. Nada más:
@@ -79,3 +82,8 @@ Una tabla corta y una pregunta. Nada más:
 
 El usuario añade, quita o renombra. Si duda, recuerda que **añadir una sección después es fácil** y
 reordenarlas no: ante la duda, menos secciones.
+
+Esto vale igual la primera vez (`--init`) que después: cada entrada aceptada se convierte en una fila
+de `secciones.md`, con o sin semillas todavía. El catálogo registra lo propuesto hasta ahora, pero
+**no cierra la lista** — una sección nueva se propone después con el mismo criterio, sin necesidad de
+justificarla contra lo ya existente. Detalle del catálogo persistente: `secciones-catalogo.md`.

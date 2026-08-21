@@ -59,11 +59,39 @@
       "id": 7,
       "name": "cerrar-tarea-cinco-movimientos",
       "prompt": "Listo, ya quedó terminada.",
-      "expected_output": "Hace las tres confirmaciones por separado y en orden, sin fusionarlas ni darlas por supuestas: primero pregunta si la tarea queda cerrada; con el visto bueno ejecuta los cinco movimientos (estado a ✅ Completada con Completada y Duración rellenas; baja la fila al final de su sección; recalcula el total de la sección; borra la fila de ## Ahora migrando a Comentarios lo que valga de su Nota y renumera el # de las que queden; y archiva el comentario en tareas/historial/AAAA-MM.md dejando en la celda un resumen ≤240 chars más el enlace [detalle](...), creando el mensual y el directorio historial/ si no existen); después propone el commit; y solo después el merge a main. La Duración sale de git reflog/git log y descuenta pausas largas — si el intervalo cruzó una noche, se descuenta y se explica en Comentarios. Al terminar ofrece para revisar.md lo que el trabajo dejó pendiente, y para sin empezar la siguiente tarea.",
+      "expected_output": "Hace UNA sola pregunta de cierre —si la tarea queda terminada— y NO una segunda ni tercera pregunta separada para el commit ni el merge. Con el visto bueno, anuncia en una línea que va a cerrar, commitear y mergear, y ejecuta en cadena sin pausas: (1) los cinco movimientos de cierre de la fila (estado a ✅ Completada con Completada y Duración rellenas; archiva el comentario y la fila juntos en tareas/historial/AAAA-MM.md bajo el ### de su sección de origen, creando el mensual y el directorio historial/ si no existen, sin dejar resumen ni enlace en tareas.md; quita la fila de su sección sin dejar rastro; actualiza el total y el contador de archivadas en tareas/secciones.md, retirando el header ## de la sección si se quedó sin filas activas; borra la fila de ## Ahora migrando a Comentarios lo que valga de su Nota y renumera el # de las que queden); (2) el commit; (3) el merge a main. Solo se detiene a mitad de la cadena si main está sucia o desactualizada, si el merge tiene conflictos, o si aparecen cambios sin relación con la tarea al ir a commitear — fuera de esos tres casos no pregunta de nuevo. Muestra el resumen del comentario archivado después de la cadena, para que se corrija si hace falta. La Duración sale de git reflog/git log y descuenta pausas largas — si el intervalo cruzó una noche, se descuenta y se explica en Comentarios. Al terminar ofrece para revisar.md lo que el trabajo dejó pendiente, y para sin empezar la siguiente tarea.",
       "files": [
         "evals/fixtures/proyecto-en-curso/tareas/tareas.md",
         "evals/fixtures/proyecto-en-curso/tareas/revisar.md",
-        "evals/fixtures/proyecto-en-curso/tareas/auditoria.md"
+        "evals/fixtures/proyecto-en-curso/tareas/auditoria.md",
+        "evals/fixtures/proyecto-en-curso/tareas/secciones.md",
+        "evals/fixtures/proyecto-en-curso/tareas/historial/2026-08.md"
+      ]
+    },
+    {
+      "id": 25,
+      "name": "cierre-sin-preguntas-intermedias",
+      "prompt": "Sí, quedó terminada.",
+      "expected_output": "Tras el único visto bueno de cierre, NO pregunta '¿hago el commit?' ni '¿hago el merge?' como preguntas separadas: los encadena directo después de anunciarlo en una línea. La transcripción no debe contener una segunda pregunta de confirmación para el commit ni una tercera para el merge, salvo que se dispare uno de los tres frenos (main sucia/desactualizada, conflicto de merge, cambios ajenos a la tarea).",
+      "files": [
+        "evals/fixtures/proyecto-en-curso/tareas/tareas.md",
+        "evals/fixtures/proyecto-en-curso/tareas/revisar.md",
+        "evals/fixtures/proyecto-en-curso/tareas/auditoria.md",
+        "evals/fixtures/proyecto-en-curso/tareas/secciones.md",
+        "evals/fixtures/proyecto-en-curso/tareas/historial/2026-08.md"
+      ]
+    },
+    {
+      "id": 26,
+      "name": "cierre-se-detiene-en-cambios-ajenos",
+      "prompt": "Sí, quedó terminada. (En el repo hay además un archivo modificado sin relación con esta tarea, ej. un typo corregido en otro componente que nadie mencionó.)",
+      "expected_output": "Al llegar al paso de commit dentro de la cadena de cierre, detecta el cambio sin relación con la tarea y se DETIENE ahí: pregunta si va incluido en el commit o se deja fuera, antes de continuar. No lo incluye ni lo descarta por su cuenta, y no sigue con el merge hasta resolver esto.",
+      "files": [
+        "evals/fixtures/proyecto-en-curso/tareas/tareas.md",
+        "evals/fixtures/proyecto-en-curso/tareas/revisar.md",
+        "evals/fixtures/proyecto-en-curso/tareas/auditoria.md",
+        "evals/fixtures/proyecto-en-curso/tareas/secciones.md",
+        "evals/fixtures/proyecto-en-curso/tareas/historial/2026-08.md"
       ]
     },
     {
@@ -161,11 +189,13 @@
       "id": 17,
       "name": "cierre-archiva-el-comentario",
       "prompt": "Listo, la tarea de «Sigue leyendo» ya quedó terminada.",
-      "expected_output": "Tras las tres confirmaciones, en el cierre de la fila: el comentario íntegro (condensado a un máximo de 900 chars) va a tareas/historial/2026-08.md bajo un ### con el ancla en kebab-case sin tildes, y en la celda Comentarios queda un resumen de MÁXIMO 240 chars más el enlace [detalle](historial/2026-08.md#...). Nunca la celda vacía ni solo el enlace. El resumen prioriza la trampa que costó encontrar, luego la decisión no evidente. Muestra el resumen en una línea para que el usuario lo corrija. No toca los comentarios de las tareas abiertas.",
+      "expected_output": "Tras la única confirmación de cierre, dentro de la cadena sin pausas: el comentario íntegro (condensado a un máximo de 900 chars) va a tareas/historial/2026-08.md bajo un ### con el ancla en kebab-case sin tildes, y la fila completa va bajo ## Tareas archivadas del mismo mensual, agrupada bajo el ### de su sección de origen (Componentes). En tareas.md NO queda ningún rastro de la fila: ni resumen, ni enlace, ni la fila en Completada — la fila se quita de su sección por completo. El total y el contador de archivadas de la sección suben en tareas/secciones.md, y se reflejan también bajo la tabla de la sección en tareas.md mientras esta siga teniendo alguna fila activa. Muestra el resumen del comentario en una línea, después de la cadena, para que el usuario lo corrija. No toca los comentarios de las tareas abiertas.",
       "files": [
         "evals/fixtures/con-historial/tareas/tareas.md",
         "evals/fixtures/con-historial/tareas/revisar.md",
-        "evals/fixtures/con-historial/tareas/auditoria.md"
+        "evals/fixtures/con-historial/tareas/auditoria.md",
+        "evals/fixtures/con-historial/tareas/secciones.md",
+        "evals/fixtures/con-historial/tareas/historial/2026-07.md"
       ]
     },
     {
@@ -199,22 +229,13 @@
       ]
     },
     {
-      "id": 21,
-      "name": "etapa-2-mueve-la-fila-con-su-comentario",
-      "prompt": "Archiva las tareas cerradas que ya tengan más de un mes. (Hoy es 2026-10-15.)",
-      "expected_output": "Identifica las ✅ Completada cerradas hace más de un mes, PIDE CONFIRMACIÓN y solo entonces mueve la fila entera al mensual de su mes, junto al comentario que ya está ahí, bajo el mismo encabezado. La sección conserva su total acumulado (no lo recalcula a la baja) más el puntero «· N archivadas en [historial](...)». No toca tareas abiertas ni nada de revisar.md o auditoria.md.",
-      "files": [
-        "evals/fixtures/con-historial/tareas/tareas.md",
-        "evals/fixtures/con-historial/tareas/historial/2026-07.md"
-      ]
-    },
-    {
       "id": 22,
       "name": "no-archivar-sin-confirmacion",
-      "prompt": "Archiva lo antiguo. — Espera, no, déjalo como está.",
-      "expected_output": "Ofrece y, ante la negativa, NO toca ningún archivo: ni tareas.md ni el historial. `git diff` debe quedar vacío. No insiste ni vuelve a proponerlo en la misma sesión.",
+      "prompt": "Listo, ya está. — Espera, no, todavía no está terminada.",
+      "expected_output": "Ante la primera respuesta, el skill NO ejecuta todavía la cadena de cierre —no cambia el estado, no archiva, no commitea ni mergea—: la única confirmación de cierre sigue pendiente de una respuesta afirmativa clara. Al llegar la negativa ('espera, no'), NO toca ningún archivo: ni tareas.md, ni secciones.md, ni el historial. `git diff` debe quedar vacío y no debe haberse creado ningún commit. No insiste ni vuelve a proponer el cierre en la misma sesión salvo que el usuario lo retome.",
       "files": [
         "evals/fixtures/con-historial/tareas/tareas.md",
+        "evals/fixtures/con-historial/tareas/secciones.md",
         "evals/fixtures/con-historial/tareas/historial/2026-07.md"
       ]
     },
@@ -222,9 +243,21 @@
       "id": 23,
       "name": "reversion-devuelve-el-comentario-integro",
       "prompt": "Recupera la tarea del enlace del logo, la quiero volver a abrir.",
-      "expected_output": "La devuelve a su sección en tareas.md CON EL COMENTARIO ÍNTEGRO del historial, no con el resumen recortado, y la quita del mensual (de las dos zonas: su ### y su fila). Actualiza el total y el puntero de archivadas de la sección. El historial no es un destino de solo ida.",
+      "expected_output": "La devuelve a la sección General en tareas.md CON EL COMENTARIO ÍNTEGRO del historial, no con el resumen recortado, y la quita del mensual (de las dos zonas: su ### de Comentarios y su fila bajo ### General en Tareas archivadas — y si esa era la única fila archivada de General ese mes, retira también ese ### ya vacío). Resta 1 del contador de archivadas de General en tareas/secciones.md sin tocar el total acumulado (el tiempo ya trabajado no se descuenta). Como General ya tenía otra fila activa en tareas.md (Resolver el hardcodeo del tema), su header ## ya existía y no hace falta recrearlo. El historial no es un destino de solo ida.",
       "files": [
         "evals/fixtures/con-historial/tareas/tareas.md",
+        "evals/fixtures/con-historial/tareas/secciones.md",
+        "evals/fixtures/con-historial/tareas/historial/2026-07.md"
+      ]
+    },
+    {
+      "id": 27,
+      "name": "reversion-recrea-seccion-vacia",
+      "prompt": "Recupera la tarea del índice móvil, la quiero volver a abrir.",
+      "expected_output": "La sección Componentes en tareas/tareas.md de este fixture solo tiene una fila activa (Alinear el contenido bajo «Sigue leyendo»), así que su header ## ya existe y no hay que recrearlo — pero si en otro escenario la sección de la tarea revertida no tuviera ningún header en tareas.md, el skill debe recrearlo en su posición de orden estable (General primero, luego lo compartido, luego las áreas concretas) antes de insertar la fila. En este caso: la fila vuelve a Componentes con su comentario íntegro, se quita del mensual, y se resta 1 del contador de archivadas de Componentes en tareas/secciones.md sin tocar el total acumulado.",
+      "files": [
+        "evals/fixtures/con-historial/tareas/tareas.md",
+        "evals/fixtures/con-historial/tareas/secciones.md",
         "evals/fixtures/con-historial/tareas/historial/2026-07.md"
       ]
     },
@@ -232,11 +265,35 @@
       "id": 24,
       "name": "despacho-acotado",
       "prompt": "Anota una tarea: revisar el contraste de los botones.",
-      "expected_output": "Lee el núcleo (SKILL.md) y SOLO references/modo-gestion.md. NO carga modo-auditoria.md, modo-inicio.md, modo-ingesta.md ni archivado.md, que no intervienen en anotar una tarea: cargarlas «por si acaso» es lo que anula el ahorro estructural del núcleo delgado. Propone el enunciado afinado con su sección y espera.",
+      "expected_output": "Lee el núcleo (SKILL.md) y SOLO references/modo-gestion.md. NO carga modo-auditoria.md, modo-inicio.md, modo-ingesta.md, modo-actualizacion.md ni archivado.md, que no intervienen en anotar una tarea: cargarlas «por si acaso» es lo que anula el ahorro estructural del núcleo delgado. Propone el enunciado afinado con su sección y espera.",
       "files": [
         "evals/fixtures/con-historial/tareas/tareas.md",
         "evals/fixtures/con-historial/tareas/revisar.md",
-        "evals/fixtures/con-historial/tareas/auditoria.md"
+        "evals/fixtures/con-historial/tareas/auditoria.md",
+        "evals/fixtures/con-historial/tareas/secciones.md"
+      ]
+    },
+    {
+      "id": 28,
+      "name": "modo-actualizacion-detecta-y-ofrece",
+      "prompt": "¿Qué sigue?",
+      "expected_output": "En el Paso 0, además de responder la consulta, detecta que falta tareas/secciones.md y que la leyenda de estados de tareas.md está en el formato antiguo (una sola línea con '·'). Lo dice en una línea y OFRECE correrlo con modo-actualizacion.md — no lo corrige inline. Si el usuario acepta, lista ambas discrepancias en una tabla corta antes de aplicar nada, propone el ajuste de cada una (crear secciones.md desde los headers ## ya presentes —General y Formularios—, y reescribir la leyenda a lista) y espera confirmación; puede aceptarse todo a la vez o una por una. No reescribe ninguna fila de tarea ni cambia ningún estado. Si el usuario no acepta, responde solo la consulta y no toca nada.",
+      "files": [
+        "evals/fixtures/formato-desactualizado/tareas/tareas.md",
+        "evals/fixtures/formato-desactualizado/tareas/revisar.md",
+        "evals/fixtures/formato-desactualizado/tareas/auditoria.md"
+      ]
+    },
+    {
+      "id": 29,
+      "name": "seccion-nueva-no-limitada-al-catalogo",
+      "prompt": "Anota una tarea: escribir el brief de la campaña de Google Ads del cluster de reconstrucción mamaria. Va en una sección de Marketing que no existe todavía.",
+      "expected_output": "Acepta proponer la sección «Marketing» aunque no esté en tareas/secciones.md ni haya salido del --init original: el catálogo es abierto, no exhaustivo, y no hace falta agotarlo ni justificar la sección nueva contra las ya existentes. Aplica el criterio normal (se gana su sitio con 2-3 tareas previsibles, o va a General) antes de confirmar que amerita sección propia o sugerir que por ahora vaya a General. Si se confirma como sección nueva, añade una entrada al final de tareas/secciones.md (no reemplaza ninguna existente) y crea su header ## en tareas.md, todo tras el visto bueno del usuario.",
+      "files": [
+        "evals/fixtures/con-historial/tareas/tareas.md",
+        "evals/fixtures/con-historial/tareas/revisar.md",
+        "evals/fixtures/con-historial/tareas/auditoria.md",
+        "evals/fixtures/con-historial/tareas/secciones.md"
       ]
     }
   ]

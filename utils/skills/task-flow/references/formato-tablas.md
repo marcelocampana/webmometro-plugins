@@ -21,3 +21,5 @@ Columnas verbatim de las cuatro tablas — **preservarlas exactamente**:
 - **Una tarea abierta lleva `—`** en Completada y Duración.
 - **El archivo no se recalcula solo.** Si se corrige una fecha a mano, la duración y el total de la
   sección quedan desincronizados hasta que se pida rehacerlos.
+- **`secciones.md` no lleva tabla**: es prosa corta por sección — nombre, ámbito y total. Su formato
+  vive en `secciones-catalogo.md`, no aquí.

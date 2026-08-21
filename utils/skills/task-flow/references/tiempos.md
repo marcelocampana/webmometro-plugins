@@ -57,26 +57,29 @@ la ventana entre la marca anterior y ese commit—. Si esa ventana contiene una 
 va con `~`. En Comentarios se resume el mensaje del commit, y se añade que la fila se reconstruyó del
 historial: quien la lea tiene que saber que no se midió en su momento.
 
-## El total va por sección
+## El total vive en `secciones.md`
 
-**No al pie del archivo.** «La página de registro costó 6h 42m» sirve para estimar la siguiente página;
-un total global de horas no sirve para nada.
+**No al pie de `tareas.md`, y no solo ahí.** «La página de registro costó 6h 42m» sirve para estimar
+la siguiente página; un total global de horas no sirve para nada.
 
-Se escribe bajo la tabla de la sección, en negrita:
+Con el archivado inmediato al cerrar, el total vive **siempre** en `tareas/secciones.md`, en la
+entrada de esa sección (`secciones-catalogo.md`), y **se refleja también** bajo la tabla de
+`tareas.md` mientras la sección tenga alguna fila activa ahí:
 
 ```markdown
-**Cerradas en esta sección: 10h 21m**
+**Cerradas en esta sección: 10h 21m** · 3 archivadas
 ```
 
-Una sección sin tareas cerradas no lleva línea de total.
+Una sección sin tareas cerradas todavía no lleva esa línea. Cuando la sección se vacía y su header
+sale de `tareas.md`, el total **no se pierde**: sigue en `secciones.md`, que es la única de las dos
+copias garantizada a persistir.
 
-**El total incluye lo archivado.** Cuando una fila se muda al historial, el total de su sección **no se
-recalcula a la baja**: sigue contando su duración, y junto al total va el puntero al mes
-(`· 3 archivadas en historial/2026-07.md`). Si se recalculara sin las archivadas, se perdería justo lo
-que sirve para estimar la siguiente área.
+**El total incluye siempre lo archivado.** Nunca se recalcula a la baja: archivar una fila no resta
+del total acumulado, solo la mueve de `tareas.md` al historial. Si se recalculara sin las archivadas,
+se perdería justo lo que sirve para estimar la siguiente área.
 
 **El archivo no se recalcula solo.** La duración se calcula al cerrar; si después se corrige una fecha
-a mano, esa duración y el total de la sección quedan desincronizados hasta que se pida rehacerlos.
+a mano, esa duración y el total en `secciones.md` quedan desincronizados hasta que se pida rehacerlos.
 
 ## Comentarios es para el trabajo, no para la medición
 

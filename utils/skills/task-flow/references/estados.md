@@ -10,7 +10,7 @@ cerrado.
 | `🔵 En curso` | Es la tarea que se está trabajando. **Lleva punto azul**: es la única fila activa, y el punto la encuentra sin leer. | Se crea la rama y se anota el Inicio. | Se cierra → `✅ Completada`, o se interrumpe → `Pausada` / `Bloqueada`. | Sí, y **es la única que puede estarlo**: una tarea a la vez. |
 | `Pausada` | Empezada y detenida **por tiempo**. Se puede retomar cuando haya rato. | El usuario para sin cerrarla. | Se retoma → `🔵 En curso`, o se cierra → `✅ Completada`. | Sí; conviene una Nota de dónde quedó el trabajo, pero no es obligatoria. |
 | `Bloqueada` | Detenida **por una dependencia**: falta una validación, un dato, una decisión u otra tarea. No avanza aunque haya tiempo. | Se descubre lo que falta. | Se resuelve la dependencia → `🔵 En curso` o `Pendiente`. | Sí, con Nota de **qué falta para desbloquear** — sin eso la fila no informa. |
-| `✅ Completada` | Cerrada: commit hecho y fila rellena. **Es el único estado con tick**, para que el historial se distinga de lo abierto de un vistazo. | Las tres confirmaciones de cierre. | Nunca. Es terminal. | No: su fila se borra de `## Ahora` al cerrar. |
+| `✅ Completada` | Cerrada: commit hecho y fila rellena. **Es el único estado con tick**, para que el historial se distinga de lo abierto de un vistazo. | La confirmación de cierre. | Nunca. Es terminal. | No: su fila se borra de `## Ahora` al cerrar. |
 
 ## Lo que hay que saber, aparte de la tabla
 
@@ -31,8 +31,9 @@ cerrado.
 - **El estado se cambia en los dos sitios**, en la fila de `## Ahora` y en la de la sección de su
   área. La tarea existe duplicada mientras está priorizada, y actualizar solo una deja el archivo
   mintiendo.
-- **Solo `Completada` mueve la fila de sitio** (baja al final de su sección). Los cuatro estados
-  abiertos la dejan donde está, arriba.
+- **Solo `Completada` mueve la fila de sitio**: la saca de `tareas.md` hacia el historial mensual, en
+  el mismo cierre (`archivado.md`). Los cuatro estados abiertos la dejan donde está, arriba, dentro
+  de su sección.
 - **Dos estados llevan icono, y solo dos: `🔵 En curso` y `✅ Completada`.** Son los dos extremos que
   se buscan de un vistazo — qué se está trabajando ahora, y qué ya es historial. `Pendiente`,
   `Pausada` y `Bloqueada` van sin icono a propósito: si todas las filas lo llevaran, el icono dejaría
@@ -47,3 +48,10 @@ En una celda de tabla, un `- [x]` de Markdown **no** se renderiza como casilla �
 en casillas los ítems de lista—, así que una tabla de tareas no puede usar checkboxes. Y un icono a
 secas depende de cómo renderice cada visor y no se encuentra con `grep`. De ahí que el estado sea
 texto, en su propia columna, con icono solo en los dos extremos.
+
+## El formato de la leyenda al pie de `tareas.md`
+
+La leyenda es una **lista, un estado por línea**, nunca una sola línea con "·" como separador: un
+salto de línea simple dentro de un párrafo Markdown no siempre se renderiza como salto visual, y una
+lista sí lo garantiza en cualquier visor, incluido Obsidian. El esqueleto
+(`assets/tareas.esqueleto.md`) trae el formato exacto; no se abrevia de vuelta a una sola línea.

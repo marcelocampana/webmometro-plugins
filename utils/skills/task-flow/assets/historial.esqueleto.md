@@ -20,9 +20,16 @@ Con un rango `sed` hasta el siguiente `###` el último comentario se desborda a 
 
 ## Tareas archivadas
 
-<!-- Agrupadas por sección de origen, de la menos a la más antigua. -->
+<!-- Un ### por sección de origen, con el mismo nombre que en tareas.md — solo las secciones que
+     tengan alguna fila archivada este mes. De la más reciente en cerrar algo a la más antigua.
+     Bajo cada ### va su tabla, mismas columnas que en tareas.md. Ejemplo con dos secciones: -->
 
-### {{Sección de origen}}
+### {{Sección de origen A}}
+
+| Estado | Tarea | Inicio | Completada | Duración | Comentarios |
+| --- | --- | --- | --- | --- | --- |
+
+### {{Sección de origen B}}
 
 | Estado | Tarea | Inicio | Completada | Duración | Comentarios |
 | --- | --- | --- | --- | --- | --- |
