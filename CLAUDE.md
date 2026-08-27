@@ -163,36 +163,35 @@ When a data source is missing, SEO skills degrade explicitly rather than fail.
 4. Bump `version` in **both** the plugin's `plugin.json` and its `marketplace.json` entry
    together.
 
-## How work advances: `tareas/`
+## Cómo avanzamos: `tareas/`
 
-Work is tracked in four files under `tareas/`, managed by the `task-flow` skill (plugin `utils`):
+El trabajo se organiza en cuatro piezas dentro de `tareas/`, gobernadas por el skill `task-flow`
+(plugin `utils`):
 
-- **`tareas.md`** — the real queue, always clean: `## Ahora` plus only the sections with active work
-  the user confirmed. The `## Ahora` table **is** the priority order, and **the user sets it**; its
-  rows are pointers to a task that lives in its area's section. Completed work is archived on close,
-  it does not live here.
-- **`revisar.md`** — inbox for what shows up in passing or is worth looking at later. Nothing here is
-  prioritized.
-- **`auditoria.md`** — findings from a full review by areas, on explicit request.
-- **`secciones.md`** — the section catalog (name and scope), no task tables; it persists even when a
-  section has no active work. It is an open catalog, not a closed list of what may exist.
+- **`tareas.md`** — la cola real, siempre limpia: `## Ahora` más solo las secciones con trabajo
+  activo confirmado por el usuario. Su tabla `## Ahora` es la prioridad, **y la determina el
+  usuario**; sus filas son punteros a la tarea, que vive en la sección de su área. Lo completado se
+  archiva al cerrar, no vive aquí.
+- **`revisar.md`** — bandeja de lo que aparece de paso o se quiere mirar más adelante. Nada de aquí
+  está priorizado.
+- **`auditoria.md`** — hallazgos de una revisión completa por áreas, bajo petición.
+- **`secciones.md`** — catálogo de secciones (nombre y ámbito), sin tablas de tareas; persiste aunque
+  una sección se quede sin trabajo activo. Es un catálogo abierto, no la lista cerrada de lo que
+  puede existir.
 
-Three non-negotiable rules:
+Tres reglas irrenunciables:
 
-1. **The next task is the first row in `## Ahora` that is not `Bloqueada`** — not "the first pending
-   one reading top to bottom".
-2. **One task, one branch, one commit.** Check that `main` is clean and up to date, then branch from
-   there; **never work on `main`**.
-3. **Finish that task and stop.** Closing asks once whether it is done; with that go-ahead the row
-   close, the commit and the merge to `main` run as one chain without pauses — unless `main` is
-   dirty/stale, the merge conflicts, or unrelated changes appear, where it stops and asks. Suggesting
-   the next task is fine, starting it is not.
+1. **La siguiente tarea es la primera fila de `## Ahora` que no esté `Bloqueada`** — no «la primera
+   pendiente leyendo de arriba abajo».
+2. **Una tarea, una rama, un commit.** Se comprueba que `main` está limpia y actualizada y se
+   ramifica desde ahí; **nunca se trabaja sobre `main`**.
+3. **Se completa esa tarea y se para.** Al cerrar se pregunta una sola vez si queda terminada; con el
+   visto bueno se encadenan el cierre de la fila, el commit y el merge a `main` sin pausas —salvo que
+   `main` esté sucia/desactualizada, el merge tenga conflictos, o aparezcan cambios sin relación con
+   la tarea, ahí sí se detiene y pregunta—. Sugerir la siguiente sí, empezarla no.
 
-Nothing enters any list without approval, and the assistant does not write to `tareas.md` on its own
-initiative — that is what the other two lists are for.
-
-State names, section names and file names stay in Spanish exactly as written: the flow greps for
-them, so translating them breaks it.
+Nada entra a ninguna lista sin visto bueno, y la IA no escribe en `tareas.md` por iniciativa propia:
+para eso están las otras dos.
 
 ## Git
 
