@@ -14,7 +14,7 @@ description: >
   pidió nada de tareas, no lo actives ni lo propongas.
 argument-hint: "[--init | --revisar | --auditoria | --ingerir | --actualizar]"
 metadata:
-  version: 1.3.0
+  version: 1.4.0
 ---
 
 # Gestión de tareas por rama (task-flow)
@@ -151,8 +151,10 @@ merge, o cambios ajenos a la tarea; fuera de eso, no hay una segunda ni tercera 
 9. **El texto no se pierde, se mueve**: al archivar, la fila y su comentario íntegro van al mensual;
    en `tareas.md` no queda rastro por fila, y el total acumulado de la sección se lee en
    `secciones.md`.
-10. **Del historial se lee la sección del ancla, nunca el archivo entero** (`archivado.md`).
-11. **Se lee la referencia del modo invocado y ninguna más.**
+10. **Si la tarea aprueba o publica contenido, su `estado:` se actualiza en el archivo fuente**,
+    dentro de la misma cadena de cierre y sin pregunta aparte (`archivado.md`).
+11. **Del historial se lee la sección del ancla, nunca el archivo entero** (`archivado.md`).
+12. **Se lee la referencia del modo invocado y ninguna más.**
 
 ## Manejo de errores del Paso 0
 

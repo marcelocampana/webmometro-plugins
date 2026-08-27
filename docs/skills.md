@@ -86,3 +86,8 @@ Utilidades transversales de organización del trabajo.
   `tareas/`: cola de tareas con flujo "una tarea, una rama, un commit",
   bandeja de revisión y auditoría por áreas. Solo se activa si el proyecto
   ya tiene esa estructura o si el usuario pide montarla.
+- **content-sync-check** — Verifica que el contenido aprobado del cliente
+  coincida en todos sus destinos (el repo del sitio, el proyecto de Claude
+  Design y su espejo local) y repara las diferencias con confirmación pieza
+  por pieza. La fuente del workspace manda: las correcciones se hacen ahí
+  primero y los destinos se alimentan de ella.
