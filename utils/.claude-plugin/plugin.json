@@ -1,7 +1,7 @@
 {
   "name": "utils",
   "displayName": "Utils",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Skills personales de utilidad general para Webmometro. Incluye el registro de actividad cross-cuenta (Claude Activity Log), el asistente de gestión de tareas por rama con catálogo de secciones, cierre en cadena, archivado inmediato al cerrar e ingesta desde conversación o archivos (Task Flow), la verificación y reparación de contenido entre la fuente del cliente, el repo del sitio y Claude Design (Content Sync Check) y, a futuro, otras herramientas de productividad y mantenimiento del entorno de trabajo.",
   "author": {
     "name": "Webmometro"
