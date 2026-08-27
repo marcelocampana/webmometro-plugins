@@ -28,6 +28,7 @@ user-facing output (skills instruct their output language explicitly):
 <plugin>/agents/<name>.md           ← optional autonomous subagents (brand-voice-pro only)
 <plugin>/commands/<name>.md         ← optional slash-command entry points (brand-voice-pro only)
 <plugin>/settings/*.local.md.example← optional per-project config template the user copies into .claude/
+tareas/                             ← this repo's own task queue, managed by the `task-flow` skill
 ```
 
 Two invariants tie the manifests together — **always keep them in sync**:
@@ -161,6 +162,37 @@ When a data source is missing, SEO skills degrade explicitly rather than fail.
    no `agents/`, `commands/`, or `.mcp.json` — skills auto-activate via their `description`.
 4. Bump `version` in **both** the plugin's `plugin.json` and its `marketplace.json` entry
    together.
+
+## How work advances: `tareas/`
+
+Work is tracked in four files under `tareas/`, managed by the `task-flow` skill (plugin `utils`):
+
+- **`tareas.md`** — the real queue, always clean: `## Ahora` plus only the sections with active work
+  the user confirmed. The `## Ahora` table **is** the priority order, and **the user sets it**; its
+  rows are pointers to a task that lives in its area's section. Completed work is archived on close,
+  it does not live here.
+- **`revisar.md`** — inbox for what shows up in passing or is worth looking at later. Nothing here is
+  prioritized.
+- **`auditoria.md`** — findings from a full review by areas, on explicit request.
+- **`secciones.md`** — the section catalog (name and scope), no task tables; it persists even when a
+  section has no active work. It is an open catalog, not a closed list of what may exist.
+
+Three non-negotiable rules:
+
+1. **The next task is the first row in `## Ahora` that is not `Bloqueada`** — not "the first pending
+   one reading top to bottom".
+2. **One task, one branch, one commit.** Check that `main` is clean and up to date, then branch from
+   there; **never work on `main`**.
+3. **Finish that task and stop.** Closing asks once whether it is done; with that go-ahead the row
+   close, the commit and the merge to `main` run as one chain without pauses — unless `main` is
+   dirty/stale, the merge conflicts, or unrelated changes appear, where it stops and asks. Suggesting
+   the next task is fine, starting it is not.
+
+Nothing enters any list without approval, and the assistant does not write to `tareas.md` on its own
+initiative — that is what the other two lists are for.
+
+State names, section names and file names stay in Spanish exactly as written: the flow greps for
+them, so translating them breaks it.
 
 ## Git
 
