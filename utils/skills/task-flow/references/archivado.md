@@ -40,6 +40,29 @@ mismo movimiento: no hay secciones vacías ni con solo `Completada` dentro del a
 Di en una línea que la tarea quedó archivada en el mensual y **muestra el resumen del comentario**
 para que el usuario lo corrija si hace falta.
 
+## Si la tarea aprueba o publica contenido
+
+Cuando lo que cierra la tarea es la **aprobación o publicación de una pieza de contenido** —un
+artículo, una página—, su archivo fuente lleva un `estado:` en el frontmatter que hay que mover en
+el mismo cierre: `borrador` → `en-revision` → `aprobado` → `publicado`. Si no se actualiza ahí, el
+archivo queda mintiendo sobre su propio estado y cualquier verificación posterior parte de un dato
+falso (`content-sync-check` solo compara lo aprobado).
+
+**Va dentro de la cadena de cierre, no como paso aparte**: sin una segunda pregunta, igual que el
+archivado. Dos movimientos:
+
+1. **Actualiza `estado:`** al valor que corresponda y **`fecha_aprobacion:`** con la fecha del
+   cierre (de `date '+%Y-%m-%d'`, nunca inventada). Si el archivo no tiene esos campos, añádelos.
+2. **Dilo en la misma línea de cierre**: qué archivo y a qué estado pasó.
+
+**Es condicional y no se fuerza.** Una tarea de código, de configuración o de análisis no toca
+ningún `estado:`. Si no está claro qué pieza aprueba la tarea —o si toca varias—, **pregunta cuáles
+antes de escribir**: es la única excepción que añade una pregunta, y solo cuando la respuesta no
+está en la tarea.
+
+La fuente es el archivo del workspace de contenido (`web/contenido/**`), **nunca la copia del repo
+del sitio ni la del proyecto de diseño**: esas son destinos y se alimentan de la fuente.
+
 ## El umbral
 
 Red de seguridad, no mecanismo principal —de eso se encarga el archivado al cerrar—. Se anota al

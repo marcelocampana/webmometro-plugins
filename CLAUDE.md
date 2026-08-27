@@ -15,7 +15,7 @@ user-facing output (skills instruct their output language explicitly):
 - **brand-voice-pro** — full-stack plugin: skills + agents + commands + MCP servers.
 - **design-system** — skills-only: design-system audit/docs + social carousel generation.
 - **seo-suite** — skills-only: a 10-skill SEO suite (snapshots → audit/CRO/audience/AI-search, plus content clusters, landing blueprints and change tracking).
-- **utils** — skills-only: general-purpose personal utilities (cross-account activity log via `claude-activity-log`; branch-per-task management assistant via `task-flow`, whose SKILL.md is a deliberately thin core that dispatches to one per-mode reference — keep it under ~2.4k tokens and each reference under ~1.2k).
+- **utils** — skills-only: general-purpose personal utilities (cross-account activity log via `claude-activity-log`; branch-per-task management assistant via `task-flow`; content sync verification and repair across publishing destinations via `content-sync-check`). `task-flow` and `content-sync-check` both use a deliberately thin SKILL.md core that dispatches to one per-mode reference — keep the core under ~2.4k tokens and each reference under ~1.7k.
 
 ## Layout & manifest hierarchy
 
@@ -65,7 +65,9 @@ directory until they find `contexto/` (they operate in the *active project*, not
     marca/                         voz de marca, guidelines         (produce: brand-voice-pro)
     audiencia-canales.md           demanda y channel-fit            (produce: audience-demand)
     plantilla-landing.md           esqueleto de slots de landing    (produce: landing-blueprint)
-    configuracion.md               IDs GA4/GSC/Clarity/DataForSEO + URLs
+    configuracion.md               IDs GA4/GSC/Clarity/DataForSEO + URLs, y los destinos de
+                                     publicación: repo del sitio, proyecto de Claude Design y
+                                     mapeo de páginas (lee/escribe: content-sync-check)
     antecedentes/                  informes previos del equipo (solo lectura; input cualitativo)
     seo-tracking/                  cambios SEO — continuo, sin período (produce: seo-change-tracker;
                                      leen: skills SEO + brand-voice-pro)
@@ -85,6 +87,12 @@ Reglas clave para editar skills:
   un legado `context/…`, o un `reportes/contexto/{mes}/…`), resolver por rol y ofrecer migrar; no
   asumir un nombre alterno fijo.
 - **`contexto/` es vivo** (no versionado); datos e informes se versionan por período `YYYY-MM`.
+- **La fuente de contenido manda sobre sus destinos.** Lo aprobado vive en `web/contenido/` y se
+  copia a destinos externos al workspace (el repo del sitio, un proyecto de Claude Design, un
+  espejo local de diseños). Esos destinos **se alimentan de la fuente y nunca la sustituyen**: una
+  corrección se hace primero en `web/contenido/` y desde ahí se propaga. `content-sync-check`
+  verifica esa coincidencia y repara con confirmación; las rutas de cada destino viven en
+  `contexto/configuracion.md`, no dentro del skill.
 
 Flujo de la suite SEO:
 
