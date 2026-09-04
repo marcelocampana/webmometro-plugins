@@ -15,22 +15,21 @@ description: >
   ni para sincronizar código que no sea contenido editorial.
 argument-hint: "[--init | --reparar | <página>]"
 metadata:
-  version: 1.0.0
+  version: 1.1.0
 ---
 
 # Verificación de contenido entre destinos (content-sync-check)
 
-El contenido aprobado vive una vez en el workspace del cliente y se copia a varios destinos: el
-repo del sitio, el proyecto de diseño y su espejo local. **Cada copia puede quedarse atrás sin que
-nada lo señale**, y en contenido médico o regulado eso no es un detalle de forma. Este skill compara
-la fuente contra sus destinos, dice qué difiere, y —con confirmación pieza por pieza— lo repara.
+El contenido aprobado vive una vez en el workspace y se copia a varios destinos: el repo del sitio,
+el proyecto de diseño y su espejo local. **Cada copia puede quedarse atrás sin que nada lo señale**,
+y en contenido médico eso no es un detalle de forma. Este skill compara la fuente contra sus
+destinos, dice qué difiere, y —con confirmación pieza por pieza— lo repara.
 
 **La regla que gobierna todo: la fuente manda.** Las correcciones se hacen primero en el archivo
-fuente del workspace; los destinos se alimentan de ella. Un cambio hecho solo en un destino es un
-hallazgo que hay que resolver, nunca una verdad que se propague sola.
+fuente; los destinos se alimentan de ella. Un cambio hecho solo en un destino es un hallazgo que
+resolver, nunca una verdad que se propague sola.
 
-**Este archivo es el núcleo: solo lo que toda operación necesita.** El detalle de cada modo vive
-en `references/` y se lee **uno**, el del modo invocado.
+**Este archivo es el núcleo.** El detalle de cada modo vive en `references/`.
 
 ## Qué leer según lo que se pida
 
@@ -42,10 +41,11 @@ en `references/` y se lee **uno**, el del modo invocado.
 | pregunta cómo se compara un campo concreto, o qué se ignora | `references/comparacion.md` |
 | necesita sacar el texto de una página de diseño (`.dc.html`) | `references/extraccion.md` |
 | compara escritorio contra móvil, o pregunta si una omisión importa | `references/dispositivos.md` |
+| va a comparar, o el script devuelve algo que no sabe leer | `references/comparador.md` |
+| pregunta si lo que se publicará es lo que validó el equipo médico, o hay que sellar una validación | `references/validacion.md` |
 | encuentra que **varios lados divergen a la vez**, o pregunta cuál gobierna | `references/reconciliacion.md` |
 
-**Se lee la referencia del modo invocado y ninguna más.** Cargarlas «por si acaso» infla el
-contexto sin necesidad: el núcleo pesa ~2.400 tokens y cada referencia suma otros ~1.000-1.400.
+**Se lee la referencia del modo invocado y ninguna más.**
 
 ## Paso 0 · Precondición (siempre, antes de todo)
 
@@ -78,15 +78,15 @@ web/contenido/**            ← FUENTE: lo aprobado, lo único que se edita a ma
 
 ## Qué se compara y qué no
 
-**Solo se verifica lo aprobado**: una pieza entra si su frontmatter dice `estado: aprobado` o
-`publicado`. Un borrador que no coincide con el sitio no es un hallazgo, es un borrador. Ese campo
+**Solo se verifica lo aprobado**: una pieza entra si su frontmatter dice `estado: aprobado`,
+`validado` o `publicado`. **`validado` es distinto de `aprobado`**: hay una copia congelada de lo
+que revisó el equipo médico y un hash, y contra ella el diff manda sin excepción (`validacion.md`). Un borrador que no coincide con el sitio no es un hallazgo, es un borrador. Ese campo
 lo mantiene `task-flow` al cerrar la tarea que aprueba la pieza.
 
-**Ante la duda, se reporta.** Solo se descarta lo que se puede identificar con certeza —un campo de
-proceso con nombre conocido, una diferencia tipográfica, andamiaje de interfaz—, **nunca por parecer
-poco importante**. El coste es asimétrico: un aviso de más cuesta una línea; uno de menos puede
-dejar sin ver una cifra o una advertencia clínica. Y se clasifica **por lo que dice el texto, no
-por el bloque donde vive**: un testimonio puede contener la única mención de un efecto adverso.
+**Ante la duda, se reporta.** Solo se descarta lo identificable con certeza —un campo de proceso
+con nombre conocido, una diferencia tipográfica, andamiaje—, nunca por parecer poco importante: un
+aviso de más cuesta una línea, uno de menos puede dejar sin ver una cifra. Y se clasifica **por lo
+que dice el texto, no por el bloque donde vive**.
 
 **Lo que nunca es un hallazgo** (lista cerrada en `comparacion.md`): la metadata de proceso
 editorial que no viaja al sitio (`origen_spoke`, `keyword_objetivo`, `voz`, notas internas), las
@@ -96,10 +96,8 @@ que no existe.
 **Lo que siempre es un hallazgo**: un campo presente en la fuente y ausente en el destino, un texto
 que difiere, y un destino modificado después de la fecha de aprobación de la fuente.
 
-**Dos cosas parecen hallazgo y hay que descartar antes de reportar**: texto que solo **cambió de
-bloque** —búscalo en el resto del destino antes de darlo por ausente (`comparacion.md`)— y
-diferencias entre **escritorio y móvil**, donde condensar es diseño, no desincronización, salvo que
-lo omitido cambie lo que alguien entiende o decide (`dispositivos.md`).
+**Dos cosas parecen hallazgo y no lo son**: texto que solo cambió de bloque (`comparacion.md`) y
+diferencias entre escritorio y móvil, donde condensar es diseño (`dispositivos.md`).
 
 ## Las tres direcciones, y la que no existe
 
@@ -111,7 +109,7 @@ lo omitido cambie lo que alguien entiende o decide (`dispositivos.md`).
 | **sitio → fuente** | **Se editó el sitio directamente** | **No.** Se reporta y se pide decisión |
 
 La cuarta no se propaga a propósito: aceptar el sitio como origen consagraría la práctica que este
-skill existe para corregir. Se informa, se explica el riesgo y decide el usuario.
+skill corrige. Se informa y decide el usuario.
 
 ## Reglas invariantes
 
@@ -138,10 +136,20 @@ skill existe para corregir. Se informa, se explica el riesgo y decide el usuario
 | No hay `## Destinos de publicación` | `modo-inicio.md` si el usuario pidió algo; si no, dilo en una línea. |
 | La ruta del repo del sitio no existe | Dilo, ofrece corregirla en `configuracion.md`, y sigue con los demás destinos. |
 | Falta el `project_id` de Claude Design | Sigue sin ese destino y anótalo como pendiente en el reporte. |
-| `get_project` falla (sin acceso, id inválido) | Dilo en una línea con el id probado; no reintentes en bucle. Si es de permisos, el acceso de agentes se concede una vez desde el cliente (`/design-consent`) — lo hace el usuario, no tú. |
+| `get_project` falla (sin acceso, id inválido) | Dilo en una línea con el id probado; no reintentes en bucle. Si es de permisos, `modo-inicio.md`. |
 | Una pieza sin `estado:` | No la verifiques; ofrece añadírselo (lo pone `task-flow` al aprobar). |
 
 Los errores propios de cada modo están en su referencia.
+
+## Recursos
+
+- `scripts/comparar_contenido.py` — diff determinista palabra por palabra entre dos archivos
+  (`.md` fuente, `.md` de Nuxt, `.dc.html`). Salida JSON. Uso: `references/comparador.md`.
+- `scripts/sellar_validacion.py` — sella y verifica la versión que validó el equipo médico.
+  Uso: `references/validacion.md`.
+
+Si un script no corre, dilo y compara leyendo (`comparacion.md`). Nunca des por coincidente lo que
+no se pudo procesar.
 
 ## Idioma
 

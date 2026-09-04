@@ -68,8 +68,8 @@
       "name": "utils",
       "displayName": "Utils",
       "source": "./utils",
-      "description": "Skills personales de utilidad general: registro de actividad cross-cuenta (Claude Activity Log), asistente de gestión de tareas por rama con catálogo de secciones, cierre en cadena y archivado inmediato al cerrar (Task Flow), verificación y reparación de contenido entre la fuente del cliente, el repo del sitio y Claude Design (Content Sync Check) y, a futuro, otras herramientas de productividad y mantenimiento del entorno de trabajo",
-      "version": "1.5.0",
+      "description": "Skills personales de utilidad general: registro de actividad cross-cuenta (Claude Activity Log), asistente de gestión de tareas por rama con catálogo de secciones, cierre en cadena y archivado inmediato al cerrar (Task Flow), y verificación determinista de contenido entre la fuente del cliente, el repo del sitio y Claude Design, con ancla de validación para garantizar que lo publicado sea idéntico a lo que revisó el equipo médico (Content Sync Check)",
+      "version": "1.6.0",
       "keywords": [
         "utils",
         "productividad",
@@ -88,7 +88,10 @@
         "contenido",
         "nuxt",
         "claude-design",
-        "fuente-de-verdad"
+        "fuente-de-verdad",
+        "validacion",
+        "diff",
+        "hash"
       ]
     }
   ]

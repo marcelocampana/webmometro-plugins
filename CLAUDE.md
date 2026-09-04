@@ -25,6 +25,7 @@ user-facing output (skills instruct their output language explicitly):
 <plugin>/.mcp.json                  ← optional; only when the plugin needs MCP servers (brand-voice-pro only)
 <plugin>/skills/<skill>/SKILL.md    ← the core unit; frontmatter drives auto-activation
 <plugin>/skills/<skill>/references/ ← supporting docs a skill reads on demand
+<plugin>/skills/<skill>/scripts/    ← executable helpers (stdlib-only, invoked from SKILL.md)
 <plugin>/agents/<name>.md           ← optional autonomous subagents (brand-voice-pro only)
 <plugin>/commands/<name>.md         ← optional slash-command entry points (brand-voice-pro only)
 <plugin>/settings/*.local.md.example← optional per-project config template the user copies into .claude/

@@ -19,7 +19,7 @@ otro lugar de la misma variante, no falta.
 
 ## El método
 
-1. **Extrae el texto de las dos variantes** (`extraccion.md`) y normaliza: sin tildes, sin
+1. **Extrae el texto de las dos variantes** (`extraccion.md`) y normaliza **con la difusa** (la de emparejar, nunca la de verificar — `comparador.md`): sin tildes, sin
    mayúsculas, sin puntuación.
 2. **Descarta la segmentación**: no compares frases completas, sino tiradas de ~8-10 palabras. Una
    frase partida en dos en móvil no es texto ausente.

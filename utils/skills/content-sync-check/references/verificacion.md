@@ -6,7 +6,7 @@ si el usuario lo pide.
 
 ## Qué entra al chequeo
 
-Las piezas cuyo frontmatter diga `estado: aprobado` o `estado: publicado`. Un borrador que no
+Las piezas cuyo frontmatter diga `estado: aprobado`, `validado` o `publicado`. Un borrador que no
 coincide con el sitio **no es un hallazgo**. Si el usuario nombra una página concreta, verifícala
 aunque esté en borrador — diciéndolo.
 

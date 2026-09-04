@@ -72,6 +72,9 @@ menciónalo si cambia el orden visible en la página.
 
 ## Comparar prosa
 
+El diff mecánico lo hace `comparar_contenido.py` (`comparador.md`); estas reglas dicen qué hallazgo
+merece reportarse.
+
 Por bloques: encabezados, párrafos, elementos de lista. Empareja los bloques por su encabezado más
 cercano, no por posición, para que un bloque insertado no desplace todo lo demás y genere un
 reporte de diferencias falso.
@@ -109,8 +112,9 @@ contenido está completo y aprobado — cambió de sitio.
 Leído campo a campo produce **dos hallazgos falsos**: «falta en `hero`» y «sobra en `intro`». Y si
 se repara el primero sin ver el segundo, **el párrafo queda duplicado**.
 
-**Antes de declarar que un texto falta, búscalo en toda la página, no solo en su bloque.** Compara
-normalizado (sin tildes, mayúsculas ni puntuación); basta que coincida una tirada de ~8-10
+**Antes de declarar que un texto falta, búscalo en toda la página, no solo en su bloque.** Compara con la
+normalización **difusa** —sin tildes, mayúsculas ni puntuación; la de emparejar, no la de
+verificar (`comparador.md`)—; basta que coincida una tirada de ~8-10
 palabras, porque el reencuadre suele reescribir el principio o el final, no el medio.
 
 | Lo que encuentras | Qué es | Cómo reportarlo |

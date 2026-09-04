@@ -123,3 +123,11 @@ escribir, **menciónalo**: el usuario querrá reexportar.
 | El campo a añadir no existe en el esquema del sitio | No lo escribas: rompería la validación. Dilo y ofrece añadirlo al esquema como tarea aparte. |
 | El usuario aprueba «todo» de una vez | Confirma el alcance en una línea (cuántas piezas, qué destinos) y ve pieza por pieza igualmente. |
 | Tras escribir, el texto aparece dos veces en la página | Era una reubicación, no una ausencia. Dilo, revierte lo añadido y repórtalo como reubicación. |
+
+## Dos cosas antes de reparar
+
+**Si un texto aparece en `reubicaciones`, no lo repares como ausencia**: está en el destino, en otro
+bloque, y repararlo lo duplicaría.
+
+**Corregir la fuente de una pieza `validado` invalida la validación.** Dilo y ofrece resellar
+(`validacion.md`).

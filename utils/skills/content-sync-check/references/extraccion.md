@@ -73,3 +73,13 @@ coincidente.
 
 **La síntesis no se delega**: reunir, aplicar el umbral de ruido y decidir qué merece la atención
 del usuario se hace en el hilo principal.
+
+## Con el script
+
+`comparar_contenido.py --formato-destino dc-html` hace los cuatro pasos por su cuenta y separa
+DESKTOP/MOBILE aunque vivan en el mismo archivo (`--variante desktop|movil`). Extrae también los
+arrays de strings planos (`const types = ['Todos', 'Guías']`), no solo los de objetos.
+
+El método a mano queda para cuando el script no corre, o para entender qué está haciendo. Si un
+`.dc.html` grande devuelve menos de ~20 bloques, el script lo avisa: es extracción fallida, no
+página vacía.

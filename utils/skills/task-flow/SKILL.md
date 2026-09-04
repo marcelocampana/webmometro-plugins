@@ -14,7 +14,7 @@ description: >
   pidió nada de tareas, no lo actives ni lo propongas.
 argument-hint: "[--init | --revisar | --auditoria | --ingerir | --actualizar]"
 metadata:
-  version: 1.5.0
+  version: 1.6.0
 ---
 
 # Gestión de tareas por rama (task-flow)
