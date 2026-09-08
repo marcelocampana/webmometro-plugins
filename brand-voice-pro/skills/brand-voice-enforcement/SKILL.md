@@ -122,6 +122,28 @@ After generating content:
 
 When `always-explain` is true in settings, include brand application notes with every response.
 
+### 6. Separate the Copy from the Reasoning
+
+**When the deliverable is a file** — a page's copy written to disk (landing, treatment page,
+pillar, long article) rather than a reply in chat — the copy goes in **its own file, containing
+only the text that gets built**: headings, body, CTA labels, table and accordion content, FAQ.
+
+Everything that explains the copy goes in a **sibling file** named `decisiones-<slug>.md`:
+per-section contracts, voice rationale, word-count budgets, open questions, blocking checks,
+implementation notes and the change log against a previous version. Link it from the copy's front
+matter with a `decisiones:` key, and link back to the copy from the decisions file.
+
+**Why:** the copy file is read to review the text. A page carries ~1.000–1.500 words of copy and
+the reasoning behind it can run to five times that; merged, every review means wading through
+thousands of words to read one thousand. Keeping them apart costs nothing — the reasoning is
+still written, still complete, still one click away.
+
+**Do not** drop the reasoning to keep the file short: contracts and rationale are what make the
+copy auditable against the guidelines. Move them, never delete them.
+
+Applies to files only. In chat, keep the explanation of Step 5 brief and let the decisions file
+carry the detail.
+
 ## Web Content Module (articles, blog posts, web pages)
 
 Apply this module **only** when Step 1 flagged the request as web content. It adds discovery
