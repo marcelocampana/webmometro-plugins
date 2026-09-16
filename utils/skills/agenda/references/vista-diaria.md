@@ -74,6 +74,9 @@ Hoy · martes 15 · capacidad 4h
 
 - **El enunciado de la tarea, tal cual está en el archivo**, recortado por la derecha si no cabe.
   Nunca reescrito: el usuario tiene que reconocerlo de un vistazo.
+- **El recorte cuenta caracteres, no bytes.** El `substr` de `awk` corta bytes y parte un acento por
+  la mitad —`calibraci` seguido de basura—, justo en un idioma donde casi toda línea larga lleva uno.
+  Se recorta al componer la salida, no dentro del `awk`.
 - **La etiqueta del repo es la del registro**, no la ruta.
 - **`—` donde no hay coste.** No se rellena con un guion largo que parezca un número.
 

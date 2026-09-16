@@ -33,7 +33,7 @@ Los cuatro skills del plugin `utils`: `claude-activity-log`, `content-sync-check
 | Pendiente | Montar la rutina diaria que dispara la agenda | — | — | — | — | — | Fuera del repo: es configuración de la máquina, no código del marketplace. El conector de Monday vive aquí y no en el skill —precedente de `seo-suite`, que declara sus MCP como prerrequisito—. Corre sobre lo commiteado en `main`, así que no ve trabajo sin commitear. |
 | Pendiente | Añadir a `agenda` el modo semanal y la calibración de estimaciones | — | — | — | — | — | Dos errores que **no se corrigen con el mismo número**: esfuerzo (`Coste`→`Duración`, horas de trabajo, mediana de razones sobre duraciones sin `~`) y calendario (`Vence`→`Completada`, días de reloj, que en realidad mide capacidad). La salida útil es el sesgo enunciado, no solo el número corregido. |
 
-**Cerradas en esta sección: ~47m** · 2 archivadas
+**Cerradas en esta sección: ~48m** · 3 archivadas
 
 ---
 
