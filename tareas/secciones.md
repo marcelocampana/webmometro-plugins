@@ -10,7 +10,7 @@ Formato y reglas: skill `task-flow`, `references/secciones-catalogo.md`.
 Documentación raíz (`README.md`, `CLAUDE.md`, `docs/`), configuración y todo lo transversal a los
 cuatro plugins.
 
-**Cerradas: 2m** · 2 archivadas
+**Cerradas: 3m** · 3 archivadas
 
 ---
 

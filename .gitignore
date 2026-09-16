@@ -6,3 +6,6 @@
 # Python bytecode (los scripts de skills se ejecutan con python3; el bytecode es un artefacto local)
 __pycache__/
 *.pyc
+
+# Buzón local: material de paso, no del proyecto
+_buzon/

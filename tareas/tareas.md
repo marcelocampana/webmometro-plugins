@@ -21,7 +21,7 @@ Documentación raíz (`README.md`, `CLAUDE.md`, `docs/`), configuración y todo 
 | Pendiente | Documentar `content-sync-check` en el `README.md` | — | — | — | — | — | El skill existe desde `b223d81` y está en `docs/skills.md`, pero el README no lo menciona. |
 | Pendiente | Decidir el destino del skill `documentar-proceso` | — | — | — | — | — | Solo tiene `DESIGN.md` desde `ac6d7cc`: sin `SKILL.md`, sin entrada en manifests ni en `docs/skills.md`. Implementarlo o retirarlo. |
 
-**Cerradas en esta sección: 2m** · 2 archivadas
+**Cerradas en esta sección: 3m** · 3 archivadas
 
 ---
 
