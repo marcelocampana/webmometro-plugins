@@ -162,7 +162,14 @@ When a data source is missing, SEO skills degrade explicitly rather than fail.
 3. Match the closest existing plugin's shape: skills-only plugins (design-system, seo-suite) have
    no `agents/`, `commands/`, or `.mcp.json` — skills auto-activate via their `description`.
 4. Bump `version` in **both** the plugin's `plugin.json` and its `marketplace.json` entry
-   together.
+   together, **and** bump the `metadata.version` of **every skill whose content you changed**, in
+   the same commit. These are separate version lines, not one number in three files: each skill
+   versions independently of its siblings and of the plugin (`utils` 1.7.1 ships `task-flow` 1.7.1
+   alongside `content-sync-check` 1.1.0 and `claude-activity-log` 1.1.0). So a change touching one
+   skill is two manifest bumps plus one skill bump; a change touching two skills is two plus two.
+   **The trigger is changing content that ships, not editing a manifest** — a pure refactor that
+   extracts a reference out of a `SKILL.md` and never opens a `.json` still needs all of them. Some
+   skills carry no `metadata.version`; those have nothing to bump, and adding one is optional.
 
 ## Cómo avanzamos: `tareas/`
 
