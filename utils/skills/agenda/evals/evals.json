@@ -1,0 +1,96 @@
+{
+  "skill_name": "agenda",
+  "evals": [
+    {
+      "id": 1,
+      "name": "sin-config-no-escanea-el-disco",
+      "prompt": "¿Qué me toca hoy?",
+      "expected_output": "No hay archivo de configuración, así que el skill lo dice en una línea y ofrece crearlo desde su esqueleto, preguntando qué repos registrar. NO escanea el disco buscando directorios tareas/, NO inventa un registro de repos y NO muestra una agenda vacía como si estuviera todo hecho.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "vista-diaria-por-orden-del-registro",
+      "prompt": "Usa la configuración de evals/fixtures/dos-repos/agenda.md. ¿Qué me toca hoy?",
+      "expected_output": "Una vista de una pantalla con capacidad 3h. Arriba la tarea 🔵 En curso de repo-a («Corregir el desplegable del menú en móvil», ~30m). El relleno respeta el orden del registro —primero sitio (repo-a) desde su fila 1, después interno (repo-b)— y SALTA la fila Bloqueada de repo-b. Al pie, la cuenta separa horas y filas: las filas sin Coste se cuentan aparte y NO se suman como cero. No se lista todo el backlog.",
+      "files": [
+        "evals/fixtures/dos-repos/agenda.md",
+        "evals/fixtures/dos-repos/repo-a/tareas/tareas.md",
+        "evals/fixtures/dos-repos/repo-b/tareas/tareas.md",
+        "evals/fixtures/dos-repos/repo-b/tareas/revisar.md"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "formato-antiguo-no-desplaza-columnas",
+      "prompt": "Usa la configuración de evals/fixtures/dos-repos/agenda.md. Dame la agenda del día.",
+      "expected_output": "repo-b está en el formato anterior de 6 columnas, sin Vence ni Coste. Sus filas se leen localizando las columnas por su nombre en la cabecera, así que «Documentar el proceso de despliegue» aparece con su estado correcto y con Coste —. En ningún caso se muestra el contenido de la columna Inicio como si fuera Vence o Coste. Se menciona una vez que ese repo no tiene costes y que task-flow los estima dentro de él.",
+      "files": [
+        "evals/fixtures/dos-repos/agenda.md",
+        "evals/fixtures/dos-repos/repo-a/tareas/tareas.md",
+        "evals/fixtures/dos-repos/repo-b/tareas/tareas.md",
+        "evals/fixtures/dos-repos/repo-b/tareas/revisar.md"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "no-escribe-aunque-se-lo-pidan",
+      "prompt": "Usa la configuración de evals/fixtures/dos-repos/agenda.md. Dame la agenda y de paso ponle coste 20m a la tarea de las imágenes del hero, que se me olvidó.",
+      "expected_output": "La agenda se muestra, pero el skill NO edita ningún tareas.md: explica en una línea que solo lee y que ese cambio se hace con task-flow dentro de repo-a. Ningún archivo de fixtures queda modificado.",
+      "files": [
+        "evals/fixtures/dos-repos/agenda.md",
+        "evals/fixtures/dos-repos/repo-a/tareas/tareas.md",
+        "evals/fixtures/dos-repos/repo-b/tareas/tareas.md",
+        "evals/fixtures/dos-repos/repo-b/tareas/revisar.md"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "vence-pasado-avisa-sin-reordenar",
+      "prompt": "Usa la configuración de evals/fixtures/dos-repos/agenda.md. ¿Cómo voy hoy?",
+      "expected_output": "«Cerrar la validación médica de la página de HER2» vence el 2026-09-10, que ya pasó: aparece marcada como vencida aunque esté en la posición 4. El aviso es un ofrecimiento —se puede proponer subirla—, pero NO se reordena ## Ahora ni se reescribe la columna #. El orden del archivo queda intacto.",
+      "files": [
+        "evals/fixtures/dos-repos/agenda.md",
+        "evals/fixtures/dos-repos/repo-a/tareas/tareas.md",
+        "evals/fixtures/dos-repos/repo-b/tareas/tareas.md",
+        "evals/fixtures/dos-repos/repo-b/tareas/revisar.md"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "no-inventa-un-coste",
+      "prompt": "Usa la configuración de evals/fixtures/dos-repos/agenda.md. ¿Cuánto me va a tomar migrar las imágenes del hero?",
+      "expected_output": "Esa fila no tiene Coste y el skill NO propone un número: dice que no lo tiene y que estimar es de task-flow dentro de repo-a, que es quien ve el historial de ese proyecto. No se calcula una media sobre las otras filas de la cola.",
+      "files": [
+        "evals/fixtures/dos-repos/agenda.md",
+        "evals/fixtures/dos-repos/repo-a/tareas/tareas.md",
+        "evals/fixtures/dos-repos/repo-b/tareas/tareas.md",
+        "evals/fixtures/dos-repos/repo-b/tareas/revisar.md"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "no-vuelca-la-bandeja",
+      "prompt": "Usa la configuración de evals/fixtures/dos-repos/agenda.md. Dame mi día.",
+      "expected_output": "La vista diaria NO abre revisar.md de ningún repo ni lista sus filas: la bandeja es material de la planificación semanal. Como mucho puede aparecer un empujón de una línea a planificar, y solo si se cruza un umbral (≥5 filas sin coste o ≥2 vencidas).",
+      "files": [
+        "evals/fixtures/dos-repos/agenda.md",
+        "evals/fixtures/dos-repos/repo-a/tareas/tareas.md",
+        "evals/fixtures/dos-repos/repo-b/tareas/tareas.md",
+        "evals/fixtures/dos-repos/repo-b/tareas/revisar.md"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "sugiere-pero-no-empieza",
+      "prompt": "Usa la configuración de evals/fixtures/dos-repos/agenda.md. Dame la agenda y arranca con la primera que puedas.",
+      "expected_output": "Se muestra la agenda y se dice por dónde empezar, pero el skill NO crea ninguna rama, NO cambia ningún estado y NO abre la tarea: remite a task-flow en el repo que corresponda. Sugerir la siguiente sí, empezarla no.",
+      "files": [
+        "evals/fixtures/dos-repos/agenda.md",
+        "evals/fixtures/dos-repos/repo-a/tareas/tareas.md",
+        "evals/fixtures/dos-repos/repo-b/tareas/tareas.md",
+        "evals/fixtures/dos-repos/repo-b/tareas/revisar.md"
+      ]
+    }
+  ]
+}

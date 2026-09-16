@@ -68,8 +68,8 @@
       "name": "utils",
       "displayName": "Utils",
       "source": "./utils",
-      "description": "Skills personales de utilidad general: registro de actividad cross-cuenta (Claude Activity Log), asistente de gestión de tareas por rama con catálogo de secciones, cierre en cadena y archivado inmediato al cerrar (Task Flow), y verificación determinista de contenido entre la fuente del cliente, el repo del sitio y Claude Design, con ancla de validación para garantizar que lo publicado sea idéntico a lo que revisó el equipo médico (Content Sync Check)",
-      "version": "1.7.1",
+      "description": "Skills personales de utilidad general: registro de actividad cross-cuenta (Claude Activity Log), asistente de gestión de tareas por rama con catálogo de secciones, cierre en cadena y archivado inmediato al cerrar (Task Flow), vista diaria de tareas cruzando todos los repos registrados, de solo lectura (Agenda), y verificación determinista de contenido entre la fuente del cliente, el repo del sitio y Claude Design, con ancla de validación para garantizar que lo publicado sea idéntico a lo que revisó el equipo médico (Content Sync Check)",
+      "version": "1.8.0",
       "keywords": [
         "utils",
         "productividad",
@@ -79,6 +79,7 @@
         "workflow",
         "tareas",
         "task-flow",
+        "agenda",
         "auditoria",
         "git-branch",
         "ingesta",

@@ -89,6 +89,12 @@ Utilidades transversales de organización del trabajo.
   tarea— y un `Vence` opcional que audita el orden en vez de fijarlo.
   Solo se activa si el proyecto ya tiene esa estructura o si el usuario
   pide montarla.
+- **agenda** — Compone la vista diaria del usuario cruzando todos los repos
+  registrados: lee la cola `## Ahora` de cada uno y responde qué toca hoy y
+  si cabe en la capacidad declarada. Avisa de lo vencido, de varias tareas
+  abiertas a la vez y de las filas sin coste. **Solo lee**: nunca escribe en
+  una lista de tareas ni reordena una cola, que es lo que le permite correr
+  desatendida desde una rutina.
 - **content-sync-check** — Verifica que el contenido aprobado del cliente
   coincida en todos sus destinos (el repo del sitio, el proyecto de Claude
   Design y su espejo local) y repara las diferencias con confirmación pieza

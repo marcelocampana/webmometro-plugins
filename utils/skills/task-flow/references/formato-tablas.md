@@ -49,5 +49,8 @@ Los dos campos de planificación. Van juntos, delante de la zona de medición, p
   convierte a fecha absoluta y se confirma en la misma línea.
 - **Sin muestras suficientes, `Coste` va `—` y se dice.** No se rellena con un número plausible:
   un coste inventado contamina la estimación de todas las tareas que vengan después (`estimacion.md`).
+- **Estas columnas también las lee el skill `agenda`**, que compone la vista diaria cruzando repos.
+  Las localiza por su nombre en la cabecera, así que añadir una no lo rompe; **renombrar `Vence`,
+  `Coste` o `Estado`, sí**. Si cambian aquí, cambia también `agenda/references/contrato-formato.md`.
 - **Al archivar, los dos campos viajan con la fila.** `Coste` queda al lado de `Duración` en el
   mensual, que es lo que permite calibrar sin llevar ningún registro aparte.
