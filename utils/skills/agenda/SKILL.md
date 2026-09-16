@@ -12,7 +12,7 @@ description: >
   y ofrece crearla; no la inventa.
 argument-hint: "[--hoy | --config]"
 metadata:
-  version: 1.0.1
+  version: 1.1.0
 ---
 
 # Agenda diaria cross-repo (agenda)
@@ -81,6 +81,23 @@ y la plantilla de salida.
 
 **Cabe en una pantalla.** Si necesita scroll, está fallando: la agenda no es el backlog, es lo que
 toca hoy. Lo que no entra en la capacidad no se lista, se cuenta.
+
+## Cuando la dispara una rutina
+
+**Nadie está delante.** Una pregunta sin respuesta deja la rutina colgada y el día sin agenda, así
+que corriendo desatendida el skill **no pregunta: informa y termina**. Si falta la configuración, si
+una ruta no existe o si un `tareas.md` no se deja leer, eso *es* la salida de ese día.
+
+No hace falta ninguna salvaguarda más, y ese es el argumento de que sea solo lectura: **lo peor que
+puede pasar en una ejecución desatendida es un informe incompleto**, nunca una cola tocada.
+
+La rutina se monta fuera del repo, como tarea programada del usuario, y su prompt puede pedir más
+cosas —una bandeja externa, un tablero— que **no son asunto de este skill**: él entrega la vista y el
+resto lo compone la rutina. Precedente en este marketplace: `seo-suite` declara sus MCP como
+prerrequisito en vez de traerlos dentro.
+
+**Lee el árbol de trabajo, no lo commiteado.** Una tarea abierta hace un minuto y sin commitear ya
+sale en la agenda de mañana; un repo parado en una rama de tarea muestra el estado de esa rama.
 
 ## Qué leer según lo que se pida
 

@@ -8,8 +8,7 @@ El orden de esta tabla **es** el orden de ejecución: se toma la primera fila qu
 
 | # | Tarea | Sección | Estado | Vence | Coste | Nota |
 | :--: | --- | --- | --- | --- | --- | --- |
-| 1 | Montar la rutina que dispara la agenda | utils | Pendiente | — | — | No toca este repo: es configuración de la máquina. Monday va aquí. |
-| 2 | Añadir a `agenda` el modo semanal y la calibración de estimaciones | utils | Pendiente | — | — | El último, y solo si a esas alturas se echa de menos. |
+| 1 | Añadir a `agenda` el modo semanal y la calibración de estimaciones | utils | Pendiente | — | — | El último, y solo si a esas alturas se echa de menos. |
 
 ---
 
@@ -30,10 +29,9 @@ Los cuatro skills del plugin `utils`: `claude-activity-log`, `content-sync-check
 
 | Estado | Tarea | Vence | Coste | Inicio | Completada | Duración | Comentarios |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Pendiente | Montar la rutina diaria que dispara la agenda | — | — | — | — | — | Fuera del repo: es configuración de la máquina, no código del marketplace. El conector de Monday vive aquí y no en el skill —precedente de `seo-suite`, que declara sus MCP como prerrequisito—. Corre sobre lo commiteado en `main`, así que no ve trabajo sin commitear. |
 | Pendiente | Añadir a `agenda` el modo semanal y la calibración de estimaciones | — | — | — | — | — | Dos errores que **no se corrigen con el mismo número**: esfuerzo (`Coste`→`Duración`, horas de trabajo, mediana de razones sobre duraciones sin `~`) y calendario (`Vence`→`Completada`, días de reloj, que en realidad mide capacidad). La salida útil es el sesgo enunciado, no solo el número corregido. |
 
-**Cerradas en esta sección: ~48m** · 3 archivadas
+**Cerradas en esta sección: ~53m** · 4 archivadas
 
 ---
 
