@@ -3,6 +3,24 @@
 El registro de tiempos sirve para **estimar la próxima área**, no para llevar la cuenta de las horas.
 De ahí las dos reglas que gobiernan todo: se mide contra git, y se descuenta lo que no fue trabajo.
 
+## Dos relojes que no se mezclan
+
+El archivo lleva cuatro campos de tiempo, y son **dos parejas en dos unidades distintas**:
+
+| Pareja | Campos | Unidad | Qué revela la diferencia |
+| --- | --- | --- | --- |
+| **Esfuerzo** | `Coste` → `Duración` | Horas de **trabajo**, con pausas descontadas | Lo bien o mal que se estima |
+| **Calendario** | `Vence` → `Completada` | Días de **reloj de pared** | Cuánto tiempo hubo, no cuánto costó |
+
+**No se corrigen con el mismo número, y confundirlas rompe las dos.** Se puede estimar 5h con
+precisión perfecta y entregar dos días tarde porque solo hubo una hora libre al día: eso es un
+problema de capacidad, no de estimación. Si el sistema responde al retraso inflando los costes, acaba
+con estimaciones pesimistas **y** sigue llegando tarde.
+
+La razón técnica es la misma que justifica el descuento de pausas: `Duración` es deliberadamente
+tiempo de trabajo y no de calendario, así que `Coste` tiene que serlo también para ser comparable — y
+por eso mismo ninguno de los dos es comparable con `Vence`.
+
 ## Las dos marcas
 
 - **Inicio = creación de la rama de la tarea.**
@@ -48,6 +66,11 @@ número que no informa de nada y que además envenena cualquier estimación futu
 de inicio en el reflog: lo más que se puede acotar es la ventana entre la marca anterior y el commit.
 Cuando esa ventana contiene una noche, el inicio es **inferencia, no medición**, y la fila debe
 decirlo.
+
+**El `~` significa cosas distintas en cada columna.** En `Duración` dice que el intervalo no se pudo
+medir entero; en `Coste`, que el número lo propuso el skill y no el usuario. Solo las duraciones
+**sin** `~` sirven para estimar y calibrar: hacerlo contra una estimación es morderse la cola
+(`estimacion.md`).
 
 Los totales que incluyen una cifra estimada llevan `~` también.
 

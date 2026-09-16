@@ -4,18 +4,18 @@
 
 El orden de esta tabla **es** el orden de ejecución: se toma la primera fila que no esté `Bloqueada`, y se para al cerrarla. Sus filas son punteros — la tarea vive en la sección de su área, y aquí solo aparece mientras toca.
 
-| # | Tarea | Sección | Estado | Inicio | Nota |
-| :--: | --- | --- | --- | --- | --- |
-| 1 | Resolver el hardcodeo del tema antes de añadir el segundo cluster | General | Bloqueada | — | Espera el segundo cluster: sin un tema real no hay con qué probar el mapa. |
-| 2 | Alinear el contenido bajo «Sigue leyendo» con el diseño original | Componentes | Pendiente | — | — |
+| # | Tarea | Sección | Estado | Vence | Coste | Nota |
+| :--: | --- | --- | --- | --- | --- | --- |
+| 1 | Resolver el hardcodeo del tema antes de añadir el segundo cluster | General | Bloqueada | — | — | Espera el segundo cluster: sin un tema real no hay con qué probar el mapa. |
+| 2 | Alinear el contenido bajo «Sigue leyendo» con el diseño original | Componentes | Pendiente | — | — | — |
 
 ---
 
 ## General
 
-| Estado | Tarea | Inicio | Completada | Duración | Comentarios |
-| --- | --- | --- | --- | --- | --- |
-| Bloqueada | Resolver el hardcodeo del tema antes de añadir el segundo cluster | — | — | — | Hace falta un mapa `cluster → clase de tema`; hoy la clase está fija en el `<div>` raíz de las dos páginas. |
+| Estado | Tarea | Vence | Coste | Inicio | Completada | Duración | Comentarios |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Bloqueada | Resolver el hardcodeo del tema antes de añadir el segundo cluster | — | — | — | — | — | Hace falta un mapa `cluster → clase de tema`; hoy la clase está fija en el `<div>` raíz de las dos páginas. |
 
 **Cerradas en esta sección: ~1h 50m** · 1 archivada
 
@@ -25,9 +25,9 @@ El orden de esta tabla **es** el orden de ejecución: se toma la primera fila qu
 
 Cambios que viven en los componentes compartidos y por tanto **alcanzan a todas las páginas a la vez**. Una fila aquí evita duplicar la tarea en cada página y contar su intervalo dos veces.
 
-| Estado | Tarea | Inicio | Completada | Duración | Comentarios |
-| --- | --- | --- | --- | --- | --- |
-| Pendiente | Alinear el contenido bajo «Sigue leyendo» con el diseño original | — | — | — | Afecta a dos páginas a la vez: el bloque vive en `RelatedCard`. Contrastar contra los mockups sección por sección. |
+| Estado | Tarea | Vence | Coste | Inicio | Completada | Duración | Comentarios |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Pendiente | Alinear el contenido bajo «Sigue leyendo» con el diseño original | — | — | — | — | — | Afecta a dos páginas a la vez: el bloque vive en `RelatedCard`. Contrastar contra los mockups sección por sección. |
 
 **Cerradas en esta sección: 35m** · 1 archivada
 

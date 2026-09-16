@@ -44,6 +44,7 @@ sesión. El patrón es siempre el mismo:
 | Catálogo de secciones | No existe `tareas/secciones.md` | Se crea desde los headers `##` ya presentes en `tareas.md` (`secciones-catalogo.md`) |
 | Leyenda de estados | El pie de `tareas.md` tiene la leyenda en una sola línea con "·" | Lista `-`, un estado por línea (`estados.md`) |
 | Momento del archivado | Hay filas `✅ Completada` conviviendo dentro de una sección en `tareas.md` | Se archivan de inmediato (`archivado.md`); no hay «filas pendientes de migrar» por antigüedad — el archivado inmediato aplica desde ya a los próximos cierres |
+| Columnas de planificación | Las tablas de sección tienen 6 columnas (sin `Vence` ni `Coste`), o `## Ahora` tiene `Inicio` | Tablas de sección y del mensual a 8 columnas y `## Ahora` a 7, según `formato-tablas.md`. Las filas ya existentes reciben `—` en las dos nuevas; **`## Ahora` pierde su `Inicio`**, que ya estaba duplicado de la fila de la sección. No se reestima nada retroactivamente |
 | Cualquier otra convención de `SKILL.md`/`references/` | Se detecta comparando el archivo contra la referencia dueña de esa convención | Se ajusta al formato que esa referencia documenta |
 
 La última fila sostiene el "patrón general": cuando una futura versión del skill cambie otra

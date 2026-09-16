@@ -11,9 +11,10 @@ ofrécelo en una línea: `archivado.md`.)
    que `main` está desactualizada y decide antes de empezar**: la rama nueva no sale de la rama previa.
 2. Anota el **Inicio** en la fila de su sección y el estado `🔵 En curso`. La hora sale de
    `date '+%Y-%m-%d %H:%M'`, **nunca inventada**.
-3. **Sube su fila a `## Ahora`** con la misma Tarea, Sección, Estado e Inicio, y el `#` que le
-   corresponda por su posición. **Pregunta al usuario en qué posición va** — la prioridad la decide
-   él, y abrir una tarea no dice dónde quiere el resto de la cola.
+3. **Sube su fila a `## Ahora`** con la misma Tarea, Sección, Estado, Vence y Coste, y el `#` que le
+   corresponda por su posición. **El Inicio no se copia**: vive solo en la fila de la sección, que es
+   la fuente de verdad. **Pregunta al usuario en qué posición va** — la prioridad la decide él, y
+   abrir una tarea no dice dónde quiere el resto de la cola.
 
 **Cerrar una tarea** — **una sola confirmación**; con ella se ejecuta la cadena entera sin pausas.
 
@@ -90,6 +91,18 @@ sin contexto del proyecto** y **toda sugerencia se ancla en algo verificable** (
 declarada, un hallazgo de la conversación); sin ancla, no se propone. Qué leer: `contextualizacion.md`.
 Propón el enunciado afinado y tus observaciones, y **espera**: el protocolo es **propone y espera**, en
 las tres listas y también para lo que dicta el usuario. Sugiere la sección por el ámbito del cambio.
+
+**La propuesta ya trae el `Coste` estimado**, y ahí es donde ocurre toda la planificación de este
+skill: una sola pregunta, con el número puesto y la posición como única decisión del usuario. El coste
+sale del historial —mediana de las cerradas de la misma **familia de tarea**, no de la misma sección—
+y **si no hay base va `—` y se dice**; nunca se inventa (`estimacion.md`). `Vence` solo se pregunta si
+hay un compromiso externo real: no es el campo con el que se decide el día.
+
+> Propongo: **Corregir el desplegable del menú en móvil** (`AppHeader.vue`) → sección General
+> Coste `~32m` — mediana de 5 similares medidas (3m, 16m, 32m, 6h 33m, 6h 42m), y el rango se dice
+> porque abarca dos órdenes de magnitud.
+> ¿La pongo en la 1 o más abajo?
+
 Una tarea nueva crea el header de su sección en `tareas.md` si esa sección ya existe en
 `secciones.md` pero no tiene fila activa ahí, o propone la sección como nueva —ampliando el
 catálogo— si no existe en ninguno de los dos (`secciones-catalogo.md`). Va en `Pendiente` y sin
@@ -99,6 +112,11 @@ Inicio; **sube a `## Ahora` solo cuando el usuario la prioriza**. Sobre el orden
 **Consultar** — «qué sigue», «qué hay bloqueado», «cuánto llevamos»: **solo lectura**. Al responder
 añade el aviso si el orden tiene un conflicto real (la primera depende de una de más abajo). Usa los
 resúmenes de la celda Comentarios: **no abras detalles del historial en una consulta**.
+
+**`Vence` audita ese orden, no lo cambia.** Si sumando los `Coste` de la cola una tarea fechada cae
+después de su límite, **dilo en una línea y ofrece subirla** — nunca la muevas solo: la prioridad
+sigue siendo del usuario. Sin `Coste` en las filas de por medio no hay aviso que dar, y eso es lo
+correcto: no se avisa a ojo.
 
 **La invariante de siempre: la siguiente tarea es la primera fila de `## Ahora` que no esté
 `Bloqueada`.** No «la primera pendiente leyendo de arriba abajo», ni una de más abajo porque parezca

@@ -16,7 +16,8 @@ cerrado.
 
 - **`Pendiente` y `En curso` se distinguen por el Inicio, no solo por la etiqueta.** Una `En curso`
   sin Inicio, o una `Pendiente` con Inicio, es un error de registro: el Inicio es la creación de la
-  rama, y las dos cosas se anotan en el mismo momento.
+  rama, y las dos cosas se anotan en el mismo momento. Esa comprobación se hace **en la fila de la
+  sección**, que es donde vive el Inicio: `## Ahora` no lo lleva.
 - **`Pausada` y `Bloqueada` no son lo mismo y no se usan indistintamente.** La diferencia decide qué
   se trabaja: una pausada se retoma en cuanto haya rato; una bloqueada **no se toma aunque sea la
   primera fila de `## Ahora`** — se avisa y se propone la siguiente no bloqueada, y saltarla o bajarla
@@ -26,11 +27,14 @@ cerrado.
 - **`Bloqueada` sin Nota no vale.** Es el único estado con Nota **obligatoria**: una fila bloqueada
   que no dice qué falta obliga a reconstruirlo, que es justo lo que el registro debía evitar. En
   `Pausada` la Nota es recomendable —dónde quedó el trabajo— pero no impide dejar la tarea así.
-- **La Nota solo existe en `## Ahora`.** Si la tarea se bloquea o se pausa sin estar priorizada, ese
-  texto va en **Comentarios**, en su fila de la sección: es el único sitio donde puede vivir.
+- **La Nota solo existe en `## Ahora`, y el Inicio solo en la sección.** Si la tarea se bloquea o se
+  pausa sin estar priorizada, ese texto va en **Comentarios**, en su fila de la sección: es el único
+  sitio donde puede vivir. `Vence` y `Coste`, en cambio, sí están en los dos sitios, igual que el
+  Estado — y se cambian en los dos.
 - **El estado se cambia en los dos sitios**, en la fila de `## Ahora` y en la de la sección de su
   área. La tarea existe duplicada mientras está priorizada, y actualizar solo una deja el archivo
-  mintiendo.
+  mintiendo. Lo duplicado es Tarea, Estado, `Vence` y `Coste`; **el Inicio no se duplica** y por eso
+  no puede desincronizarse.
 - **Solo `Completada` mueve la fila de sitio**: la saca de `tareas.md` hacia el historial mensual, en
   el mismo cierre (`archivado.md`). Los cuatro estados abiertos la dejan donde está, arriba, dentro
   de su sección.

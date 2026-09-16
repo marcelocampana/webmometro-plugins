@@ -26,12 +26,12 @@ Con un rango `sed` hasta el siguiente `###` el último comentario se desborda a 
 
 ### {{Sección de origen A}}
 
-| Estado | Tarea | Inicio | Completada | Duración | Comentarios |
-| --- | --- | --- | --- | --- | --- |
+| Estado | Tarea | Vence | Coste | Inicio | Completada | Duración | Comentarios |
+| --- | --- | --- | --- | --- | --- | --- | --- |
 
 ### {{Sección de origen B}}
 
-| Estado | Tarea | Inicio | Completada | Duración | Comentarios |
-| --- | --- | --- | --- | --- | --- |
+| Estado | Tarea | Vence | Coste | Inicio | Completada | Duración | Comentarios |
+| --- | --- | --- | --- | --- | --- | --- | --- |
 
 **Total del mes: {{Xh Ym}}**

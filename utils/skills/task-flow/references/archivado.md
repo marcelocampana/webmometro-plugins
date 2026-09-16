@@ -24,7 +24,9 @@ recuperables del repo) va bajo `## Comentarios` del mensual, como `### <ancla>` 
 tildes.
 
 **La fila** (ya `✅ Completada`, con Completada y Duración) va bajo `## Tareas archivadas` del mismo
-mensual, agrupada por su sección de origen — ver «El formato del mensual» abajo. Su enlace en
+mensual, **entera y sin recortar columnas**: `Vence` y `Coste` viajan con ella, y que `Coste` quede al
+lado de `Duración` es lo que permite después medir si el skill estima bien, sin llevar ningún registro
+aparte. Se agrupa por su sección de origen — ver «El formato del mensual» abajo. Su enlace en
 Comentarios pasa a ser ancla del mismo archivo (`[detalle](#el-ancla)`) — nunca
 `historial/AAAA-MM.md#...`, porque fila y comentario viven en el mismo mensual desde el principio.
 
@@ -101,7 +103,7 @@ Desde `assets/historial.esqueleto.md`: zona `## Comentarios` (un `### <título>`
 tildes por comentario — es el ancla del enlace) y zona `## Tareas archivadas`, que agrupa por
 sección de origen con **un header real por sección**: un `### <Sección>` por cada sección que tenga
 alguna fila archivada ese mes, y bajo cada uno su tabla con las mismas columnas que en `tareas.md`
-(`Estado | Tarea | Inicio | Completada | Duración | Comentarios`). El nombre del `###` es **el mismo
+(`Estado | Tarea | Vence | Coste | Inicio | Completada | Duración | Comentarios`). El nombre del `###` es **el mismo
 nombre de la sección de origen** en `tareas.md` — no se abrevia ni se renombra. Columnas idénticas =
 mover una fila es cortar y pegar, sin reformatear.
 

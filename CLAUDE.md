@@ -15,7 +15,7 @@ user-facing output (skills instruct their output language explicitly):
 - **brand-voice-pro** — full-stack plugin: skills + agents + commands + MCP servers.
 - **design-system** — skills-only: design-system audit/docs + social carousel generation.
 - **seo-suite** — skills-only: a 10-skill SEO suite (snapshots → audit/CRO/audience/AI-search, plus content clusters, landing blueprints and change tracking).
-- **utils** — skills-only: general-purpose personal utilities (cross-account activity log via `claude-activity-log`; branch-per-task management assistant via `task-flow`; content sync verification and repair across publishing destinations via `content-sync-check`). `task-flow` and `content-sync-check` both use a deliberately thin SKILL.md core that dispatches to one per-mode reference — keep the core under ~2.4k tokens and each reference under ~1.7k.
+- **utils** — skills-only: general-purpose personal utilities (cross-account activity log via `claude-activity-log`; branch-per-task management assistant via `task-flow`, whose rows carry a `Coste` estimated from closed-task history (matched by task *family* — verb + object — never by section mean) and an optional `Vence` that audits the user's ordering instead of overriding it; content sync verification and repair across publishing destinations via `content-sync-check`). `task-flow` and `content-sync-check` both use a deliberately thin SKILL.md core that dispatches to one per-mode reference — keep the core under ~2.4k tokens and each reference under ~1.7k.
 
 ## Layout & manifest hierarchy
 
@@ -183,7 +183,7 @@ El trabajo se organiza en cuatro piezas dentro de `tareas/`, gobernadas por el s
 Tres reglas irrenunciables:
 
 1. **La siguiente tarea es la primera fila de `## Ahora` que no esté `Bloqueada`** — no «la primera
-   pendiente leyendo de arriba abajo».
+   pendiente leyendo de arriba abajo». `Vence` no altera esa regla: avisa y ofrece, no reordena.
 2. **Una tarea, una rama, un commit.** Se comprueba que `main` está limpia y actualizada y se
    ramifica desde ahí; **nunca se trabaja sobre `main`**.
 3. **Se completa esa tarea y se para.** Al cerrar se pregunta una sola vez si queda terminada; con el

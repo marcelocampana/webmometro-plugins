@@ -6,7 +6,7 @@ description: >
   `auditoria.md`. Asiste en crearlas: propone, afina enunciados y recomienda prioridad.
   **Actívalo solo si el proyecto ya tiene ese directorio, o si el usuario pide montarlo.** Cubre:
   abrir y cerrar tareas ("qué sigue", "listo, ya está", "commit y merge"), pausar o bloquear, anotar,
-  priorizar y consultar; aparcar en "por revisar" y ascender; revisar el proyecto completo; extraer
+  priorizar y consultar; estimar cuánto cuesta una tarea y para cuándo vence; aparcar en "por revisar" y ascender; revisar el proyecto completo; extraer
   tareas de la conversación o de un archivo de otro skill; archivar al cerrar cada tarea; poner al
   día el formato de un sistema de tareas ya existente (`--actualizar`); y montar el sistema donde no
   existe. NO lo uses para TODOs efímeros de la sesión (esa es la lista interna de Claude Code), para
@@ -14,7 +14,7 @@ description: >
   pidió nada de tareas, no lo actives ni lo propongas.
 argument-hint: "[--init | --revisar | --auditoria | --ingerir | --actualizar]"
 metadata:
-  version: 1.6.0
+  version: 1.7.0
 ---
 
 # Gestión de tareas por rama (task-flow)
@@ -41,9 +41,9 @@ crear** las tareas: propone, afina, observa y recomienda prioridad — no solo m
 | va a abrir el detalle de un comentario archivado | `references/historial-lectura.md` |
 
 **Se lee la referencia del modo invocado y ninguna más.** Las de apoyo —`contextualizacion`,
-`redaccion-tareas`, `estados`, `tiempos`, `seccionamiento`, `secciones-catalogo`, `formato-tablas`—
-solo cuando la del modo las cite para el paso que estás ejecutando. Cargarlas «por si acaso» es el
-error que convierte este skill en su propio problema: el núcleo pesa ~2.600 tokens y cada referencia
+`redaccion-tareas`, `estados`, `tiempos`, `estimacion`, `seccionamiento`, `secciones-catalogo`,
+`formato-tablas`— solo cuando la del modo las cite para el paso que estás ejecutando. Cargarlas «por si acaso» es el
+error que convierte este skill en su propio problema: el núcleo pesa ~2.800 tokens y cada referencia
 suma otros ~1.000-1.500.
 
 ## Paso 0 · Precondición (siempre, antes de todo)
@@ -92,7 +92,7 @@ el usuario. Lo que separa las tres listas no es el tema, es **quién decide y cu
 | --- | --- | --- | --- |
 | **Decide qué entra** | El usuario, siempre | El usuario aprueba; la IA propone a discreción | El usuario aprueba; la IA propone bajo petición |
 | **Ceremonia** | Rama, tiempos, una confirmación de cierre | Ninguna | Ninguna |
-| **Columnas** | secciones: `Estado \| Tarea \| Inicio \| Completada \| Duración \| Comentarios`<br>`## Ahora`: `# \| Tarea \| Sección \| Estado \| Inicio \| Nota` | `Tarea \| Origen \| Motivo \| Notas` | `Tarea \| Área \| Severidad \| Motivo` |
+| **Columnas** | secciones: `Estado \| Tarea \| Vence \| Coste \| Inicio \| Completada \| Duración \| Comentarios`<br>`## Ahora`: `# \| Tarea \| Sección \| Estado \| Vence \| Coste \| Nota` | `Tarea \| Origen \| Motivo \| Notas` | `Tarea \| Área \| Severidad \| Motivo` |
 | **Cola `## Ahora`** | Sí | No | No |
 | **Cómo sale** | Se cierra con commit y merge, en cadena | Asciende con aprobación, o se descarta | Igual |
 
@@ -116,6 +116,15 @@ activas — y es un catálogo abierto, no la lista cerrada de lo que puede exist
 **Solo `🔵 En curso` y `✅ Completada` llevan icono, e icono *y* texto, nunca el icono a secas** —
 `grep "En curso"` tiene que seguir funcionando y la columna debe leerse sin renderizar el emoji. El
 estado se cambia **en los dos sitios** mientras la tarea está en `## Ahora`. Detalle: `estados.md`.
+
+## Planificar sin sesión de planificación
+
+**No se asignan días: se asignan orden y coste, y el día sale solo.** Toda la planificación cabe en la
+pregunta que ya se hacía al crear una tarea —«¿en qué posición va?»—, ahora con el coste puesto.
+
+- **`Coste`** manda: horas de trabajo, **lo propone el skill** desde el historial (`estimacion.md`) y
+  el usuario lo confirma. Sin base suficiente va `—`; no se inventa.
+- **`Vence`** es raro y solo para compromisos externos. **No decide el día: audita el orden.**
 
 ## Comunicación ejecutiva
 

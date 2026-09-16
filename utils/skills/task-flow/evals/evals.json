@@ -295,6 +295,54 @@
         "evals/fixtures/con-historial/tareas/auditoria.md",
         "evals/fixtures/con-historial/tareas/secciones.md"
       ]
+    },
+    {
+      "id": 30,
+      "name": "coste-se-propone-al-crear",
+      "prompt": "Hay que alinear el contenido bajo «Sigue leyendo» de la página de HER2 con el diseño original. Anótalo.",
+      "expected_output": "El skill propone la tarea afinada con su sección Y con un `Coste` ya estimado en la misma línea, mostrando de dónde sale (mediana de cierres de la misma familia de tarea, con las muestras a la vista). Pregunta en qué posición de `## Ahora` va. NO pregunta por `Vence`: no hay compromiso externo. NO escribe la fila antes del visto bueno.",
+      "files": [
+        "evals/fixtures/proyecto-en-curso/tareas/tareas.md",
+        "evals/fixtures/proyecto-en-curso/tareas/revisar.md",
+        "evals/fixtures/proyecto-en-curso/tareas/secciones.md",
+        "evals/fixtures/proyecto-en-curso/tareas/historial/2026-08.md"
+      ]
+    },
+    {
+      "id": 31,
+      "name": "sin-base-no-se-inventa-coste",
+      "prompt": "Anota que hay que separar las reglas de prosa editorial de la clase de tema.",
+      "expected_output": "El skill propone la tarea, pero el `Coste` va como `—` y lo DICE en una línea: no hay muestras medidas suficientes de esa familia en el historial. No inventa un número plausible ni lo deriva de la media de la sección. La ausencia de coste no bloquea la creación de la tarea.",
+      "files": [
+        "evals/fixtures/con-historial/tareas/tareas.md",
+        "evals/fixtures/con-historial/tareas/revisar.md",
+        "evals/fixtures/con-historial/tareas/secciones.md",
+        "evals/fixtures/con-historial/tareas/historial/2026-07.md"
+      ]
+    },
+    {
+      "id": 32,
+      "name": "vence-avisa-pero-no-reordena",
+      "prompt": "¿Qué sigue?",
+      "expected_output": "Responde con la primera fila de `## Ahora` que no esté `Bloqueada`. Si sumando los `Coste` de la cola alguna tarea con `Vence` cae después de su límite, lo dice en UNA línea y OFRECE subirla. No reordena `## Ahora` por su cuenta: la prioridad la decide el usuario. Sin `Coste` en las filas intermedias no da el aviso a ojo.",
+      "files": [
+        "evals/fixtures/proyecto-en-curso/tareas/tareas.md",
+        "evals/fixtures/proyecto-en-curso/tareas/revisar.md",
+        "evals/fixtures/proyecto-en-curso/tareas/secciones.md",
+        "evals/fixtures/proyecto-en-curso/tareas/historial/2026-08.md"
+      ]
+    },
+    {
+      "id": 33,
+      "name": "ahora-no-duplica-el-inicio",
+      "prompt": "Voy a empezar con la de «Sigue leyendo».",
+      "expected_output": "Abre la tarea en tres movimientos: rama desde `main` limpia, Inicio y `🔵 En curso` en la fila de su SECCIÓN, y sube el puntero a `## Ahora` con Tarea, Sección, Estado, Vence y Coste. En `## Ahora` NO escribe el Inicio: esa columna no existe ahí. Pregunta en qué posición va.",
+      "files": [
+        "evals/fixtures/proyecto-en-curso/tareas/tareas.md",
+        "evals/fixtures/proyecto-en-curso/tareas/revisar.md",
+        "evals/fixtures/proyecto-en-curso/tareas/secciones.md",
+        "evals/fixtures/proyecto-en-curso/tareas/historial/2026-08.md"
+      ]
     }
   ]
 }

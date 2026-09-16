@@ -6,8 +6,8 @@
 
 El orden de esta tabla **es** el orden de ejecución: se toma la primera fila que no esté `Bloqueada`, y se para al cerrarla. Sus filas son punteros — la tarea vive en la sección de su área, y aquí solo aparece mientras toca.
 
-| # | Tarea | Sección | Estado | Inicio | Nota |
-| :--: | --- | --- | --- | --- | --- |
+| # | Tarea | Sección | Estado | Vence | Coste | Nota |
+| :--: | --- | --- | --- | --- | --- | --- |
 
 ---
 
@@ -15,8 +15,8 @@ El orden de esta tabla **es** el orden de ejecución: se toma la primera fila qu
 
 {{Una línea opcional: qué abarca esta sección y qué queda fuera. Se omite si el título ya lo dice.}}
 
-| Estado | Tarea | Inicio | Completada | Duración | Comentarios |
-| --- | --- | --- | --- | --- | --- |
+| Estado | Tarea | Vence | Coste | Inicio | Completada | Duración | Comentarios |
+| --- | --- | --- | --- | --- | --- | --- | --- |
 
 <!-- Al cerrar la primera tarea de la sección, añade bajo la tabla (el total real vive en
      secciones.md; esto es el reflejo mientras la sección siga activa aquí):

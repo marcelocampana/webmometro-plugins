@@ -42,4 +42,4 @@ Los diez skills de la suite SEO y el flujo que los encadena (snapshots → anál
 Los cuatro skills del plugin: `claude-activity-log`, `content-sync-check`, `documentar-proceso` y
 `task-flow`.
 
-**Cerradas: ~35m** · 1 archivada
+**Cerradas: ~48m** · 2 archivadas
