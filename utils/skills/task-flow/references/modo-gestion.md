@@ -37,31 +37,11 @@ ofrécelo en una línea: `archivado.md`.)
    2. **Commit**, en la rama de la tarea: lo resuelto y la fila cerrada, en un solo commit.
    3. **Merge a `main`**, sin pedir un tercer visto bueno.
 
-**Impacto documental** — después del merge. Dos tiempos: detectar barato, y solo entonces leer.
-
-1. **Detectar.** Del diff de la rama (`git diff --name-only main@{1}...`), busca señales de que la
-   documentación pudo quedar corta: cambió la estructura de directorios; se añadió, renombró o
-   eliminó un archivo que el README enumera, un comando, un script, una dependencia o una variable de
-   entorno; o se tocó algo que `CLAUDE.md` describe como convención, layout o invariante. **Sin señal,
-   silencio total**: no lo menciones ni digas que lo miraste.
-
-2. **Verificar, solo lo señalado.** Abre **únicamente** los archivos que la señal apunta —nunca el
-   directorio de documentación entero—: el README y los archivos que enlaza, `CLAUDE.md`, y de `docs/`
-   solo el que cubre el área tocada. Comprueba si la afirmación concreta sigue siendo cierta. **Si
-   sigue al día, silencio**: haber leído no obliga a decir nada.
-
-3. **Decir lo que sepas, y solo eso.** Con una discrepancia verificada, **una línea**: qué archivo,
-   qué afirma hoy y qué dice el repo, con las dos salidas en la misma pregunta. Si el paso 2 no pudo
-   concluir —archivo demasiado grande, afirmación ambigua—, di la sospecha sin resolverla y ofrece
-   solo `revisar.md`. **No redactes el reemplazo** en ninguno de los dos casos: el diagnóstico es la
-   entrega.
-
-> Cerrada y mergeada. `docs/skills.md` lista 3 skills en utils y ahora son 4: falta
-> `content-sync-check`. ¿Lo anoto en `revisar.md` o lo corrijo ahora?
-
-Si el usuario dice «corrígelo», es **una tarea nueva y corta** —rama, commit y merge propios—, no una
-extensión de la que acaba de cerrarse: esa cadena ya terminó. Esto **no es un cuarto freno**: ocurre
-con el merge hecho, así que nada queda a medias si el usuario no contesta.
+**Impacto documental** — con el merge ya hecho, mira si el cambio dejó la documentación corta. Del
+diff de la rama (`git diff --name-only main@{1}...`) busca señales: estructura de directorios, un
+archivo que el README enumera, un comando, una dependencia, o algo que `CLAUDE.md` describe como
+convención. **Sin señal, silencio total** — no lo menciones ni digas que lo miraste. Con señal, el
+procedimiento y sus límites están en `impacto-documental.md`.
 
 **Tres frenos, y solo esos, detienen la cadena** — no son ceremonia, son una excepción real que el
 usuario tiene que decidir:
@@ -72,36 +52,29 @@ usuario tiene que decidir:
 - **Al ir a commitear aparecen cambios sin relación con la tarea**: detente y pregunta si van
   incluidos en el commit o se dejan fuera, antes de seguir.
 
-Fuera de esos tres casos, la cadena no se pausa a mitad camino. Muestra el resumen del comentario
-archivado **después** de la cadena, en la misma línea de cierre, para que el usuario lo corrija si
-hace falta — corregirlo es una edición posterior, no una pausa de la cadena.
+Fuera de esos tres casos la cadena no se pausa. El resumen del comentario archivado se muestra
+**después**, en la misma línea de cierre: corregirlo es una edición posterior, no una pausa.
 
 La Duración sale de `git reflog`/`git log` y es **tiempo de trabajo**: las pausas largas se descuentan
-y se explican en Comentarios; las estimadas llevan `~`. Comandos y casos: `tiempos.md`.
+y las cifras estimadas llevan `~` (`tiempos.md`).
 
 Al cerrar, **ofrece** para `revisar.md` lo que el trabajo dejó pendiente (propone y espera). Después
 **para**: puedes sugerir la siguiente, no empezarla.
 
 **Pausar o bloquear** — Estado en **los dos sitios**, la fila no se mueve, Nota obligatoria en
-`Bloqueada`. Una `Bloqueada` **no se toma aunque sea la primera fila**: avisa y propón la siguiente.
-Reglas completas en `estados.md`.
+`Bloqueada`. Una `Bloqueada` **no se toma aunque sea la primera fila**: avisa y propón la siguiente
+(`estados.md`).
 
 **Crear y priorizar** — aquí vive la asistencia, con dos reglas no opcionales: **ninguna tarea se crea
-sin contexto del proyecto** y **toda sugerencia se ancla en algo verificable** (un archivo, una deuda
-declarada, un hallazgo de la conversación); sin ancla, no se propone. Qué leer: `contextualizacion.md`.
-Propón el enunciado afinado y tus observaciones, y **espera**: el protocolo es **propone y espera**, en
-las tres listas y también para lo que dicta el usuario. Sugiere la sección por el ámbito del cambio.
+sin contexto del proyecto** (`contextualizacion.md`) y **toda sugerencia se ancla en algo verificable**
+—un archivo, una deuda declarada, un hallazgo de la conversación—; sin ancla, no se propone. Propón el
+enunciado afinado y **espera**: el protocolo es **propone y espera**, también para lo que dicta el
+usuario. Sugiere la sección por el ámbito del cambio.
 
-**La propuesta ya trae el `Coste` estimado**, y ahí es donde ocurre toda la planificación de este
-skill: una sola pregunta, con el número puesto y la posición como única decisión del usuario. El coste
-sale del historial —mediana de las cerradas de la misma **familia de tarea**, no de la misma sección—
-y **si no hay base va `—` y se dice**; nunca se inventa (`estimacion.md`). `Vence` solo se pregunta si
-hay un compromiso externo real: no es el campo con el que se decide el día.
-
-> Propongo: **Corregir el desplegable del menú en móvil** (`AppHeader.vue`) → sección General
-> Coste `~32m` — mediana de 5 similares medidas (3m, 16m, 32m, 6h 33m, 6h 42m), y el rango se dice
-> porque abarca dos órdenes de magnitud.
-> ¿La pongo en la 1 o más abajo?
+**La propuesta ya trae el `Coste` estimado**, y ahí ocurre toda la planificación de este skill: una
+pregunta, con el número puesto y la posición como única decisión del usuario. **Si no hay base va `—`
+y se dice**; nunca se inventa. Cómo se estima y cómo se presenta: `estimacion.md`. `Vence` solo se
+pregunta si hay un compromiso externo real.
 
 Una tarea nueva crea el header de su sección en `tareas.md` si esa sección ya existe en
 `secciones.md` pero no tiene fila activa ahí, o propone la sección como nueva —ampliando el
@@ -114,24 +87,17 @@ añade el aviso si el orden tiene un conflicto real (la primera depende de una d
 resúmenes de la celda Comentarios: **no abras detalles del historial en una consulta**.
 
 **`Vence` audita ese orden, no lo cambia.** Si sumando los `Coste` de la cola una tarea fechada cae
-después de su límite, **dilo en una línea y ofrece subirla** — nunca la muevas solo: la prioridad
-sigue siendo del usuario. Sin `Coste` en las filas de por medio no hay aviso que dar, y eso es lo
-correcto: no se avisa a ojo.
+después de su límite, **dilo en una línea y ofrece subirla**; nunca la muevas solo. Sin `Coste` en las
+filas de por medio no hay aviso que dar: no se avisa a ojo.
 
 **La invariante de siempre: la siguiente tarea es la primera fila de `## Ahora` que no esté
-`Bloqueada`.** No «la primera pendiente leyendo de arriba abajo», ni una de más abajo porque parezca
-más rápida.
+`Bloqueada`.** No «la primera pendiente de arriba abajo», ni una de más abajo por parecer más rápida.
 
-## Redacción de tareas
+## Redacción y formato
 
-Verbo + objeto concreto + ámbito: «Corregir el desplegable del menú en móvil (`AppHeader.vue`)», no
-«arreglar el menú». La Tarea es **una línea**; el detalle va a Comentarios. Si el enunciado necesita
-una «y», probablemente son dos tareas. Si el usuario rechaza tu redacción, se usa la suya.
+**Verbo + objeto concreto + ámbito**, en **una línea**; el detalle va a Comentarios. Si el enunciado
+necesita una «y», probablemente son dos tareas, y si el usuario rechaza tu redacción se usa la suya.
+Anatomía y ejemplos antes/después: `redaccion-tareas.md`.
 
-Anatomía, cuándo partir una tarea y ejemplos antes/después: `redaccion-tareas.md`.
-
-## Formato de las tablas
-
-Las columnas verbatim, las reglas de celda (`<br>`, `\|` escapado) y la forma de una celda cerrada
-están en `formato-tablas.md`. Lo imprescindible: la Tarea es una línea, el detalle va a Comentarios, y
+Las columnas verbatim y las reglas de celda están en `formato-tablas.md`. Lo que no se puede olvidar:
 **el archivo no se recalcula solo**.
