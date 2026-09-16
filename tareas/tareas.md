@@ -8,9 +8,8 @@ El orden de esta tabla **es** el orden de ejecución: se toma la primera fila qu
 
 | # | Tarea | Sección | Estado | Vence | Coste | Nota |
 | :--: | --- | --- | --- | --- | --- | --- |
-| 1 | Añadir a `task-flow` la ventana de estimación que retrocede y el archivado de completadas al actualizar | utils | Pendiente | — | ~15m | Dos reglas decididas por el usuario el 2026-09-16; tocan `estimacion.md`, `modo-actualizacion.md` y `archivado.md`. |
-| 2 | Dejar de versionar `.claude/settings.local.json` y fijar la regla global | General | Pendiente | — | ~5m | El archivo entró en `8fd0e15`; hay que sacarlo del índice, ignorarlo y escribir la regla en el `CLAUDE.md` del usuario. |
-| 3 | Añadir a `agenda` el modo semanal y la calibración de estimaciones | utils | Pendiente | — | — | El último, y solo si a esas alturas se echa de menos. |
+| 1 | Dejar de versionar `.claude/settings.local.json` y fijar la regla global | General | Pendiente | — | ~5m | El archivo entró en `8fd0e15`; hay que sacarlo del índice, ignorarlo y escribir la regla en el `CLAUDE.md` del usuario. |
+| 2 | Añadir a `agenda` el modo semanal y la calibración de estimaciones | utils | Pendiente | — | — | El último, y solo si a esas alturas se echa de menos. |
 
 ---
 
@@ -32,10 +31,9 @@ Los cuatro skills del plugin `utils`: `claude-activity-log`, `content-sync-check
 
 | Estado | Tarea | Vence | Coste | Inicio | Completada | Duración | Comentarios |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Pendiente | Añadir a `task-flow` la ventana de estimación que retrocede y el archivado de completadas al actualizar | — | ~15m | — | — | — | Dos reglas del usuario. **Estimación:** la ventana arranca en el mes en curso y el anterior y retrocede mes a mes mientras no haya 3 muestras medidas; sin base, `Coste` va `—`. Sigue sin abrirse ningún mensual entero. **Actualización:** ninguna `✅ Completada` se queda en `tareas.md`; si aparece, se investiga por qué y sin justificación se archiva. Falta decidir en el propio cambio si `--actualizar` convierte todos los mensuales o solo el del mes. |
 | Pendiente | Añadir a `agenda` el modo semanal y la calibración de estimaciones | — | — | — | — | — | Dos errores que **no se corrigen con el mismo número**: esfuerzo (`Coste`→`Duración`, horas de trabajo, mediana de razones sobre duraciones sin `~`) y calendario (`Vence`→`Completada`, días de reloj, que en realidad mide capacidad). La salida útil es el sesgo enunciado, no solo el número corregido. |
 
-**Cerradas en esta sección: ~2h 15m** · 7 archivadas
+**Cerradas en esta sección: ~2h 17m** · 8 archivadas
 
 ---
 

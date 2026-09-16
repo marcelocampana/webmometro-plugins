@@ -51,6 +51,19 @@ awk '/^## Tareas archivadas/,0' tareas/historial/2026-09.md | grep '^| ✅'
 de una línea, nunca la zona `## Comentarios`. Si `tareas/calibracion.md` existe y está al día, se lee
 **solo ese archivo** y no se toca el historial.
 
+**La ventana se abre hacia atrás hasta tener base, no hasta un número fijo de meses.** Arranca en el
+mes en curso y el anterior; si de ahí no salen las 3 muestras medidas de la familia, se lee el mensual
+anterior, y así mes a mes **hasta reunirlas o hasta que se acabe el historial** — y entonces `Coste`
+va `—`. Dos meses es el punto de partida porque en un proyecto vivo suele bastar, no porque el dato
+de marzo estorbe: lo que no sirve es parar en seco con dos muestras teniendo la tercera un mes más
+atrás.
+
+Retroceder **no relaja ninguna otra regla**: de cada mensual se sigue leyendo solo su zona
+`## Tareas archivadas`, se siguen descartando las `Duración` con `~`, y la mediana se calcula sobre
+todas las muestras reunidas, sin ponderar por antigüedad. **Se dice de cuántos meses salieron**: una
+mediana de tres muestras repartidas en cinco meses describe una familia rara, y el usuario lee distinto
+ese número que uno de la semana pasada.
+
 ## Qué muestra vale y cuál no
 
 - **Solo duraciones medidas.** Una `Duración` con `~` es una estimación; calibrar contra ella es

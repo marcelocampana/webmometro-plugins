@@ -43,12 +43,17 @@ sesión. El patrón es siempre el mismo:
 | --- | --- | --- |
 | Catálogo de secciones | No existe `tareas/secciones.md` | Se crea desde los headers `##` ya presentes en `tareas.md` (`secciones-catalogo.md`) |
 | Leyenda de estados | El pie de `tareas.md` tiene la leyenda en una sola línea con "·" | Lista `-`, un estado por línea (`estados.md`) |
-| Momento del archivado | Hay filas `✅ Completada` conviviendo dentro de una sección en `tareas.md` | Se archivan de inmediato (`archivado.md`); no hay «filas pendientes de migrar» por antigüedad — el archivado inmediato aplica desde ya a los próximos cierres |
-| Columnas de planificación | Las tablas de sección tienen 6 columnas (sin `Vence` ni `Coste`), o `## Ahora` tiene `Inicio` | Tablas de sección y del mensual a 8 columnas y `## Ahora` a 7, según `formato-tablas.md`. Las filas ya existentes reciben `—` en las dos nuevas; **`## Ahora` pierde su `Inicio`**, que ya estaba duplicado de la fila de la sección. No se reestima nada retroactivamente |
+| Momento del archivado | Hay filas `✅ Completada` en `tareas.md` | **Ninguna se queda**: se archivan todas (`archivado.md`). Antes de mover cada una, mira **por qué sigue ahí** y dilo en una línea — lo normal es que vengan del archivado por antigüedad, pero una fila cerrada sin comentario en el mensual, o duplicada, es un fallo de cierre que conviene ver antes de taparlo. **Solo se queda la que tenga una justificación que el usuario confirme**, y entonces se anota cuál en el propio cierre |
+| Columnas de planificación | Las tablas de sección tienen 6 columnas (sin `Vence` ni `Coste`), o `## Ahora` tiene `Inicio` | Tablas de sección y **de todos los mensuales de `historial/`** a 8 columnas, y `## Ahora` a 7, según `formato-tablas.md`. Las filas ya existentes reciben `—` en las dos nuevas; **`## Ahora` pierde su `Inicio`**, que ya estaba duplicado de la fila de la sección. No se reestima nada retroactivamente |
 | Cualquier otra convención de `SKILL.md`/`references/` | Se detecta comparando el archivo contra la referencia dueña de esa convención | Se ajusta al formato que esa referencia documenta |
 
 La última fila sostiene el "patrón general": cuando una futura versión del skill cambie otra
 convención, este modo no necesita rediseño — solo añadir una fila al checklist.
+
+**Los mensuales se convierten todos, no solo el del mes.** Es una sola pasada, y deja el historial
+entero legible por nombre de columna: la estimación retrocede mes a mes cuando le faltan muestras
+(`estimacion.md`), así que un mensual de hace cuatro meses con otras columnas sería justo el que
+rompiera la lectura el día que hace falta.
 
 ## Ejemplo de cierre de este modo
 

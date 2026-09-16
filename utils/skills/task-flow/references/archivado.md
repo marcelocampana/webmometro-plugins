@@ -4,8 +4,7 @@ El comentario y la fila de una tarea cerrada pesan mucho más que lo que se cons
 comentario ~10× más que el resto de la fila (30% del archivo frente a 3%), y una fila `Completada`
 que se queda en `tareas.md` es justo el peso que ese archivo no debería cargar.
 
-**Un solo movimiento al cerrar, y un solo archivo mensual por mes.** El comentario y la fila completa
-se archivan juntos, en el instante del cierre — no hay una espera de un mes ni una etapa posterior.
+**Un solo movimiento al cerrar, y un solo archivo mensual por mes.**
 
 ```text
 tareas/historial/
@@ -108,6 +107,8 @@ vacío de `## Tareas archivadas` en el mensual.
 - **Un comentario no baja de 900 sin perder lo accionable** → deja lo que quepa y dilo. Antes perder
   relato que perder la trampa.
 - **Piden archivar una tarea abierta** → no se hace: solo `✅ Completada`.
+- **Aparece una `✅ Completada` en `tareas.md`** → no se queda ahí: mira por qué sigue, dilo en una
+  línea y archívala (`modo-actualizacion.md`).
 - **Piden reabrir una archivada** → se revierte, ver «Reversión» arriba.
 - **La sección de una fila reactivada no existe ni en `tareas.md` ni en `secciones.md`** → no
   debería pasar (el catálogo es persistente); si ocurre, dilo y ofrece reconstruir la entrada del
