@@ -8,8 +8,7 @@ El orden de esta tabla **es** el orden de ejecución: se toma la primera fila qu
 
 | # | Tarea | Sección | Estado | Vence | Coste | Nota |
 | :--: | --- | --- | --- | --- | --- | --- |
-| 1 | Dejar de versionar `.claude/settings.local.json` y fijar la regla global | General | Pendiente | — | ~5m | El archivo entró en `8fd0e15`; hay que sacarlo del índice, ignorarlo y escribir la regla en el `CLAUDE.md` del usuario. |
-| 2 | Añadir a `agenda` el modo semanal y la calibración de estimaciones | utils | Pendiente | — | — | El último, y solo si a esas alturas se echa de menos. |
+| 1 | Añadir a `agenda` el modo semanal y la calibración de estimaciones | utils | Pendiente | — | — | El último, y solo si a esas alturas se echa de menos. |
 
 ---
 
@@ -19,9 +18,10 @@ Documentación raíz (`README.md`, `CLAUDE.md`, `docs/`), configuración y todo 
 
 | Estado | Tarea | Vence | Coste | Inicio | Completada | Duración | Comentarios |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Pendiente | Dejar de versionar `.claude/settings.local.json` y fijar la regla global | — | ~5m | — | — | — | Entró al repo en `8fd0e15` y el usuario lo borró del árbol. Hay que sacarlo del índice con `git rm --cached`, añadirlo a `.gitignore` y escribir la regla —nunca versionar ajustes locales, en ningún proyecto— en el `CLAUDE.md` del usuario. |
 | Pendiente | Documentar `content-sync-check` en el `README.md` | — | — | — | — | — | El skill existe desde `b223d81` y está en `docs/skills.md`, pero el README no lo menciona. |
 | Pendiente | Decidir el destino del skill `documentar-proceso` | — | — | — | — | — | Solo tiene `DESIGN.md` desde `ac6d7cc`: sin `SKILL.md`, sin entrada en manifests ni en `docs/skills.md`. Implementarlo o retirarlo. |
+
+**Cerradas en esta sección: 2m** · 2 archivadas
 
 ---
 
