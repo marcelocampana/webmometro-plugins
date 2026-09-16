@@ -17,6 +17,8 @@ cuatro plugins.
 `.claude-plugin/marketplace.json` y los cuatro `plugin.json`. Vive aparte porque un bump de versión
 toca dos archivos a la vez: es una sola tarea aquí, nunca una fila duplicada por plugin.
 
+**Cerradas: 1m** · 1 archivada
+
 ---
 
 ## brand-voice-pro
