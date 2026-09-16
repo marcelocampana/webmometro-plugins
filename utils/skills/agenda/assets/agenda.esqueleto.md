@@ -5,8 +5,8 @@
 Registro de repos y capacidad diaria. **Este archivo se edita a mano**; la agenda solo lo lee, salvo
 cuando el usuario le pide crearlo o cambiarlo.
 
-Ubicación esperada: `~/Documents/config/claude/agenda.md`, o `~/.claude/agenda.md`. La variable
-`AGENDA_CONFIG` tiene prioridad sobre las dos.
+Ubicación esperada: `~/Github/AI-kit/config/context/agenda.md`. La variable `AGENDA_CONFIG` tiene
+prioridad sobre ella.
 
 ## Capacidad
 
@@ -31,8 +31,8 @@ que esta, así que el primero de la lista debería ser el que más pesa hoy.
 
 | Etiqueta | Ruta |
 | --- | --- |
-| clientes | ~/Projects/cliente-principal |
-| plugins | ~/Documents/config/claude/webmometro-plugins |
+| clientes | ~/Github/Projects/cliente-principal |
+| plugins | ~/Github/AI-kit/plugins/webmometro-plugins |
 
 - **La etiqueta es lo que se ve en la agenda**: corta, reconocible, sin ruta.
 - **La ruta apunta al repo**, no a su `tareas/`. Si falta ese directorio, la agenda lo dice y sigue.

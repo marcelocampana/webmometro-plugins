@@ -12,7 +12,7 @@ description: >
   y ofrece crearla; no la inventa.
 argument-hint: "[--hoy | --config]"
 metadata:
-  version: 1.1.0
+  version: 1.1.1
 ---
 
 # Agenda diaria cross-repo (agenda)
@@ -37,8 +37,7 @@ De ahí la segunda mitad: **no reordena nada**. El orden de `## Ahora` es del us
 ## Paso 0 · Resolver la configuración (siempre, antes de todo)
 
 ```bash
-CFG="${AGENDA_CONFIG:-$HOME/Documents/config/claude/agenda.md}"
-[ -f "$CFG" ] || CFG="$HOME/.claude/agenda.md"
+CFG="${AGENDA_CONFIG:-$HOME/Github/AI-kit/config/context/agenda.md}"
 [ -f "$CFG" ] && cat "$CFG"
 ```
 
@@ -47,7 +46,7 @@ CFG="${AGENDA_CONFIG:-$HOME/Documents/config/claude/agenda.md}"
   repos que el usuario nombre. **No se adivina el registro** escaneando el disco: un `tareas/` de un
   proyecto archivado metería ruido en la agenda todos los días.
 
-**Si el usuario nombra un archivo, manda ese**, y `AGENDA_CONFIG` por delante de las dos rutas por
+**Si el usuario nombra un archivo, manda ese**, y `AGENDA_CONFIG` por delante de la ruta por
 defecto: es lo que permite a una rutina apuntar a otra configuración sin tocar el skill.
 
 La configuración lleva dos cosas: el **registro de repos** (ruta y etiqueta corta) y la **capacidad
