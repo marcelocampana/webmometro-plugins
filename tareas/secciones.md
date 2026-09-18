@@ -3,7 +3,7 @@
 Catálogo de las secciones vigentes de este proyecto — existan o no, ahora mismo, con una fila activa
 en `tareas.md`. Es un catálogo **abierto**: registra lo propuesto hasta ahora, no la lista exhaustiva
 de lo que puede existir. Se actualiza junto con el cierre de tareas y la creación de secciones nuevas.
-Formato y reglas: skill `task-flow`, `references/secciones-catalogo.md`.
+Formato y reglas: skill `tarea`, `references/secciones-catalogo.md`.
 
 ## General
 
@@ -44,6 +44,6 @@ Los diez skills de la suite SEO y el flujo que los encadena (snapshots → anál
 ## utils
 
 Los cinco skills del plugin: `agenda`, `claude-activity-log`, `content-sync-check`,
-`documentar-proceso` y `task-flow`.
+`documentar-proceso` y `tarea`.
 
 **Cerradas: ~2h 17m** · 8 archivadas

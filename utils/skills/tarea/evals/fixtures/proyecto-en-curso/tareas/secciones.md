@@ -2,7 +2,7 @@
 
 Catálogo de las secciones vigentes de este proyecto — existan o no, ahora mismo, con una fila activa
 en `tareas.md`. Es un catálogo abierto: registra lo propuesto hasta ahora, no la lista exhaustiva de
-lo que puede existir. Formato y reglas: skill `task-flow`, `references/secciones-catalogo.md`.
+lo que puede existir. Formato y reglas: skill `tarea`, `references/secciones-catalogo.md`.
 
 ## General
 

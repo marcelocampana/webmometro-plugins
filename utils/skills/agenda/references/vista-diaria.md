@@ -69,7 +69,7 @@ Hoy · martes 15 · capacidad 4h
   ─────────────────────────────────────────────────────────────────────────
   3 tareas · ~40m de 4h · 1 sin coste, la cuenta va incompleta
 
-  ⚠ odc-clusters no tiene Coste en ninguna fila: `task-flow` allí los estima al abrirlas.
+  ⚠ odc-clusters no tiene Coste en ninguna fila: `tarea` allí los estima al abrirlas.
 ```
 
 - **El enunciado de la tarea, tal cual está en el archivo**, recortado por la derecha si no cabe.

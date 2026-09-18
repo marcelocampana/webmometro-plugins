@@ -1,4 +1,4 @@
-<!-- task-flow: umbral 40000 chars · holgura 70% · última revisión 2026-08-20 -->
+<!-- tarea: umbral 40000 chars · holgura 70% · última revisión 2026-08-20 -->
 
 # Tareas
 
@@ -43,4 +43,4 @@ Cambios que viven en los componentes compartidos y por tanto **alcanzan a todas 
 - `✅ Completada` — cerrada y archivada. Solo `🔵 En curso` y `✅ Completada` llevan icono, pegado al texto.
 
 Al cerrarse, una tarea sale de este archivo hacia `historial/AAAA-MM.md` — no queda rastro en la
-tabla de su sección. El flujo completo lo gobierna el skill `task-flow`.
+tabla de su sección. El flujo completo lo gobierna el skill `tarea`.

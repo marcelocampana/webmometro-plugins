@@ -82,7 +82,7 @@ Utilidades transversales de organización del trabajo.
 - **claude-activity-log** — Mantiene un registro persistente y cross-cuenta
   de las tareas realizadas en Claude, para no perder el rastro de en qué
   cuenta, proyecto y contexto se hizo cada cosa.
-- **task-flow** — Gestiona las tareas de un proyecto en el directorio
+- **tarea** — Gestiona las tareas de un proyecto en el directorio
   `tareas/`: cola de tareas con flujo "una tarea, una rama, un commit",
   bandeja de revisión y auditoría por áreas. Cada fila lleva `Coste`
   —estimado desde el historial al crearla, emparejando por familia de

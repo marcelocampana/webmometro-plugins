@@ -18,4 +18,4 @@ Tres reglas irrenunciables:
 
 Nada entra a ninguna lista sin visto bueno, y la IA no escribe en `tareas.md` por iniciativa propia: para eso están las otras dos.
 
-El flujo completo —los movimientos del cierre, los estados, el cálculo de tiempos— lo gobierna el skill `task-flow` (plugin `utils`).
+El flujo completo —los movimientos del cierre, los estados, el cálculo de tiempos— lo gobierna el skill `tarea` (plugin `utils`).

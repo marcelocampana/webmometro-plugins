@@ -43,4 +43,4 @@ Cambios que viven en los componentes compartidos y por tanto **alcanzan a todas 
 
 Al cerrarse, una tarea sale de este archivo hacia `historial/AAAA-MM.md`. El flujo completo —una
 tarea/una rama/un commit, la confirmación de cierre en cadena y el cálculo de tiempos— lo gobierna
-el skill `task-flow`.
+el skill `tarea`.

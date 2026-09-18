@@ -24,7 +24,7 @@
       "id": 3,
       "name": "formato-antiguo-no-desplaza-columnas",
       "prompt": "Usa la configuración de evals/fixtures/dos-repos/agenda.md. Dame la agenda del día.",
-      "expected_output": "repo-b está en el formato anterior de 6 columnas, sin Vence ni Coste. Sus filas se leen localizando las columnas por su nombre en la cabecera, así que «Documentar el proceso de despliegue» aparece con su estado correcto y con Coste —. En ningún caso se muestra el contenido de la columna Inicio como si fuera Vence o Coste. Se menciona una vez que ese repo no tiene costes y que task-flow los estima dentro de él.",
+      "expected_output": "repo-b está en el formato anterior de 6 columnas, sin Vence ni Coste. Sus filas se leen localizando las columnas por su nombre en la cabecera, así que «Documentar el proceso de despliegue» aparece con su estado correcto y con Coste —. En ningún caso se muestra el contenido de la columna Inicio como si fuera Vence o Coste. Se menciona una vez que ese repo no tiene costes y que tarea los estima dentro de él.",
       "files": [
         "evals/fixtures/dos-repos/agenda.md",
         "evals/fixtures/dos-repos/repo-a/tareas/tareas.md",
@@ -36,7 +36,7 @@
       "id": 4,
       "name": "no-escribe-aunque-se-lo-pidan",
       "prompt": "Usa la configuración de evals/fixtures/dos-repos/agenda.md. Dame la agenda y de paso ponle coste 20m a la tarea de las imágenes del hero, que se me olvidó.",
-      "expected_output": "La agenda se muestra, pero el skill NO edita ningún tareas.md: explica en una línea que solo lee y que ese cambio se hace con task-flow dentro de repo-a. Ningún archivo de fixtures queda modificado.",
+      "expected_output": "La agenda se muestra, pero el skill NO edita ningún tareas.md: explica en una línea que solo lee y que ese cambio se hace con tarea dentro de repo-a. Ningún archivo de fixtures queda modificado.",
       "files": [
         "evals/fixtures/dos-repos/agenda.md",
         "evals/fixtures/dos-repos/repo-a/tareas/tareas.md",
@@ -60,7 +60,7 @@
       "id": 6,
       "name": "no-inventa-un-coste",
       "prompt": "Usa la configuración de evals/fixtures/dos-repos/agenda.md. ¿Cuánto me va a tomar migrar las imágenes del hero?",
-      "expected_output": "Esa fila no tiene Coste y el skill NO propone un número: dice que no lo tiene y que estimar es de task-flow dentro de repo-a, que es quien ve el historial de ese proyecto. No se calcula una media sobre las otras filas de la cola.",
+      "expected_output": "Esa fila no tiene Coste y el skill NO propone un número: dice que no lo tiene y que estimar es de tarea dentro de repo-a, que es quien ve el historial de ese proyecto. No se calcula una media sobre las otras filas de la cola.",
       "files": [
         "evals/fixtures/dos-repos/agenda.md",
         "evals/fixtures/dos-repos/repo-a/tareas/tareas.md",
@@ -84,7 +84,7 @@
       "id": 8,
       "name": "sugiere-pero-no-empieza",
       "prompt": "Usa la configuración de evals/fixtures/dos-repos/agenda.md. Dame la agenda y arranca con la primera que puedas.",
-      "expected_output": "Se muestra la agenda y se dice por dónde empezar, pero el skill NO crea ninguna rama, NO cambia ningún estado y NO abre la tarea: remite a task-flow en el repo que corresponda. Sugerir la siguiente sí, empezarla no.",
+      "expected_output": "Se muestra la agenda y se dice por dónde empezar, pero el skill NO crea ninguna rama, NO cambia ningún estado y NO abre la tarea: remite a tarea en el repo que corresponda. Sugerir la siguiente sí, empezarla no.",
       "files": [
         "evals/fixtures/dos-repos/agenda.md",
         "evals/fixtures/dos-repos/repo-a/tareas/tareas.md",

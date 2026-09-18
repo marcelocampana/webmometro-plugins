@@ -1,11 +1,11 @@
 {
-  "skill_name": "task-flow",
+  "skill_name": "tarea",
   "evals": [
     {
       "id": 1,
       "name": "no-activar-sin-directorio-tareas",
       "prompt": "Estoy revisando este componente y me acabo de acordar: anota que tengo que revisar los estilos del footer en algún momento.",
-      "expected_output": "El skill NO se activa y NO ofrece montar el sistema de tareas, porque el proyecto no tiene un directorio tareas/. La petición se atiende con la lista interna de tareas de Claude Code o con una respuesta normal. No se crea ningún archivo ni se menciona task-flow, tareas.md, revisar.md ni auditoria.md.",
+      "expected_output": "El skill NO se activa y NO ofrece montar el sistema de tareas, porque el proyecto no tiene un directorio tareas/. La petición se atiende con la lista interna de tareas de Claude Code o con una respuesta normal. No se crea ningún archivo ni se menciona tarea, tareas.md, revisar.md ni auditoria.md.",
       "files": []
     },
     {
@@ -128,7 +128,7 @@
     {
       "id": 11,
       "name": "auditoria-no-escribe-en-lista-principal",
-      "prompt": "/task-flow --auditoria",
+      "prompt": "/tarea --auditoria",
       "expected_output": "Recorre el proyecto por las áreas del checklist base que apliquen más las propias del proyecto, y escribe SOLO en tareas/auditoria.md. No toca tareas.md ni revisar.md. Descarta lo que ya esté en esas dos listas, incluido el historial de tareas ✅ Completada. Cada fila lleva Área, Severidad (alta/media/baja) y un Motivo con evidencia concreta (archivo y línea, o el comando que lo delata); una fila sin evidencia no se escribe. No convierte en tareas los marcadores de pendiente intencionales del proyecto (por ejemplo [PENDIENTE-validación] o TODO(nombre)). Entrega la tabla más un resumen de una línea por área, sin ascender ninguna fila y sin informe adicional.",
       "files": [
         "evals/fixtures/proyecto-en-curso/tareas/tareas.md",
@@ -166,7 +166,7 @@
     {
       "id": 15,
       "name": "ingesta-de-conversacion",
-      "prompt": "Hemos estado depurando el header toda la tarde. /task-flow --ingerir",
+      "prompt": "Hemos estado depurando el header toda la tarde. /tarea --ingerir",
       "expected_output": "Recorre la conversación previa y propone tareas de las TRES fuentes, no solo de lo que el usuario pidió: (a) lo que pidió y no se hizo, (b) **lo que la IA propuso antes** —recomendaciones y alternativas descartadas por tiempo—, y (c) lo que el trabajo destapó depurando, que es la que más rinde. Todo va a revisar.md con Origen = tema y fecha de la conversación, no «conversación» a secas. Propone en tabla compacta y ESPERA: no escribe ninguna fila sin visto bueno. Si no hay material, lo dice — una ingesta vacía es un resultado válido.",
       "files": [
         "evals/fixtures/con-historial/tareas/tareas.md",

@@ -100,15 +100,15 @@ Repórtalo **antes que cualquier otro hallazgo**, con las versiones literales, y
    validación nueva; la anterior queda como registro.
 2. **Revertir** — la copia congelada gobierna. Se restaura desde ella y se propaga.
 
-Si el usuario no decide ahora, regístralo como tarea con las versiones literales (`task-flow`); no
+Si el usuario no decide ahora, regístralo como tarea con las versiones literales (`tarea`); no
 dejes la decisión solo en el chat. **Mientras el bloqueo esté en pie, ninguna pieza se declara
 sincronizada ni lista para publicar.**
 
 ## Cuando una pieza validada se modifica
 
 Corregir la fuente de una pieza en `estado: validado` **invalida la validación**. Dilo en el momento
-y ofrece resellar. Si la corrección la cierra `task-flow`, el estado baja a `en-revision`
-(`task-flow/references/archivado.md`): la validación caducó con el cambio.
+y ofrece resellar. Si la corrección la cierra `tarea`, el estado baja a `en-revision`
+(`tarea/references/archivado.md`): la validación caducó con el cambio.
 
 ## Errores
 

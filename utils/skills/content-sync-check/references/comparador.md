@@ -80,7 +80,7 @@ saltan, casi siempre por no tener `estado:`), `rutas_rotas` y `avisos`.
 
 **Repórtalo en el resumen, no al final.** Una pieza sin `estado:` se salta en silencio: el reporte
 sale limpio y parece completo sin serlo. Decir «3 de 5 páginas no se verificaron» es más útil que
-cualquier hallazgo de las otras dos. Ofrece añadir el `estado:` que falte (lo pone `task-flow` al
+cualquier hallazgo de las otras dos. Ofrece añadir el `estado:` que falte (lo pone `tarea` al
 aprobar); no lo escribas por tu cuenta.
 
 ## Si el script no corre

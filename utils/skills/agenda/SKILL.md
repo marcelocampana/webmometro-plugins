@@ -7,17 +7,17 @@ description: >
   "cuánto me cabe hoy", "cómo voy", o cuando una rutina programada pida el resumen diario. Avisa de
   lo vencido, de lo que vence hoy, de varias tareas abiertas a la vez y de las filas sin `Coste`.
   **Solo lee: nunca escribe en ninguna lista de tareas ni reordena ninguna cola.** NO lo uses para
-  abrir, cerrar, crear, priorizar ni mover una tarea —eso es `task-flow`, dentro del repo que
+  abrir, cerrar, crear, priorizar ni mover una tarea —eso es `tarea`, dentro del repo que
   corresponda—, ni para el detalle de un proyecto concreto. Si no hay configuración de repos, lo dice
   y ofrece crearla; no la inventa.
 argument-hint: "[--hoy | --config]"
 metadata:
-  version: 1.1.1
+  version: 1.1.2
 ---
 
 # Agenda diaria cross-repo (agenda)
 
-`task-flow` gobierna **un** repo. El día del usuario no es un repo: es la suma de varios, cada uno con
+`tarea` gobierna **un** repo. El día del usuario no es un repo: es la suma de varios, cada uno con
 su `tareas/`. Este skill responde a una sola pregunta —**qué toca hoy y si cabe en el tiempo que
 hay**— y no hace nada más.
 
@@ -28,11 +28,11 @@ hay**— y no hace nada más.
 
 Es lo que le permite correr desatendido desde una rutina: un skill que solo lee no puede dejar una
 cola corrupta, ni duplicar una fila, ni pisar un cierre a medias. Cuando algo hay que cambiar —un
-coste que falta, un orden que no cuadra—, **lo dice y remite a `task-flow` en ese repo**; no lo
+coste que falta, un orden que no cuadra—, **lo dice y remite a `tarea` en ese repo**; no lo
 arregla.
 
 De ahí la segunda mitad: **no reordena nada**. El orden de `## Ahora` es del usuario, igual que en
-`task-flow`. La agenda puede decir «por orden esto cae el viernes y vence el miércoles»; subirlo, no.
+`tarea`. La agenda puede decir «por orden esto cae el viernes y vence el miércoles»; subirlo, no.
 
 ## Paso 0 · Resolver la configuración (siempre, antes de todo)
 
@@ -111,7 +111,7 @@ sale en la agenda de mañana; un repo parado en una rama de tarea muestra el est
 1. **No escribe en ninguna lista de tareas**, ni siquiera para corregir un error evidente.
 2. **No reordena ninguna cola**, ni propone reordenar sin decir en qué repo y en qué posición.
 3. **No inventa un coste.** Una fila sin `Coste` se cuenta aparte, nunca se estima aquí: estimar es de
-   `task-flow`, que tiene delante el historial de ese repo.
+   `tarea`, que tiene delante el historial de ese repo.
 4. **No abre tareas.** Sugerir por dónde empezar sí; empezar, no.
 5. **Una ruta rota no aborta la agenda**; se reporta y se sigue.
 

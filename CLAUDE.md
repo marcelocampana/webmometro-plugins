@@ -15,7 +15,7 @@ user-facing output (skills instruct their output language explicitly):
 - **brand-voice-pro** — full-stack plugin: skills + agents + commands + MCP servers.
 - **design-system** — skills-only: design-system audit/docs + social carousel generation.
 - **seo-suite** — skills-only: a 10-skill SEO suite (snapshots → audit/CRO/audience/AI-search, plus content clusters, landing blueprints and change tracking).
-- **utils** — skills-only: general-purpose personal utilities (cross-account activity log via `claude-activity-log`; branch-per-task management assistant via `task-flow`, whose rows carry a `Coste` estimated from closed-task history (matched by task *family* — verb + object — never by section mean) and an optional `Vence` that audits the user's ordering instead of overriding it; content sync verification and repair across publishing destinations via `content-sync-check`; and the read-only cross-repo daily view via `agenda`, which reads each registered repo's `## Ahora` and answers what fits in today's declared capacity). **`agenda` never writes to any task list and never reorders a queue** — that is what lets it run unattended from a routine; when something needs changing it names the repo and defers to `task-flow` there. The two are coupled by a **format contract declared on both sides**: `task-flow/references/formato-tablas.md` owns the columns, `agenda/references/contrato-formato.md` consumes them, and `agenda` locates them **by header name** so a repo still on the old 6-column format reads correctly. `task-flow`, `agenda` and `content-sync-check` all use a deliberately thin SKILL.md core that dispatches to one per-mode reference — keep the core under ~2.4k tokens and each reference under ~1.7k. **The core ceiling measures the body, not the frontmatter**: a skill's `description` is the activation trigger, is long and specific by design, and is loaded as listing metadata rather than as instructions, so it does not compete for the core's budget. Measure with `wc -c` on the text after the closing `---` (4 chars ≈ 1 token).
+- **utils** — skills-only: general-purpose personal utilities (cross-account activity log via `claude-activity-log`; branch-per-task management assistant via `tarea`, whose rows carry a `Coste` estimated from closed-task history (matched by task *family* — verb + object — never by section mean) and an optional `Vence` that audits the user's ordering instead of overriding it; content sync verification and repair across publishing destinations via `content-sync-check`; and the read-only cross-repo daily view via `agenda`, which reads each registered repo's `## Ahora` and answers what fits in today's declared capacity). **`agenda` never writes to any task list and never reorders a queue** — that is what lets it run unattended from a routine; when something needs changing it names the repo and defers to `tarea` there. The two are coupled by a **format contract declared on both sides**: `tarea/references/formato-tablas.md` owns the columns, `agenda/references/contrato-formato.md` consumes them, and `agenda` locates them **by header name** so a repo still on the old 6-column format reads correctly. `tarea`, `agenda` and `content-sync-check` all use a deliberately thin SKILL.md core that dispatches to one per-mode reference — keep the core under ~2.4k tokens and each reference under ~1.7k. **The core ceiling measures the body, not the frontmatter**: a skill's `description` is the activation trigger, is long and specific by design, and is loaded as listing metadata rather than as instructions, so it does not compete for the core's budget. Measure with `wc -c` on the text after the closing `---` (4 chars ≈ 1 token).
 
 ## Layout & manifest hierarchy
 
@@ -29,7 +29,7 @@ user-facing output (skills instruct their output language explicitly):
 <plugin>/agents/<name>.md           ← optional autonomous subagents (brand-voice-pro only)
 <plugin>/commands/<name>.md         ← optional slash-command entry points (brand-voice-pro only)
 <plugin>/settings/*.local.md.example← optional per-project config template the user copies into .claude/
-tareas/                             ← this repo's own task queue, managed by the `task-flow` skill
+tareas/                             ← this repo's own task queue, managed by the `tarea` skill
 ```
 
 Two invariants tie the manifests together — **always keep them in sync**:
@@ -164,7 +164,7 @@ When a data source is missing, SEO skills degrade explicitly rather than fail.
 4. Bump `version` in **both** the plugin's `plugin.json` and its `marketplace.json` entry
    together, **and** bump the `metadata.version` of **every skill whose content you changed**, in
    the same commit. These are separate version lines, not one number in three files: each skill
-   versions independently of its siblings and of the plugin (`utils` 1.7.1 ships `task-flow` 1.7.1
+   versions independently of its siblings and of the plugin (`utils` 1.7.1 ships `tarea` 1.7.1
    alongside `content-sync-check` 1.1.0 and `claude-activity-log` 1.1.0). So a change touching one
    skill is two manifest bumps plus one skill bump; a change touching two skills is two plus two.
    **The trigger is changing content that ships, not editing a manifest** — a pure refactor that
@@ -173,7 +173,7 @@ When a data source is missing, SEO skills degrade explicitly rather than fail.
 
 ## Cómo avanzamos: `tareas/`
 
-El trabajo se organiza en cuatro piezas dentro de `tareas/`, gobernadas por el skill `task-flow`
+El trabajo se organiza en cuatro piezas dentro de `tareas/`, gobernadas por el skill `tarea`
 (plugin `utils`):
 
 - **`tareas.md`** — la cola real, siempre limpia: `## Ahora` más solo las secciones con trabajo

@@ -10,7 +10,7 @@ prioridad sobre ella.
 
 ## Capacidad
 
-Horas de **trabajo** al día —las mismas unidades que `Coste` y `Duración` en `task-flow`, con las
+Horas de **trabajo** al día —las mismas unidades que `Coste` y `Duración` en `tarea`, con las
 pausas fuera—, no horas de calendario. Es **una sola cifra para el día**, no una por repo: el día no
 se multiplica por tener tres proyectos.
 

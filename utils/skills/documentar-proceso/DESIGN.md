@@ -7,13 +7,13 @@ convertirse en el `SKILL.md` final.
 
 ## Origen del problema
 
-En una conversación previa sobre mejorar el aprendizaje del registro de tareas de `task-flow`,
+En una conversación previa sobre mejorar el aprendizaje del registro de tareas de `tarea`,
 surgió la idea de generar una "bitácora de proceso" a partir de las tareas ya cerradas. La
-pregunta de diseño era si esto debía vivir dentro de `task-flow` o ser algo aparte.
+pregunta de diseño era si esto debía vivir dentro de `tarea` o ser algo aparte.
 
-## Por qué NO va dentro de `task-flow`
+## Por qué NO va dentro de `tarea`
 
-`task-flow` responde "¿qué hay que hacer y en qué estado está?" a nivel de una fila. Lo que se
+`tarea` responde "¿qué hay que hacer y en qué estado está?" a nivel de una fila. Lo que se
 busca acá es responder "¿cómo se hace bien este tipo de trabajo, aprendido de haberlo hecho varias
 veces?" — eso opera a nivel de patrón repetible cruzando tareas, proyectos y tiempo. Son preguntas
 de naturaleza distinta.
@@ -24,10 +24,10 @@ con su propio `tareas/`). Ninguna bitácora de proceso puede vivir dentro de un 
 sin romper esa independencia.
 
 Razones adicionales:
-- `task-flow` ya tiene una responsabilidad clara y cerrada (las listas de un proyecto). Añadirle
+- `tarea` ya tiene una responsabilidad clara y cerrada (las listas de un proyecto). Añadirle
   "extraer aprendizaje cruzando proyectos" le suma una dimensión —multi-proyecto, multi-tiempo,
   multi-tarea— que ninguna otra parte de la skill tiene hoy.
-- La señal correcta: si esto viviera dentro de `task-flow`, requeriría columnas nuevas en los
+- La señal correcta: si esto viviera dentro de `tarea`, requeriría columnas nuevas en los
   registros existentes para relacionar tareas entre sí — ese es exactamente el tipo de
   acoplamiento que infla una skill y la hace frágil (cada campo nuevo en `tareas.md` es una carga
   que el resto del sistema debe respetar para siempre, aunque el 95% de las tareas no participe de
@@ -40,13 +40,13 @@ es una lectura posterior sobre tareas ya cerradas."**
 ## Diseño de la skill nueva
 
 Nombre acordado: **`documentar-proceso`** (se descartó `bitacora-proceso`/`proceso-aprendido`
-porque "bitácora" ya es, en rigor, el registro de tareas que produce `task-flow` — esta skill no
+porque "bitácora" ya es, en rigor, el registro de tareas que produce `tarea` — esta skill no
 crea una bitácora nueva, aprende de la que ya existe).
 
 Características:
 
 1. **Solo lectura** sobre uno o más directorios `tareas/` (de uno o varios proyectos indicados
-   por el usuario). No escribe en `tareas.md`, `revisar.md` ni `auditoria.md` — `task-flow` no
+   por el usuario). No escribe en `tareas.md`, `revisar.md` ni `auditoria.md` — `tarea` no
    necesita saber que esta skill existe.
 2. **Sin vínculo estructural entre tareas.** No se pide marcar de antemano "esta tarea es del
    proceso X" (columna nueva, acoplamiento permanente). La relación se establece al momento de
@@ -58,9 +58,9 @@ Características:
 3. **Produce un artefacto de conocimiento**, no una tarea más: un documento Markdown por proceso
    repetible (pasos, decisiones, dónde se atascó, qué se automatizaría).
 4. **Activación explícita únicamente** ("documenta el proceso de esta página", "qué aprendimos de
-   esto") — nunca automática, igual que `--auditoria` en `task-flow`.
+   esto") — nunca automática, igual que `--auditoria` en `tarea`.
 5. Concesión mínima opcional a futuro: el Comentario de una tarea cerrada (ya es texto libre en
-   `task-flow`) podría mencionar a qué proceso perteneció, igual que ya menciona decisiones y
+   `tarea`) podría mencionar a qué proceso perteneció, igual que ya menciona decisiones y
    trampas — sin cambiar el formato actual.
 
 ### Ubicación del artefacto de salida
@@ -78,9 +78,9 @@ nuevo, siguiendo el precedente directo de `contexto/seo-tracking/` (producido po
 - Notación para documentar la carpeta nueva en el `CLAUDE.md` del cliente, copiando el estilo ya
   usado: `carpeta/  descripción corta  (produce: <skill>; leen: <consumidores>)`.
 
-### Resolución flexible frente a `task-flow` (que puede cambiar de formato)
+### Resolución flexible frente a `tarea` (que puede cambiar de formato)
 
-`task-flow` está en desarrollo activo (el usuario lo está editando en paralelo a esta discusión).
+`tarea` está en desarrollo activo (el usuario lo está editando en paralelo a esta discusión).
 Para no romperse si el formato de `tareas.md`/`revisar.md`/`auditoria.md` cambia, `documentar-proceso`
 debe **resolver por rol/estructura, no por nombre de columna exacto** — mismo patrón ya usado en
 `seo-change-tracker` frente a `contexto/configuracion.md`: "resuelve por rol y ofrece migrar; no
@@ -88,10 +88,10 @@ asume un alias fijo." Busca "una tarea cerrada con su comentario de cierre", no 
 columnas congelado. Si no encuentra lo esperado, degrada explícitamente (avisa, no falla en
 silencio, no asume).
 
-### Formato de entrada (pendiente de reconfirmar una vez que `task-flow` esté estable)
+### Formato de entrada (pendiente de reconfirmar una vez que `tarea` esté estable)
 
 Falta releer `tareas.md`/`revisar.md`/`auditoria.md` una vez que el usuario termine sus ediciones
-actuales a `task-flow`, para confirmar:
+actuales a `tarea`, para confirmar:
 - Campos exactos de una tarea cerrada (¿tiene ya un campo "Comentario" de texto libre?).
 - Si el resolver por rol es viable con la estructura real o necesita ajuste.
 
@@ -123,7 +123,7 @@ solo lectura."*
 
 ### Redacción de activación explícita / retirada silenciosa
 
-`task-flow/SKILL.md`:
+`tarea/SKILL.md`:
 > Actívalo solo si el proyecto ya tiene ese directorio, o si el usuario pide montarlo.
 > [...] si no existe y el usuario no pidió nada de tareas, no lo actives ni lo propongas.
 
@@ -131,7 +131,7 @@ Y en el cuerpo: *"No hay `tareas/` y no se pidió nada de tareas → Retírate e
 menciones."* — patrón a replicar en `documentar-proceso` cuando no hay procesos cerrados que
 documentar.
 
-### Mecanismo anti-acoplamiento del marketplace (por qué esto es seguro aunque `task-flow` cambie)
+### Mecanismo anti-acoplamiento del marketplace (por qué esto es seguro aunque `tarea` cambie)
 
 Del `CLAUDE.md` raíz del marketplace: los archivos compartidos viven una sola vez y se leen **por
 puntero, nunca por copia**; si el productor cambia de formato o ubicación, el consumidor "resuelve
@@ -146,9 +146,9 @@ por rol y ofrece migrar; no asume un alias fijo." Ejemplos concretos de esta pos
 
 1. Confirmar formato de nombre de archivo dentro de `contexto/procesos/`: `{slug}.md` vs
    `AAAA-MM-DD-slug.md`.
-2. Esperar a que el usuario termine de editar `task-flow` antes de fijar el mecanismo exacto de
+2. Esperar a que el usuario termine de editar `tarea` antes de fijar el mecanismo exacto de
    "resolver por rol" sobre `tareas.md`/`revisar.md`/`auditoria.md`.
 3. Redactar el `SKILL.md` real de `documentar-proceso` (frontmatter con triggers explícitos +
-   sección "cuándo NO activarse", siguiendo el estilo de `task-flow` y `claude-activity-log`).
+   sección "cuándo NO activarse", siguiendo el estilo de `tarea` y `claude-activity-log`).
 4. Documentar `contexto/procesos/` en el `CLAUDE.md` del cliente (ODC) cuando la skill exista,
    con la notación `carpeta/  descripción  (produce: ...; leen: ...)`.

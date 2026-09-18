@@ -1,5 +1,5 @@
 ---
-name: task-flow
+name: tarea
 description: >
   Gestiona las tareas del proyecto en el directorio `tareas/`: la cola del usuario (`tareas.md`, con
   flujo "una tarea, una rama, un commit" y tiempos), la bandeja `revisar.md` y la revisión por áreas
@@ -14,10 +14,10 @@ description: >
   pidió nada de tareas, no lo actives ni lo propongas.
 argument-hint: "[--init | --revisar | --auditoria | --ingerir | --actualizar]"
 metadata:
-  version: 1.8.0
+  version: 2.0.0
 ---
 
-# Gestión de tareas por rama (task-flow)
+# Gestión de tareas por rama (tarea)
 
 El cuello de botella de trabajar con asistencia de IA no es saber **qué** hay que hacer, sino **hacer
 una cosa a la vez, con el contexto corto y el tiempo medible**. Este skill gobierna eso y **asiste en
@@ -69,7 +69,8 @@ tokens y cada referencia suma otros ~500-1.700.
    línea —el flujo se apoya en la rama por tarea y en tiempos verificables—. Sin modo degradado.
 3. **Leer las secciones** con `grep -n '^## '` sobre el archivo resuelto, no sobre una ruta supuesta.
    Son las que hay: no inventes ni reordenes sin confirmación. Respeta el umbral si está anotado
-   (`<!-- task-flow: umbral … -->`).
+   (`<!-- tarea: umbral … -->`; el marcador antiguo `<!-- task-flow: … -->` vale igual y no se
+   reescribe sin permiso).
 
 ## Las tres listas
 

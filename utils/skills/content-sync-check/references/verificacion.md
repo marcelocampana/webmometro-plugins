@@ -11,7 +11,7 @@ coincide con el sitio **no es un hallazgo**. Si el usuario nombra una página co
 aunque esté en borrador — diciéndolo.
 
 Si ninguna pieza tiene `estado:`, no falles: dilo en una línea y ofrece verificar el mapeo
-completo igualmente (`task-flow` mantiene ese campo al cerrar la tarea que aprueba).
+completo igualmente (`tarea` mantiene ese campo al cerrar la tarea que aprueba).
 
 ## Los cuatro cotejos
 
@@ -100,8 +100,8 @@ Si **varios lados divergen a la vez** sobre el mismo bloque, no lo trates como u
 simple: es una reconciliación y tiene su propio método (`reconciliacion.md`).
 
 Si hay hallazgos, ofrece en una línea: **repararlos** (`reparacion.md`) o **registrarlos** como
-tarea vía `task-flow`. Si el usuario elige registrar y el texto corregido es largo, escríbelo en un
-archivo del reporte y que la tarea lleve el puntero: los comentarios de `task-flow` se recortan a
+tarea vía `tarea`. Si el usuario elige registrar y el texto corregido es largo, escríbelo en un
+archivo del reporte y que la tarea lleve el puntero: los comentarios de `tarea` se recortan a
 900 caracteres y el texto se perdería.
 
 Si no hay hallazgos, dilo en una línea y para. No hace falta un informe para decir que todo

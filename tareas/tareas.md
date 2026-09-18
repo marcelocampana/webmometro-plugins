@@ -1,4 +1,4 @@
-<!-- task-flow: umbral 40000 chars · holgura 70% · última revisión 2026-08-27 -->
+<!-- tarea: umbral 40000 chars · holgura 70% · última revisión 2026-08-27 -->
 
 # Tareas
 
@@ -27,7 +27,7 @@ Documentación raíz (`README.md`, `CLAUDE.md`, `docs/`), configuración y todo 
 
 ## utils
 
-Los cuatro skills del plugin `utils`: `claude-activity-log`, `content-sync-check`, `documentar-proceso` y `task-flow`.
+Los cuatro skills del plugin `utils`: `claude-activity-log`, `content-sync-check`, `documentar-proceso` y `tarea`.
 
 | Estado | Tarea | Vence | Coste | Inicio | Completada | Duración | Comentarios |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -46,4 +46,4 @@ Los cuatro skills del plugin `utils`: `claude-activity-log`, `content-sync-check
 - `✅ Completada` — cerrada y archivada. Solo `🔵 En curso` y `✅ Completada` llevan icono, pegado al texto.
 
 Al cerrarse, una tarea sale de este archivo hacia `historial/AAAA-MM.md` — no queda rastro en la
-tabla de su sección. El flujo completo lo gobierna el skill `task-flow`.
+tabla de su sección. El flujo completo lo gobierna el skill `tarea`.

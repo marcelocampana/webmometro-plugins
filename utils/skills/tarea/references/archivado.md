@@ -57,7 +57,7 @@ Red de seguridad, no mecanismo principal —de eso se encarga el archivado al ce
 inicio de `tareas.md`:
 
 ```markdown
-<!-- task-flow: umbral 40000 chars · holgura 70% · última revisión 2026-08-20 -->
+<!-- tarea: umbral 40000 chars · holgura 70% · última revisión 2026-08-20 -->
 ```
 
 Por defecto ~40.000 chars (~10k tokens). Al vivir en el archivo es visible y editable; el skill lo

@@ -15,7 +15,7 @@ description: >
   ni para sincronizar código que no sea contenido editorial.
 argument-hint: "[--init | --reparar | <página>]"
 metadata:
-  version: 1.1.0
+  version: 1.1.1
 ---
 
 # Verificación de contenido entre destinos (content-sync-check)
@@ -81,7 +81,7 @@ web/contenido/**            ← FUENTE: lo aprobado, lo único que se edita a ma
 **Solo se verifica lo aprobado**: una pieza entra si su frontmatter dice `estado: aprobado`,
 `validado` o `publicado`. **`validado` es distinto de `aprobado`**: hay una copia congelada de lo
 que revisó el equipo médico y un hash, y contra ella el diff manda sin excepción (`validacion.md`). Un borrador que no coincide con el sitio no es un hallazgo, es un borrador. Ese campo
-lo mantiene `task-flow` al cerrar la tarea que aprueba la pieza.
+lo mantiene `tarea` al cerrar la tarea que aprueba la pieza.
 
 **Ante la duda, se reporta.** Solo se descarta lo identificable con certeza —un campo de proceso
 con nombre conocido, una diferencia tipográfica, andamiaje—, nunca por parecer poco importante: un
@@ -137,7 +137,7 @@ skill corrige. Se informa y decide el usuario.
 | La ruta del repo del sitio no existe | Dilo, ofrece corregirla en `configuracion.md`, y sigue con los demás destinos. |
 | Falta el `project_id` de Claude Design | Sigue sin ese destino y anótalo como pendiente en el reporte. |
 | `get_project` falla (sin acceso, id inválido) | Dilo en una línea con el id probado; no reintentes en bucle. Si es de permisos, `modo-inicio.md`. |
-| Una pieza sin `estado:` | No la verifiques; ofrece añadírselo (lo pone `task-flow` al aprobar). |
+| Una pieza sin `estado:` | No la verifiques; ofrece añadírselo (lo pone `tarea` al aprobar). |
 
 Los errores propios de cada modo están en su referencia.
 
