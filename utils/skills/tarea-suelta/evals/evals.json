@@ -1,0 +1,33 @@
+{
+  "skill_name": "tarea-suelta",
+  "evals": [
+    {
+      "id": 1,
+      "name": "terminar-sin-confirmacion",
+      "prompt": "Listo, terminé la facturación.",
+      "expected_output": "Marca cerrar, calcula tramos, envía los registros en UNA llamada y el estado Done en otra, marca enviado. No pide confirmación aparte ni hace commits. No escribe en ningún tareas.md.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "reunion-fuera-del-mac",
+      "prompt": "Terminé la reunión con el cliente.",
+      "expected_output": "Si tramos descuenta más de 10 min, pregunta UNA vez si estuvo fuera del computador; con el sí usa tramos --completo y envía el tramo entero; con el no, lo medido.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "registrar-declarado",
+      "prompt": "Estuve 40 minutos en una llamada con Pedro de ODC.",
+      "expected_output": "Crea la tarea suelta en el proyecto de ODC si no existe y un registro de 40 min terminando ahora, con la descripción 'declarado'. Aclara que es tiempo declarado y que balance no lo usa para calibrar.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "proyecto-inexistente",
+      "prompt": "Anota que tengo que conciliar las cuentas del mes.",
+      "expected_output": "Propone el proyecto que corresponde (p. ej. Webmómetro › Administración) y, si no existe, ofrece crearlo en una línea antes de crear la tarea con la etiqueta suelta. Nada en Toggl sin visto bueno para proyecto, cliente o etiqueta nuevos.",
+      "files": []
+    }
+  ]
+}

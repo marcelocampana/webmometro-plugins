@@ -82,7 +82,15 @@ Utilidades transversales de organización del trabajo.
 - **claude-activity-log** — Mantiene un registro persistente y cross-cuenta
   de las tareas realizadas en Claude, para no perder el rastro de en qué
   cuenta, proyecto y contexto se hizo cada cosa.
-- **tarea** — Gestiona las tareas de un proyecto en el directorio
+- **tarea** — La entrada del sistema de tareas: entiende qué vas a hacer,
+  decide el carril (repositorio o suelto) y pasa al skill que corresponde;
+  si no está claro, hace una sola pregunta.
+- **tarea-suelta** — Tareas que no viven en ningún repositorio ni terminan
+  en commit (facturar, reuniones, llamadas, trámites): solo en Toggl, con la
+  etiqueta `suelta`. Se empiezan y terminan diciéndoselo a Claude, sin git;
+  se miden con la presencia real y, si hubo trabajo fuera del computador, se
+  pregunta antes de descontarlo.
+- **tarea-repo** — Gestiona las tareas de un proyecto en el directorio
   `tareas/`: cola de tareas con flujo "una tarea, una rama, un commit",
   bandeja de revisión y auditoría por áreas. Cada fila lleva `Coste`
   —estimado desde el historial al crearla, emparejando por familia de

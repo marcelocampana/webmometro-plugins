@@ -1,178 +1,73 @@
 ---
 name: tarea
 description: >
-  Gestiona las tareas del proyecto en el directorio `tareas/`: la cola del usuario (`tareas.md`, con
-  flujo "una tarea, una rama, un commit" y tiempos), la bandeja `revisar.md` y la revisión por áreas
-  `auditoria.md`. Asiste en crearlas: propone, afina enunciados y recomienda prioridad.
-  **Actívalo solo si el proyecto ya tiene ese directorio, o si el usuario pide montarlo.** Cubre:
-  abrir y cerrar tareas ("qué sigue", "listo, ya está", "commit y merge"), pausar o bloquear, anotar,
-  priorizar y consultar; estimar cuánto cuesta una tarea y para cuándo vence; aparcar en "por revisar" y ascender; revisar el proyecto completo; extraer
-  tareas de la conversación o de un archivo de otro skill; archivar al cerrar cada tarea; poner al
-  día el formato de un sistema de tareas ya existente (`--actualizar`); y montar el sistema donde no
-  existe. NO lo uses para TODOs efímeros de la sesión (esa es la lista interna de Claude Code), para
-  issues de GitHub/Jira/Linear, ni para pendientes sin esta estructura; si no existe y el usuario no
-  pidió nada de tareas, no lo actives ni lo propongas. Si el repo está conectado a Toggl (o se pide
-  conectarlo: `--toggl`), registra en Toggl el tiempo de proyecto de cada tarea, recortado por la
-  presencia real del usuario, y avisa de las pausas.
-argument-hint: "[--init | --revisar | --auditoria | --ingerir | --actualizar | --toggl]"
+  Entrada del sistema de tareas del usuario: entiende qué va a hacer, decide el carril y delega en el
+  skill específico. Úsalo cada vez que el usuario hable de una tarea o de su trabajo pendiente: "qué
+  sigue", "empiezo X", "anota esto", "haz lo siguiente", "listo, ya está", "pausa", "qué tengo
+  abierto", "crea una tarea", "tengo que facturar", "estuve en una reunión", o cuando pase un archivo
+  o una conversación de la que extraer tareas. **Carril repositorio** (`tarea-repo`): trabajo que
+  cambia archivos de un repo con `tareas/` y termina en commit. **Carril suelto** (`tarea-suelta`):
+  tareas que no viven en ningún repo —facturar, reuniones, llamadas, trámites—, registradas solo en
+  Toggl, sin git. Si no está claro, hace una sola pregunta. NO lo uses para la vista de hoy (eso es
+  `agenda`), para planificar la semana (`plan-semanal`) ni para revisarla (`balance`), ni para TODOs
+  efímeros de la sesión.
+argument-hint: "[lo que el usuario quiere hacer]"
 metadata:
-  version: 2.1.0
+  version: 3.0.0
 ---
 
-# Gestión de tareas por rama (tarea)
+# Tareas: la entrada (tarea)
 
-El cuello de botella de trabajar con asistencia de IA no es saber **qué** hay que hacer, sino **hacer
-una cosa a la vez, con el contexto corto y el tiempo medible**. Este skill gobierna eso y **asiste en
-crear** las tareas: propone, afina y recomienda prioridad — no solo marca filas.
+El usuario no debería tener que saber qué skill se encarga de qué. Dice lo que va a hacer; este
+skill decide **por dónde va** y pasa el control. **No gestiona tareas él mismo**: es un desvío corto.
 
-**Este archivo es el núcleo: solo lo que toda operación necesita.** El detalle de cada modo vive en
-`references/`, y se lee **uno**.
+## Los dos carriles
 
-## Qué leer según lo que se pida
+| | `tarea-repo` | `tarea-suelta` |
+| --- | --- | --- |
+| **Qué** | Trabajo que cambia archivos de un repo y termina en commit | Todo lo demás que requiere tiempo: facturar, reuniones, llamadas, trámites, revisar algo fuera de un repo |
+| **Dónde vive** | `tareas/` del repo (y en Toggl si el repo está conectado) | Solo en Toggl |
+| **Ceremonia** | Rama, commit, merge, historial | Empezar y terminar; sin git |
+| **Quién la hace** | Casi siempre Claude | El usuario, o Claude si se lo delega |
 
-| Si el usuario… | Lee |
-| --- | --- |
-| abre, cierra, pausa, crea, prioriza o consulta una tarea | `references/modo-gestion.md` |
-| pide montar el sistema, o no existe `tareas/` | `references/modo-inicio.md` |
-| aparca algo, o asciende de la bandeja | `references/modo-revisar.md` |
-| pide revisar el proyecto completo (`--auditoria`) | `references/modo-auditoria.md` |
-| pasa un archivo de tareas, o pide extraerlas de la conversación (`--ingerir`) | `references/modo-ingesta.md` |
-| pide poner al día el formato, o el Paso 0 detecta una convención desactualizada (`--actualizar`) | `references/modo-actualizacion.md` |
-| pide conectar el repo con Toggl, o reconciliar lo pendiente (`--toggl`) | `references/toggl-conexion.md` |
+Los dos miden igual: marcas locales en `presencia.py`, tramos recortados por la presencia real y
+envío a Toggl en bloque al terminar. Lo que cambia es solo si hay git.
 
-**Se lee la del modo invocado y ninguna más.** Las de apoyo —`archivado`, `contextualizacion`,
-`redaccion-tareas`, `estados`, `tiempos`, `estimacion`, `toggl`, `seccionamiento`, `secciones-catalogo`,
-`historial-lectura`, `formato-tablas`, `cierre-contenido`, `impacto-documental`— solo cuando la del
-modo las cite para el paso que estás
-ejecutando. Cargarlas «por si acaso» convierte este skill en su propio problema: el núcleo pesa ~2.400
-tokens y cada referencia suma otros ~500-1.700.
+## Cómo decidir
 
-## Paso 0 · Precondición (siempre, antes de todo)
+En este orden; la primera que responda, manda:
 
-1. **Resolver el artefacto.** Sube hasta la raíz del repo y busca ahí:
+1. **El usuario lo dice** («es de repo», «no va en ningún repo») → ese carril.
+2. **Es una tarea que ya existe**: si está en el `tareas.md` del repo actual → `tarea-repo`; si
+   aparece en `presencia.py abiertas --repo suelta` o es una tarea de Toggl con la etiqueta `suelta`
+   → `tarea-suelta`.
+3. **El trabajo va a cambiar archivos de un repo que tiene `tareas/`** y es para commitear
+   (código, contenido, configuración, documentación) → `tarea-repo`.
+4. **No toca ningún repo**: una reunión, una llamada, facturar, responder correos, un trámite,
+   algo que el usuario hace fuera de Claude → `tarea-suelta`.
+5. **No está claro** → **una sola pregunta**, corta: «¿Esto termina en un commit en algún repo, o
+   es trabajo suelto?». No se adivina.
 
-   ```bash
-   RAIZ=$(git rev-parse --show-toplevel)
-   ls -d "$RAIZ"/tareas/ 2>/dev/null            # ¿existe el layout esperado?
-   find "$RAIZ" -maxdepth 2 -name '*.md' -exec grep -l '^## Ahora' {} + 2>/dev/null
-   ```
+**Consultas generales** («qué tengo abierto», «qué sigue»): se miran los dos carriles —`tareas.md`
+del repo actual, si lo hay, y `presencia.py abiertas --repo suelta`— y se responde en una sola
+lista. Para la vista de todos los proyectos, se remite a `agenda`.
 
-   **Lo identifica la estructura** —un archivo con `## Ahora` y su tabla de punteros—, **no el
-   nombre**; y en macOS `tareas.md` y `TAREAS.md` son el mismo archivo, así que buscar variantes de
-   nombre no sirve de nada. Tres desenlaces:
+## Cuando una tarea cambia de carril
 
-   - **Existe `tareas/`** → paso 2.
-   - **Existe un archivo plano con `## Ahora`** (típicamente `tareas.md` en la raíz): es el **formato
-     antiguo**. Dilo en una línea, **opera sobre el archivo donde está** y ofrece migrarlo
-     (`modo-inicio.md`). No escribas en una ruta que aún no existe.
-   - **No existe nada** → `modo-inicio.md` si el usuario pidió algo de tareas; **retírate en silencio**
-     si no pidió nada, sin mencionarlo ni ofrecerlo.
+- **Una suelta que empieza a producir commits** (Claude va a automatizar la facturación con un script
+  en un repo): se cierra la suelta con lo medido y se crea la de repo, con visto bueno. No se mezclan.
+- **Una de repo que resulta no necesitar commit** (era solo investigar): se cierra en su repo como
+  siempre; `tarea-repo` sabe cerrar sin cambios de código.
 
-2. **Verificar git.** `git rev-parse --git-dir`. **Sin git el skill se detiene y lo explica** en una
-   línea —el flujo se apoya en la rama por tarea y en tiempos verificables—. Sin modo degradado.
-3. **Leer las secciones** con `grep -n '^## '` sobre el archivo resuelto, no sobre una ruta supuesta.
-   Son las que hay: no inventes ni reordenes sin confirmación. Respeta el umbral si está anotado
-   (`<!-- tarea: umbral … -->`; el marcador antiguo `<!-- task-flow: … -->` vale igual y no se
-   reescribe sin permiso). Con el marcador `<!-- tarea: toggl … -->` el repo está conectado: sus
-   tablas no llevan columnas de tiempo y crear, abrir, pausar y cerrar siguen además `toggl.md`.
+## Después de decidir
 
-## Las tres listas
+Se invoca el skill del carril con lo que dijo el usuario, sin repetirle nada ni anunciar el desvío
+con más de media línea («Va por el carril suelto»). Las reglas, los estados y los tiempos son de
+cada carril: este archivo no los duplica.
 
-```text
-tareas/
-├── tareas.md      Lista principal · la del usuario · con ceremonia completa
-├── revisar.md     Bandeja de entrada · la IA propone libremente · ligera
-├── auditoria.md   Revisión por áreas · la IA, bajo petición · ligera
-├── secciones.md   Catálogo de secciones · nombre y ámbito, nunca tareas
-└── historial/     AAAA-MM.md · comentarios y filas cerradas, siempre al cerrar (no solo al mes)
-```
-
-`tareas.md` se mantiene limpio: `## Ahora` más solo las secciones con trabajo activo confirmado por
-el usuario. Lo que separa las tres listas no es el tema, es **quién decide y cuánto cuesta anotar**:
-
-| | `tareas.md` | `revisar.md` | `auditoria.md` |
-| --- | --- | --- | --- |
-| **Decide qué entra** | El usuario, siempre | El usuario aprueba; la IA propone a discreción | El usuario aprueba; la IA propone bajo petición |
-| **Ceremonia** | Rama, tiempos, una confirmación de cierre | Ninguna | Ninguna |
-| **Cola `## Ahora`** | Sí | No | No |
-| **Cómo sale** | Se cierra con commit y merge, en cadena | Asciende con aprobación, o se descarta | Igual |
-
-Las columnas de las cuatro tablas, verbatim, están en `formato-tablas.md`.
-
-`tareas.md` archiva **al cerrar cada tarea**, no al cumplir un mes: solo queda ahí lo abierto o por
-abrirse en breve. `secciones.md` guarda el catálogo aunque una sección se quede sin tareas activas — y
-es un catálogo abierto, no la lista cerrada de lo que puede existir. De `revisar.md` y `auditoria.md`
-las filas se descartan o ascienden.
-
-## Los cinco estados
-
-`Pendiente` · `🔵 En curso` · `Pausada` · `Bloqueada` · `✅ Completada`. **No se inventa un sexto**: si
-algo no cabe, va en la Nota o en Comentarios. **Solo una puede estar `🔵 En curso`**, y solo
-`✅ Completada` mueve la fila —sale de `tareas.md` al historial—; los cuatro abiertos la dejan donde
-está.
-
-**Solo `🔵 En curso` y `✅ Completada` llevan icono, e icono *y* texto, nunca el icono a secas** —
-`grep "En curso"` tiene que seguir funcionando y la columna debe leerse sin renderizar el emoji. El
-estado se cambia **en los dos sitios** mientras la tarea está en `## Ahora`. Cuándo se entra y se sale
-de cada uno: `estados.md`.
-
-## Planificar sin sesión de planificación
-
-**No se asignan días: se asignan orden y coste, y el día sale solo.** Toda la planificación cabe en la
-pregunta que ya se hacía al crear una tarea —«¿en qué posición va?»—, ahora con el coste puesto.
-
-- **`Coste`** manda: horas de trabajo, **lo propone el skill** desde el historial (`estimacion.md`) y
-  el usuario lo confirma. Sin base suficiente va `—`; no se inventa.
-- **`Vence`** es raro y solo para compromisos externos. **No decide el día: audita el orden.**
-
-## Comunicación ejecutiva
-
-El análisis es profundo; **lo que el usuario lee, no**. Un skill que justifica cada fila con tres
-párrafos hace más caro anotar una tarea que hacerla.
-
-- **Una propuesta cabe en 2–4 líneas**; una observación, en una.
-- **No recapitules el contexto leído.** Se usa, no se narra.
-- **Tablas antes que prosa** cuando hay varias tareas.
-- **Sin preámbulos ni cierres de cortesía.** El visto bueno se pide en una pregunta corta.
-- **La justificación larga vive en la fila, no en el chat.**
-
-Lo que **no** se recorta: el cierre es **una** confirmación, y con ella corre la cadena completa
-—fila, commit, merge— sin pausas. Los únicos altos son `main` sucia/desactualizada, un conflicto de
-merge, o cambios ajenos a la tarea; fuera de eso, no hay una segunda ni tercera pregunta. **Si el
-usuario encargó la tarea completa, ese encargo ya es el visto bueno del cierre.**
-
-> Propongo: **Corregir el desplegable del menú en móvil** (`AppHeader.vue`) → General. ¿La creo?
-
-## Reglas invariantes
-
-1. La IA **no añade filas a `tareas.md` ni reordena `## Ahora`** por iniciativa propia; las
-   transiciones de una tarea ya acordada sí, tras el visto bueno.
-2. El ascenso **mueve, no copia**, y siempre con aprobación.
-3. **Ninguna fila se escribe sin visto bueno**, en ninguna de las tres listas.
-4. **Se completa una tarea y se para**; sugerir la siguiente sí, empezarla no.
-5. **Las secciones no se reordenan**, y una sin ninguna fila activa **desaparece** de `tareas.md`.
-6. **Solo se archiva `✅ Completada`**, y **en el mismo momento del cierre**, dentro de la cadena — no
-   es un paso aparte que pida su propio visto bueno.
-7. **El texto no se pierde, se mueve**: al archivar, la fila y su comentario íntegro van al mensual;
-   en `tareas.md` no queda rastro por fila, y el total de la sección se lee en `secciones.md`.
-8. **Si la tarea aprueba o publica contenido, su `estado:` se actualiza en el archivo fuente**,
-    dentro de la misma cadena de cierre y sin pregunta aparte (`cierre-contenido.md`).
-9. **Del historial se lee la sección del ancla, nunca el archivo entero** (`archivado.md`).
-
-## Manejo de errores del Paso 0
-
-Los tres desenlaces de resolver el artefacto ya están arriba. Lo que falta:
-
-| Situación | Qué hacer |
-| --- | --- |
-| Falta `revisar.md` o `auditoria.md` | Ofrece crearla desde su esqueleto; nacen vacías. |
-| Falta `tareas.md` (están las otras dos) | No se instancia de un esqueleto: lleva secciones. Ve a `modo-inicio.md`. |
-| Falta `secciones.md` (existe `tareas.md`) | Dilo en una línea y ofrece `modo-actualizacion.md`; se crea desde los headers `##` ya presentes. |
-| Convención de formato desactualizada (columnas viejas, leyenda en una línea, archivado por antigüedad) | Dilo en una línea y ofrece `modo-actualizacion.md`. No lo corrijas aquí mismo. |
-
-Los errores propios de cada modo están en su referencia.
+La infraestructura común vive aquí: `scripts/presencia.py` (presencia, marcas, tramos, plan) y
+`assets/` (instalación del registro y del gancho, y la configuración global de Toggl).
 
 ## Idioma
 
-Español neutro con el usuario. El contenido de las listas, en el idioma del proyecto. Los nombres de
-estado **tal cual están en el archivo**: traducirlos rompe el `grep`.
+Español neutro. Los nombres de las tareas, tal cual.

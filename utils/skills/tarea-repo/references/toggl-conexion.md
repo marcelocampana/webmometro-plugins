@@ -36,7 +36,7 @@ repo») y su `project_id` va solo en Toggl; el marcador no cambia.
 
 ## Configuración global
 
-`~/Github/AI-kit/config/context/toggl.md` (o `TOGGL_CONFIG`), desde `assets/toggl.esqueleto.md`:
+`~/Github/AI-kit/config/context/toggl.md` (o `TOGGL_CONFIG`), desde `tarea/assets/toggl.esqueleto.md`:
 espacio de trabajo, etiqueta de imprevistos y umbrales. Si no existe, se ofrece crearla; hasta
 entonces rigen los valores por defecto. **Se edita a mano**: el skill solo la lee.
 

@@ -25,7 +25,7 @@ orden:
 ## Lo que no tiene estimación
 
 Se juntan todas en **una sola pregunta**, dentro de la propuesta, con la sugerencia de `tarea` si el
-historial de ese repo la tiene (`tarea/references/estimacion.md`), o sin ella:
+historial de ese repo la tiene (`tarea-repo/references/estimacion.md`), o sin ella:
 
 ```text
 Sin estimación (dime un número o déjalas fuera):

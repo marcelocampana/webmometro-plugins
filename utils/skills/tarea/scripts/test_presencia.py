@@ -80,6 +80,13 @@ class Tramos(Base):
         self.assertEqual(len(r["registros"]), 2)
         self.assertEqual(r["coste"], "45m")
 
+    def test_completo_no_recorta_una_reunion_fuera_del_mac(self):
+        self.marca("R", "abrir", "10:00")
+        self.mac("10:00", "10:05")
+        self.marca("R", "cerrar", "10:50")
+        self.assertEqual(self.tramos("R", "10:50")["duracion"], "5m")
+        self.assertEqual(self.tramos("R", "10:50", "--completo")["duracion"], "50m")
+
     def test_hueco_corto_sigue_siendo_presencia(self):
         self.marca("1", "abrir", "10:00")
         self.mac("10:00", "10:10")
@@ -202,6 +209,19 @@ class Plan(Base):
         r = correr("plan", "comparar", "--semana", self.SEMANA, "--hasta", t("2026-10-04T23:00").isoformat())
         self.assertFalse(r["hay_plan"])
         self.assertIsNone(r["porcentaje_planificado"])
+
+
+class Abiertas(Base):
+    def test_lista_abiertas_y_pausadas_no_cerradas(self):
+        self.marca("A", "abrir", "10:00")
+        self.marca("B", "abrir", "10:05")
+        self.marca("B", "pausar", "10:30")
+        self.marca("C", "abrir", "10:10")
+        self.marca("C", "cerrar", "10:40")
+        self.marca("C", "enviado", "10:41")
+        r = correr("abiertas", "--hasta", t("11:00").isoformat())
+        self.assertEqual([(x["tarea"], x["estado"]) for x in r], [("A", "abierta"), ("B", "pausada")])
+        self.assertEqual(correr("abiertas", "--repo", "otro", "--hasta", t("11:00").isoformat()), [])
 
 
 if __name__ == "__main__":

@@ -56,7 +56,7 @@ skill: «llevas 40 min en este proyecto sin tarea abierta». Entonces:
 
 Al abrir, pausar o cerrar, `P sesion`: si la sesión continua pasa de `sesion_min` (90), una línea:
 «Llevas 2h 10m seguidas; toca una pausa». No bloquea nada. El mismo aviso llega a cualquier
-conversación por el gancho de mensajes (`assets/presencia-instalacion.md`).
+conversación por el gancho de mensajes (`tarea/assets/presencia-instalacion.md`).
 
 **Al crear varias tareas de una vez**, se suma su `Coste` y se dice: «suman ~2h 40m». Si pasa de
 `sesion_min`, se avisa de antemano y se propone una pausa cerca de la mitad. Sin base para estimar,

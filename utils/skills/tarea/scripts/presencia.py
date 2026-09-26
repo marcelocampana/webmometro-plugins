@@ -26,6 +26,7 @@ Uso:
     presencia.py resumen --desde AAAA-MM-DD --hasta AAAA-MM-DD
     presencia.py claude --desde AAAA-MM-DD --hasta AAAA-MM-DD
     presencia.py plan guardar|leer|comparar [--semana AAAA-Www] [--vigente]
+    presencia.py abiertas [--repo R]               # tareas abiertas o en pausa (sin cerrar)
 
 Todas las salidas son JSON salvo `mensaje`, que imprime el aviso de pausa (o nada) para que el
 gancho lo pase a Claude como contexto. `registrar` y `mensaje` nunca fallan hacia fuera: un error
@@ -228,7 +229,7 @@ def fmt_duracion(segundos):
     return ("%dh %dm" % (h, m)) if h else ("%dm" % m)
 
 
-def calcular_tramos(repo, tarea, hasta, todo, ajustes):
+def calcular_tramos(repo, tarea, hasta, todo, ajustes, completo=False):
     # Una tarea abierta hace más de 120 días no se mide aquí: su tiempo sale de git, con `~`.
     desde = hasta.date() - timedelta(days=120)
     lineas = leer_lineas(desde, hasta.date())
@@ -237,7 +238,9 @@ def calcular_tramos(repo, tarea, hasta, todo, ajustes):
         return {"repo": repo, "tarea": tarea, "error": "sin marcas de esta tarea"}
     abiertos = abierta_en(eventos, hasta)
     presentes = tramos_presentes(minutos_activos(lineas), ajustes["ausencia_min"])
-    trabajados = cortar(abiertos, presentes)
+    # `completo`: el usuario confirmó que trabajó fuera del computador (una reunión, una llamada):
+    # el tramo abierto cuenta entero, sin recortar por presencia.
+    trabajados = abiertos if completo else cortar(abiertos, presentes)
     envio = ultimo_envio(eventos)
     pendientes = trabajados if (todo or envio is None) else cortar(trabajados, [(envio, hasta)])
     abierto_s = sum((b - a).total_seconds() for a, b in abiertos)
@@ -373,6 +376,19 @@ def claude_solo(desde, hasta, ajustes):
     return {"desde": desde.isoformat(), "hasta": hasta.isoformat(), "proyectos": por_proyecto}
 
 
+def tareas_abiertas(hasta, repo=None, dias=30):
+    """Estado de cada tarea con marcas recientes: la última marca manda. Las tareas sueltas no tienen
+    fila en ningún markdown: esta es la única forma de saber cuáles quedaron abiertas o en pausa."""
+    lineas = leer_lineas(hasta.date() - timedelta(days=dias), hasta.date())
+    ultimo = {}
+    for m, t, c in lineas:
+        if t == "tarea" and len(c) >= 3 and (repo is None or c[0] == repo) and c[2] != "enviado":
+            ultimo[(c[0], c[1])] = (m, c[2])
+    estado = {"crear": "creada", "abrir": "abierta", "retomar": "abierta", "pausar": "pausada", "cerrar": "cerrada"}
+    return [{"repo": r, "tarea": t, "estado": estado.get(e, e), "desde": m.isoformat()}
+            for (r, t), (m, e) in sorted(ultimo.items(), key=lambda x: x[1][0]) if e != "cerrar"]
+
+
 # ── Plan semanal ──────────────────────────────────────────────────────────────────────────────
 # El plan de la semana vive en Toggl (fechas de cada tarea), pero se puede replanificar a media
 # semana y Toggl solo guarda lo último. Para medir plan contra realidad hace falta el plan tal como
@@ -487,8 +503,12 @@ def main(argv=None):
     t.add_argument("--tarea", required=True)
     t.add_argument("--hasta")
     t.add_argument("--todo", action="store_true", help="incluye lo ya enviado")
+    t.add_argument("--completo", action="store_true", help="sin recortar por presencia (trabajo fuera del Mac)")
     s = sub.add_parser("sesion")
     s.add_argument("--hasta")
+    ab = sub.add_parser("abiertas")
+    ab.add_argument("--repo", help="solo este repo; `suelta` para las tareas sin repositorio")
+    ab.add_argument("--hasta")
     pl = sub.add_parser("plan")
     pl.add_argument("accion", choices=["guardar", "leer", "comparar"])
     pl.add_argument("--semana", help="AAAA-Www; por defecto, la de hoy")
@@ -538,7 +558,7 @@ def main(argv=None):
         return 0
 
     if a.orden == "tramos":
-        print(json.dumps(calcular_tramos(a.repo, a.tarea, momento(a.hasta), a.todo, ajustes), ensure_ascii=False))
+        print(json.dumps(calcular_tramos(a.repo, a.tarea, momento(a.hasta), a.todo, ajustes, a.completo), ensure_ascii=False))
         return 0
 
     if a.orden == "sesion":
@@ -547,6 +567,10 @@ def main(argv=None):
 
     if a.orden == "resumen":
         print(json.dumps(resumen(a.desde, a.hasta, ajustes), ensure_ascii=False))
+        return 0
+
+    if a.orden == "abiertas":
+        print(json.dumps(tareas_abiertas(momento(a.hasta), a.repo), ensure_ascii=False))
         return 0
 
     if a.orden == "plan":

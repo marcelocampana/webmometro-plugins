@@ -108,7 +108,7 @@ sincronizada ni lista para publicar.**
 
 Corregir la fuente de una pieza en `estado: validado` **invalida la validación**. Dilo en el momento
 y ofrece resellar. Si la corrección la cierra `tarea`, el estado baja a `en-revision`
-(`tarea/references/archivado.md`): la validación caducó con el cambio.
+(`tarea-repo/references/archivado.md`): la validación caducó con el cambio.
 
 ## Errores
 

@@ -47,10 +47,13 @@ día aguanta. El orden dentro del día lo sigue dando `## Ahora`.
      en su orden, y después las `Pendiente` de sus secciones. Una consulta a Toggl (`tasks list`
      del proyecto) da estimación, fechas y estado.
    - **No conectado:** se ofrece conectarlo en ese momento, en una línea («cdz no está en Toggl:
-     ¿lo conecto para planificarlo?»). Con el sí, se sigue `tarea/references/toggl-conexion.md`
+     ¿lo conecto para planificarlo?»). Con el sí, se sigue `tarea-repo/references/toggl-conexion.md`
      en ese repo; con el no, sus tareas salen al pie como «sin planificar».
-4. **Arrastre:** tareas con día de la semana pasada que no están `Done`. Van primero.
-5. **Planificado a mano:** tareas que el usuario ya fechó en Toggl para esta semana se respetan tal
+4. **Tareas sueltas** (`tarea-suelta`): las de Toggl con la etiqueta `suelta` que no están `Done`,
+   con una consulta más. Entran como candidatas igual que las de un repo, al final del orden salvo
+   que tengan fecha o `Vence`.
+5. **Arrastre:** tareas con día de la semana pasada que no están `Done`. Van primero.
+6. **Planificado a mano:** tareas que el usuario ya fechó en Toggl para esta semana se respetan tal
    cual, aunque no estén en `## Ahora`.
 
 Consultas a Toggl: una por repo conectado, más una para escribir. **No se lee el historial.**

@@ -1,7 +1,7 @@
 # Repos conectados a Toggl
 
 Un repo está conectado si las primeras líneas de su `tareas.md` llevan el marcador
-`<!-- tarea: toggl · proyecto <id> … -->` (`tarea/references/toggl-conexion.md`). Se mira con
+`<!-- tarea: toggl · proyecto <id> … -->` (`tarea-repo/references/toggl-conexion.md`). Se mira con
 `head -5`: no hace falta leer más para saberlo.
 
 ## Coste y Vence salen de Toggl
@@ -22,6 +22,13 @@ texto: `Corregir el menú <!-- toggl:16504199 -->`.
 La misma consulta por repo trae `start_date` y `end_date` de cada tarea: con eso sale el tramo 2b
 de la vista (lo planificado para hoy) y el aviso de lo planificado antes y no hecho. **No hay
 consulta extra.** El plan lo escribe `plan-semanal`; la agenda solo lo lee.
+
+## Tareas sueltas
+
+Las de `tarea-suelta` no están en ningún `tareas.md`. **Solo si hay plan esta semana**, una consulta
+más (tareas con la etiqueta `suelta`, sin `Done`) trae las fechadas para hoy: van al tramo 2b con su
+proyecto entre paréntesis en lugar del repo. Sin plan, no se consultan: la agenda sigue siendo de
+colas de repositorio.
 
 ## Horas del día
 

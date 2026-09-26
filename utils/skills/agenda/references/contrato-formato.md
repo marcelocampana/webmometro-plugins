@@ -1,7 +1,7 @@
 # Contrato de formato con `tarea`
 
 La agenda **no define ningún formato**: consume el de `tarea`, cuyo dueño es
-`utils/skills/tarea/references/formato-tablas.md`. Si allí cambia una columna, este archivo
+`utils/skills/tarea-repo/references/formato-tablas.md`. Si allí cambia una columna, este archivo
 cambia con ella. Es el mismo acoplamiento declarado que hay entre `landing-blueprint` y
 `brand-voice-enforcement`, y se sostiene igual: escrito en los dos lados.
 
@@ -62,7 +62,7 @@ estima dentro de ese repo, al abrir cada tarea. La agenda no los pone: no puede,
   igual**; se conserva en la salida porque el usuario lee distinto un número suyo que uno propuesto.
 - **`Vence`**: `AAAA-MM-DD` absoluta. Hoy sale de `date '+%Y-%m-%d'`, **nunca de la memoria**.
 - **`Coste` es tiempo de trabajo**, con las pausas descontadas, igual que `Duración`
-  (`tarea/references/tiempos.md`). Compararlo con horas de calendario invalida la cuenta del día:
+  (`tarea-repo/references/tiempos.md`). Compararlo con horas de calendario invalida la cuenta del día:
   la capacidad declarada también son horas de trabajo, no horas del reloj.
 
 ## Lo que no se toca
