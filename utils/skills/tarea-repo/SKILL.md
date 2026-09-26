@@ -17,7 +17,7 @@ description: >
   GitHub/Jira/Linear; si no existe `tareas/` y el usuario no pidió nada de tareas, no lo actives.
 argument-hint: "[--init | --revisar | --auditoria | --ingerir | --actualizar | --toggl]"
 metadata:
-  version: 3.0.0
+  version: 3.1.0
 ---
 
 # Tareas de repositorio (tarea-repo)

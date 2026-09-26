@@ -22,7 +22,8 @@ es tiempo vive en Toggl y en el registro local, y `tareas.md` queda sin esas col
 ```
 
 La celda `Tarea` lleva el id de Toggl pegado al texto: `Corregir el menú <!-- toggl:16504199 -->`. Se
-lee igual y no añade columna; quien muestre la tarea quita el comentario. **El historial conserva las
+lee igual y no añade columna; quien muestre la tarea quita el comentario. **Con id, `## Ahora` y la
+sección se emparejan por él**, aunque un nombre se desvíe. **El historial conserva las
 ocho columnas**: al cerrar, la fila se arma con los números de `presencia.py tramos` (`toggl.md`).
 Una fila cerrada ya no cambia, así que no se desincroniza, y la estimación sigue leyendo archivos.
 

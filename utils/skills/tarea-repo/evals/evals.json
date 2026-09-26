@@ -393,6 +393,16 @@
         "evals/fixtures/proyecto-en-curso/tareas/tareas.md",
         "evals/fixtures/proyecto-en-curso/tareas/secciones.md"
       ]
+    },
+    {
+      "id": 39,
+      "name": "migrar-unifica-nombres",
+      "prompt": "Conecta este repo con Toggl (--toggl).",
+      "expected_output": "Antes de escribir nada corre scripts/emparejar_ahora.py; muestra en una tabla los pares parecido/dudoso con el nombre único propuesto (el corto) y el detalle que pasa a Comentarios, y los sin_pareja; los confirma en el mismo visto bueno de la migración. Crea las tareas en Toggl con el nombre único y escribe nombre + <!-- toggl:id --> en Ahora y en la sección. No deja ninguna fila de Ahora sin id.",
+      "files": [
+        "evals/fixtures/proyecto-en-curso/tareas/tareas.md",
+        "evals/fixtures/proyecto-en-curso/tareas/secciones.md"
+      ]
     }
   ]
 }

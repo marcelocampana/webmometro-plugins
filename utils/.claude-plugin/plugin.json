@@ -1,7 +1,7 @@
 {
   "name": "utils",
   "displayName": "Utils",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Skills personales de utilidad general para Webmometro. Incluye el registro de actividad cross-cuenta (Claude Activity Log), el sistema de tareas con una entrada que decide el carril (Tarea), el carril de repositorio con rama por tarea, catálogo de secciones, cierre en cadena, archivado inmediato e ingesta (Tarea Repo) y el carril de tareas sueltas que viven solo en Toggl, sin git (Tarea Suelta), la verificación y reparación de contenido entre la fuente del cliente, el repo del sitio y Claude Design (Content Sync Check), la vista diaria de tareas cruzando todos los repos registrados (Agenda), la conexión opcional de cada repo con Toggl 2.0 con tiempo recortado por la presencia real del usuario y avisos de pausa (Tarea), la planificación de la semana por día en Toggl con la versión original guardada para medir plan contra realidad (Plan Semanal), la revisión semanal de tiempo, plan contra realidad, estimación, salud y uso de aplicaciones (Balance) y, a futuro, otras herramientas de productividad y mantenimiento del entorno de trabajo.",
   "author": {
     "name": "Webmometro"

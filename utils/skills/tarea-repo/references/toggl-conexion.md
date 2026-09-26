@@ -45,10 +45,17 @@ entonces rigen los valores por defecto. **Se edita a mano**: el skill solo la le
 Al conectar un repo que ya tiene tareas, se pasa al formato sin columnas de tiempo
 (`modo-actualizacion.md`, fila «Conexión con Toggl»). En una pasada y con un solo visto bueno:
 
+0. **Emparejar `## Ahora` con sus secciones:** `python3 scripts/emparejar_ahora.py tareas/tareas.md`.
+   Con el tiempo el puntero se acorta y la sección guarda el enunciado largo: emparejar por nombre
+   exacto dejaría filas sin id. Los pares `parecido` y `dudoso` se muestran en una tabla junto con el
+   **nombre único** propuesto (el corto, que es el que cumple `redaccion-tareas.md`) y el detalle que
+   pasa al inicio de Comentarios; `sin_pareja` se dice y se pregunta. **Se confirman en el mismo
+   visto bueno de la migración**; el usuario puede corregir cualquier par.
 1. Crear en Toggl **todas las filas abiertas en una llamada** (`tasks bulk-create`): nombre,
    `project_id`, etiqueta de su sección, `estimated_mins` desde `Coste` y, si hay `Vence`,
    `end_date` con `start_date` = hoy (**Toggl rechaza una sin la otra**).
-2. Escribir `<!-- toggl:id -->` pegado al texto de cada celda `Tarea`, en `## Ahora` y en su sección.
+2. Escribir el nombre único y `<!-- toggl:id -->` en cada celda `Tarea`, en `## Ahora` y en su
+   sección. **Desde aquí, las dos filas se emparejan por el id, no por el nombre.**
 3. Anotar `Coste` y `Vence` en el registro local (`presencia.py marca --evento crear`), que es de
    donde los lee el cierre.
 4. Quitar las columnas de tiempo de `tareas.md`. **El historial no se toca**: conserva todas.
