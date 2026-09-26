@@ -1,6 +1,6 @@
 # El informe
 
-Siete secciones, en este orden. **Una sección sin datos no sale**, y se nombra al pie en una línea
+Ocho secciones, en este orden. **Una sección sin datos no sale**, y se nombra al pie en una línea
 («sin registro de presencia: faltan tu tiempo, salud y aplicaciones»).
 
 ## 1. Tiempo de proyecto
@@ -14,12 +14,27 @@ De `resumen`: total del período, promedio por día trabajado, y **a qué proyec
 (`atencion`: cada minuto presente va al último proyecto al que le escribiste). Si el tiempo de
 proyecto supera al tuyo, el paralelo se dice con su factor: «30h de proyecto con 18h tuyas: 1,7×».
 
-## 3. Planificado contra imprevisto
+## 3. Plan contra realidad
+
+De `presencia.py plan comparar --semana AAAA-Www`: el plan **original** de la semana (el del lunes,
+aunque después se replanificara) frente a lo medido.
+
+- **Cumplimiento:** tareas cerradas a tiempo de las planificadas («6 de 9») y horas planificadas
+  frente a horas reales en esas tareas.
+- **Porcentaje planificado** (`porcentaje_planificado`): del tiempo medido en tareas, cuánto fue en
+  tareas del plan. **Es el número del criterio de las 4 semanas**: se muestra junto al de las
+  semanas anteriores, si las hay, para ver si sube.
+- **Lo que desplazó el plan:** las tareas `fuera_de_plan` con más tiempo, dos o tres, por nombre.
+- **Sin plan esa semana** (`hay_plan: false`): una línea, sin reproche. «Sin plan esta semana».
+
+Solo cuenta tiempo medido en local; los imprevistos sueltos de Toggl entran en la sección 4.
+
+## 4. Planificado contra imprevisto
 
 Registros con la etiqueta de imprevistos (`toggl.md` de la configuración global) frente al total de
 tiempo de proyecto, en porcentaje. Si pasa de un tercio, se dice qué proyecto concentra lo imprevisto.
 
-## 4. Estimación
+## 5. Estimación
 
 De los historiales: las filas cerradas en el período con `Coste` **y** `Duración` medida (sin `~`),
 agrupadas por **familia** (verbo + objeto, igual que `tarea/references/estimacion.md`). Por familia,
@@ -34,7 +49,7 @@ trabajo) y calendario (`Vence` → `Completada`, días de reloj, que en realidad
 hubo tareas con `Vence`, se dice aparte cuántas llegaron tarde; nunca se mezcla con el sesgo de
 esfuerzo.
 
-## 5. Qué optimizar
+## 6. Qué optimizar
 
 Las familias con más tiempo acumulado **y** al menos 3 apariciones: son las candidatas a automatizar,
 a plantilla o a un skill. Una línea por candidata, con su tiempo y cuántas veces apareció. Si
@@ -44,7 +59,7 @@ práctica.
 Se ofrece llevarlas a `revisar.md` («¿las anoto en revisar.md de plugins?»); con el sí, se remite a
 `tarea` en ese repo. Este skill no escribe.
 
-## 6. Salud
+## 7. Salud
 
 De `resumen`: horas frente al computador por día (máximo y promedio), **sesión continua más larga**
 (`sesion_max_min`), número de pausas y días trabajados. Trabajo fuera de horario: minutos antes de
@@ -54,7 +69,7 @@ línea sin sermones: «el miércoles: 4h 10m seguidas».
 **Aplicaciones**: horas por aplicación (`apps`), las 5 primeras, y cuánto de eso cayó dentro de un
 tramo con tarea abierta. «Slack 3h, casi todo fuera de tareas» dice más que el total.
 
-## 7. Claude solo
+## 8. Claude solo
 
 De `claude`: horas que Claude trabajó sin el usuario presente, por proyecto (`solo`). Es trabajo que
 no costó atención: sirve para ver qué ya delega bien. **No se suma a nada.**
@@ -66,6 +81,7 @@ Balance · 15 al 21 de septiembre
 
 Proyecto    ODC 6h (+2h) · Webmómetro 4h 30m · Plugins 2h
 Tu tiempo   9h 20m en 5 días · atención: Webmómetro 45%, ODC 40% · 1,3× en paralelo
+Plan        6 de 9 a tiempo · 62% del tiempo en tareas del plan (semana anterior 48%)
 Imprevisto  22% del tiempo de proyecto
 Estimación  estimas bien las de «Corregir»; subestimas las de «Alinear con el diseño» (2×, 5 casos)
 Optimizar   «Aplicar correcciones médicas»: 3h 10m en 6 veces → candidata a plantilla

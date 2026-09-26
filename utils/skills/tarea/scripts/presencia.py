@@ -25,6 +25,7 @@ Uso:
     presencia.py sesion [--hasta ISO]
     presencia.py resumen --desde AAAA-MM-DD --hasta AAAA-MM-DD
     presencia.py claude --desde AAAA-MM-DD --hasta AAAA-MM-DD
+    presencia.py plan guardar|leer|comparar [--semana AAAA-Www] [--vigente]
 
 Todas las salidas son JSON salvo `mensaje`, que imprime el aviso de pausa (o nada) para que el
 gancho lo pase a Claude como contexto. `registrar` y `mensaje` nunca fallan hacia fuera: un error
@@ -372,6 +373,92 @@ def claude_solo(desde, hasta, ajustes):
     return {"desde": desde.isoformat(), "hasta": hasta.isoformat(), "proyectos": por_proyecto}
 
 
+# ── Plan semanal ──────────────────────────────────────────────────────────────────────────────
+# El plan de la semana vive en Toggl (fechas de cada tarea), pero se puede replanificar a media
+# semana y Toggl solo guarda lo último. Para medir plan contra realidad hace falta el plan tal como
+# se hizo el lunes: se guarda aquí cada versión, y se compara contra la primera.
+
+
+def carpeta_planes():
+    return carpeta() / "planes"
+
+
+def semana_de(d):
+    anio, num, _ = d.isocalendar()
+    return "%d-W%02d" % (anio, num)
+
+
+def limites_semana(semana):
+    anio, num = semana.split("-W")
+    lunes = date.fromisocalendar(int(anio), int(num), 1)
+    return lunes, lunes + timedelta(days=6)
+
+
+def plan_guardar(semana, tareas, hora):
+    d = carpeta_planes()
+    d.mkdir(parents=True, exist_ok=True)
+    ruta = d / ("%s.json" % semana)
+    try:
+        datos = json.loads(ruta.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        datos = {"semana": semana, "versiones": []}
+    datos["versiones"].append({"guardado": hora.isoformat(), "tareas": tareas})
+    tmp = ruta.with_suffix(".tmp")
+    tmp.write_text(json.dumps(datos, ensure_ascii=False, indent=1), encoding="utf-8")
+    tmp.replace(ruta)  # atómico: nunca queda un plan a medias
+    return {"semana": semana, "version": len(datos["versiones"]), "tareas": len(tareas)}
+
+
+def plan_leer(semana, vigente=False):
+    try:
+        datos = json.loads((carpeta_planes() / ("%s.json" % semana)).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    return datos["versiones"][-1 if vigente else 0]
+
+
+def plan_comparar(semana, hasta, ajustes):
+    """Plan original de la semana frente a lo medido. Solo cuenta el tiempo medido en local
+    (tareas abiertas con `tarea` y presencia); lo que se registró a mano en Toggl no está aquí."""
+    plan = plan_leer(semana)
+    lunes, domingo = limites_semana(semana)
+    fin = min(hasta, datetime.combine(domingo + timedelta(days=1), datetime.min.time()).astimezone())
+    inicio = datetime.combine(lunes, datetime.min.time()).astimezone()
+    lineas = leer_lineas(lunes - timedelta(days=120), min(domingo, hasta.date()))
+    presentes = cortar(tramos_presentes(minutos_activos(lineas), ajustes["ausencia_min"]), [(inicio, fin)])
+    claves = sorted({(c[0], c[1]) for _, t, c in lineas if t == "tarea" and len(c) >= 3})
+    medido = {}
+    for repo, tarea in claves:
+        eventos = eventos_tarea(lineas, repo, tarea)
+        trabajados = cortar(abierta_en(eventos, fin), presentes)
+        por_dia = {}
+        for a, b in trabajados:
+            por_dia[a.date().isoformat()] = por_dia.get(a.date().isoformat(), 0) + int((b - a).total_seconds() // 60)
+        cierres = [m for m, e, _ in eventos if e == "cerrar" and inicio <= m < fin]
+        if por_dia or cierres:
+            medido[(repo, tarea)] = {"por_dia": por_dia, "cerrada": max(cierres).date().isoformat() if cierres else None}
+    filas, en_plan = [], set()
+    for t in (plan or {}).get("tareas", []):
+        clave = (t.get("repo"), str(t.get("tarea")))
+        en_plan.add(clave)
+        m = medido.get(clave, {"por_dia": {}, "cerrada": None})
+        filas.append({**t, "real_min": sum(m["por_dia"].values()),
+                      "real_en_su_dia_min": m["por_dia"].get(t.get("dia"), 0), "cerrada": m["cerrada"],
+                      "cumplida": bool(m["cerrada"] and t.get("dia") and m["cerrada"] <= t["dia"])})
+    fuera = [{"repo": r, "tarea": t, "real_min": sum(m["por_dia"].values()), "cerrada": m["cerrada"]}
+             for (r, t), m in medido.items() if (r, t) not in en_plan and m["por_dia"]]
+    real_plan = sum(f["real_min"] for f in filas)
+    real_fuera = sum(f["real_min"] for f in fuera)
+    return {
+        "semana": semana, "hay_plan": plan is not None,
+        "planificado_min": sum(int(f.get("estimado_min") or 0) for f in filas),
+        "real_en_plan_min": real_plan, "real_fuera_min": real_fuera,
+        "porcentaje_planificado": round(100 * real_plan / (real_plan + real_fuera)) if real_plan + real_fuera else None,
+        "cumplidas": sum(1 for f in filas if f["cumplida"]), "planificadas": len(filas),
+        "tareas": filas, "fuera_de_plan": fuera,
+    }
+
+
 # ── Entrada ───────────────────────────────────────────────────────────────────────────────────
 
 
@@ -402,6 +489,11 @@ def main(argv=None):
     t.add_argument("--todo", action="store_true", help="incluye lo ya enviado")
     s = sub.add_parser("sesion")
     s.add_argument("--hasta")
+    pl = sub.add_parser("plan")
+    pl.add_argument("accion", choices=["guardar", "leer", "comparar"])
+    pl.add_argument("--semana", help="AAAA-Www; por defecto, la de hoy")
+    pl.add_argument("--vigente", action="store_true", help="leer: la última versión, no la original")
+    pl.add_argument("--hasta")
     for nombre in ("resumen", "claude"):
         r = sub.add_parser(nombre)
         r.add_argument("--desde", required=True, type=fecha)
@@ -455,6 +547,17 @@ def main(argv=None):
 
     if a.orden == "resumen":
         print(json.dumps(resumen(a.desde, a.hasta, ajustes), ensure_ascii=False))
+        return 0
+
+    if a.orden == "plan":
+        t = momento(a.hasta)
+        semana = a.semana or semana_de(t.date())
+        if a.accion == "guardar":
+            print(json.dumps(plan_guardar(semana, json.loads(sys.stdin.read() or "[]"), t), ensure_ascii=False))
+        elif a.accion == "leer":
+            print(json.dumps(plan_leer(semana, a.vigente), ensure_ascii=False))
+        else:
+            print(json.dumps(plan_comparar(semana, t, ajustes), ensure_ascii=False))
         return 0
 
     if a.orden == "claude":

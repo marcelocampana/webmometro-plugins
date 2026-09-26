@@ -8,13 +8,13 @@ description: >
   "mi balance", "revisión semanal", "cómo me fue esta semana", "en qué se me va el tiempo", "cuánto le
   dedico a cada cliente", "estadísticas de Toggl", "cuánto trabajé", "cuánto tiempo frente al
   computador", "qué aplicaciones uso más", "qué podría automatizar", "cuánto trabajó Claude solo",
-  "estimo bien?", o cuando una rutina programada pida el resumen de la semana. **Solo lee: nunca
+  "estimo bien?", "¿cumplí el plan?", "cuánto de lo que hice estaba planificado", o cuando una rutina programada pida el resumen de la semana. **Solo lee: nunca
   escribe en Toggl ni en ninguna lista de tareas**; lo que haya que cambiar lo propone para
   `revisar.md` y lo deja a `tarea`. NO lo uses para la vista de hoy (eso es `agenda`), ni para abrir,
   cerrar o crear tareas (eso es `tarea`).
 argument-hint: "[--semana | --mes | --desde AAAA-MM-DD --hasta AAAA-MM-DD]"
 metadata:
-  version: 1.0.0
+  version: 1.1.0
 ---
 
 # Balance del trabajo (balance)
@@ -47,6 +47,7 @@ cometer.** Si hubo paralelo, se dice: «30h de proyecto con 18h tuyas: 1,7× en 
 P="$HOME/Github/AI-kit/plugins/webmometro-plugins/utils/skills/tarea/scripts/presencia.py"
 python3 "$P" resumen --desde "$DESDE" --hasta "$HASTA"   # tu tiempo, atención, apps, sesiones
 python3 "$P" claude  --desde "$DESDE" --hasta "$HASTA"   # Claude trabajando solo
+python3 "$P" plan comparar --semana "$SEMANA"            # plan original contra lo medido
 ```
 
 - **Toggl**: los registros del período en una consulta (`time-entries list` con `date_from` y
@@ -59,7 +60,7 @@ python3 "$P" claude  --desde "$DESDE" --hasta "$HASTA"   # Claude trabajando sol
 
 ## Paso 1 · Componer
 
-`references/informe.md`: las siete secciones, cómo se calcula cada una y la plantilla. **Cabe en una
+`references/informe.md`: las ocho secciones, cómo se calcula cada una y la plantilla. **Cabe en una
 pantalla**: cada sección, dos o tres líneas; lo que no informa, no sale.
 
 ## Reglas invariantes

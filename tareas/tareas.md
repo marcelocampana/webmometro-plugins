@@ -25,6 +25,18 @@ Documentación raíz (`README.md`, `CLAUDE.md`, `docs/`), configuración y todo 
 
 ---
 
+## utils
+
+Los skills del plugin `utils`: `agenda`, `balance`, `claude-activity-log`, `content-sync-check`, `documentar-proceso` y `tarea`.
+
+| Estado | Tarea | Comentarios |
+| --- | --- | --- |
+| Pendiente | Registrar y planificar tareas sin repositorio (skill trabajo) <!-- toggl:16506476 --> | Segundo carril para tareas que no viven en un repo ni terminan en commit (p. ej. facturar, hoy manual). Solo en Toggl (cliente › proyecto, p. ej. Webmómetro › Administración; pueden ser recurrentes), sin fila en tareas.md. Se empiezan y terminan diciéndoselo a Claude en cualquier sesión: marcas locales y, al terminar, tramos a Toggl en bloque, sin rama ni commit; la presencia del Mac mide aunque el trabajo sea fuera de Claude. `plan-semanal` las propone como candidatas y `balance` marca las manuales que se repiten como candidatas a que las haga Claude. Skill aparte de `tarea`, que exige git; reusa `presencia.py` y el envío en bloque. |
+
+**Cerradas en esta sección: ~2h 48m** · 11 archivadas
+
+---
+
 **Estados:**
 
 - `Pendiente` — anotada.

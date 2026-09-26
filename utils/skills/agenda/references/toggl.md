@@ -17,6 +17,12 @@ texto: `Corregir el menú <!-- toggl:16504199 -->`.
 - `estimated_mins` se muestra con el formato de siempre (`45m`, `2h 30m`), sin `~`: en Toggl no queda
   quién lo estimó.
 
+## El plan del día
+
+La misma consulta por repo trae `start_date` y `end_date` de cada tarea: con eso sale el tramo 2b
+de la vista (lo planificado para hoy) y el aviso de lo planificado antes y no hecho. **No hay
+consulta extra.** El plan lo escribe `plan-semanal`; la agenda solo lo lee.
+
 ## Horas del día
 
 Del registro de presencia, no de Toggl: `presencia.py resumen --desde HOY --hasta HOY` (el script vive

@@ -1,8 +1,8 @@
 {
   "name": "utils",
   "displayName": "Utils",
-  "version": "2.1.0",
-  "description": "Skills personales de utilidad general para Webmometro. Incluye el registro de actividad cross-cuenta (Claude Activity Log), el asistente de gestión de tareas por rama con catálogo de secciones, cierre en cadena, archivado inmediato al cerrar e ingesta desde conversación o archivos (Tarea), la verificación y reparación de contenido entre la fuente del cliente, el repo del sitio y Claude Design (Content Sync Check), la vista diaria de tareas cruzando todos los repos registrados (Agenda), la conexión opcional de cada repo con Toggl 2.0 con tiempo recortado por la presencia real del usuario y avisos de pausa (Tarea), la revisión semanal de tiempo, estimación, salud y uso de aplicaciones (Balance) y, a futuro, otras herramientas de productividad y mantenimiento del entorno de trabajo.",
+  "version": "2.2.0",
+  "description": "Skills personales de utilidad general para Webmometro. Incluye el registro de actividad cross-cuenta (Claude Activity Log), el asistente de gestión de tareas por rama con catálogo de secciones, cierre en cadena, archivado inmediato al cerrar e ingesta desde conversación o archivos (Tarea), la verificación y reparación de contenido entre la fuente del cliente, el repo del sitio y Claude Design (Content Sync Check), la vista diaria de tareas cruzando todos los repos registrados (Agenda), la conexión opcional de cada repo con Toggl 2.0 con tiempo recortado por la presencia real del usuario y avisos de pausa (Tarea), la planificación de la semana por día en Toggl con la versión original guardada para medir plan contra realidad (Plan Semanal), la revisión semanal de tiempo, plan contra realidad, estimación, salud y uso de aplicaciones (Balance) y, a futuro, otras herramientas de productividad y mantenimiento del entorno de trabajo.",
   "author": {
     "name": "Webmometro"
   },
@@ -17,6 +17,8 @@
     "tarea",
     "agenda",
     "balance",
+    "plan-semanal",
+    "planificacion",
     "toggl",
     "presencia",
     "auditoria",

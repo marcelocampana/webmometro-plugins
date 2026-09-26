@@ -111,6 +111,16 @@
         "evals/fixtures/con-toggl/agenda.md",
         "evals/fixtures/con-toggl/repo-t/tareas/tareas.md"
       ]
+    },
+    {
+      "id": 11,
+      "name": "plan-del-dia-primero",
+      "prompt": "Usa la configuración de evals/fixtures/con-toggl/agenda.md. ¿Qué me toca hoy? (Hay plan de la semana y dos tareas están fechadas para hoy.)",
+      "expected_output": "Muestra primero, marcadas 'plan', las tareas cuya fecha en Toggl cubre hoy y no están Done, sin contarlas contra el tope de 5 filas; lo planificado para días anteriores y no hecho va como aviso al pie. Sin consultas extra a Toggl y sin escribir nada.",
+      "files": [
+        "evals/fixtures/con-toggl/agenda.md",
+        "evals/fixtures/con-toggl/repo-t/tareas/tareas.md"
+      ]
     }
   ]
 }

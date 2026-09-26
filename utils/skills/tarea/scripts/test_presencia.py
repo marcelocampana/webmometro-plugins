@@ -160,5 +160,49 @@ class Aviso(Base):
         self.assertEqual(presencia.sesion_actual(t("10:30"), ajustes)["minutos"], 30)
 
 
+class Plan(Base):
+    SEMANA = "2026-W40"  # lunes 28-09 a domingo 04-10
+
+    def guardar(self, tareas, hora="2026-09-27T20:00"):
+        import io as _io
+        viejo = sys.stdin
+        sys.stdin = _io.StringIO(json.dumps(tareas))
+        try:
+            return correr("plan", "guardar", "--semana", self.SEMANA, "--hasta", t(hora).isoformat())
+        finally:
+            sys.stdin = viejo
+
+    def test_guarda_versiones_y_compara_con_la_original(self):
+        self.guardar([{"repo": "repo", "tarea": "A", "nombre": "A", "dia": "2026-09-28", "estimado_min": 60},
+                      {"repo": "repo", "tarea": "B", "nombre": "B", "dia": "2026-09-29", "estimado_min": 30}])
+        self.guardar([{"repo": "repo", "tarea": "B", "nombre": "B", "dia": "2026-09-30", "estimado_min": 30}],
+                     hora="2026-09-29T09:00")
+        self.assertEqual(len(correr("plan", "leer", "--semana", self.SEMANA)["tareas"]), 2)
+        self.assertEqual(len(correr("plan", "leer", "--semana", self.SEMANA, "--vigente")["tareas"]), 1)
+
+        self.marca("A", "abrir", "2026-09-28T10:00")
+        self.mac("2026-09-28T10:00", "2026-09-28T10:40")
+        self.marca("A", "cerrar", "2026-09-28T10:40")
+        self.marca("C", "abrir", "2026-09-28T11:00")
+        self.mac("2026-09-28T11:00", "2026-09-28T11:20")
+        self.marca("C", "pausar", "2026-09-28T11:20")
+
+        r = correr("plan", "comparar", "--semana", self.SEMANA, "--hasta", t("2026-10-04T23:00").isoformat())
+        self.assertTrue(r["hay_plan"])
+        self.assertEqual(r["planificado_min"], 90)
+        self.assertEqual(r["real_en_plan_min"], 40)
+        self.assertEqual(r["real_fuera_min"], 20)
+        self.assertEqual(r["porcentaje_planificado"], 67)
+        self.assertEqual((r["cumplidas"], r["planificadas"]), (1, 2))
+        a = [f for f in r["tareas"] if f["tarea"] == "A"][0]
+        self.assertEqual((a["real_en_su_dia_min"], a["cerrada"], a["cumplida"]), (40, "2026-09-28", True))
+        self.assertEqual([f["tarea"] for f in r["fuera_de_plan"]], ["C"])
+
+    def test_sin_plan_no_inventa(self):
+        r = correr("plan", "comparar", "--semana", self.SEMANA, "--hasta", t("2026-10-04T23:00").isoformat())
+        self.assertFalse(r["hay_plan"])
+        self.assertIsNone(r["porcentaje_planificado"])
+
+
 if __name__ == "__main__":
     unittest.main()

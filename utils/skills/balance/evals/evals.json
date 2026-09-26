@@ -28,6 +28,13 @@
       "prompt": "¿Qué podría automatizar?",
       "expected_output": "Lista las familias con más tiempo y al menos 3 apariciones, y OFRECE llevarlas a revisar.md remitiendo a `tarea`. No escribe en ninguna lista ni en Toggl.",
       "files": []
+    },
+    {
+      "id": 5,
+      "name": "plan-contra-realidad",
+      "prompt": "¿Cumplí el plan de esta semana?",
+      "expected_output": "Usa presencia.py plan comparar con el plan ORIGINAL de la semana: tareas cumplidas a tiempo de las planificadas, horas planificadas frente a reales, y el porcentaje de tiempo en tareas del plan junto al de semanas anteriores. Nombra lo que desplazó el plan. Sin plan, lo dice en una línea sin reproche.",
+      "files": []
     }
   ]
 }

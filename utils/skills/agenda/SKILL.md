@@ -12,7 +12,7 @@ description: >
   y ofrece crearla; no la inventa.
 argument-hint: "[--hoy | --config]"
 metadata:
-  version: 1.2.0
+  version: 1.3.0
 ---
 
 # Agenda diaria cross-repo (agenda)

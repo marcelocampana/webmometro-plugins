@@ -101,9 +101,15 @@ Utilidades transversales de organización del trabajo.
   una lista de tareas ni reordena una cola, que es lo que le permite correr
   desatendida desde una rutina. En los repos conectados toma Coste y Vence
   de Toggl y las horas del día del registro de presencia.
+- **plan-semanal** — Planifica la semana por día cruzando los repos: propone
+  qué tarea va cada día según la capacidad y las estimaciones (dejando un 20%
+  para imprevistos), y con visto bueno escribe el día y la estimación en
+  Toggl y guarda la versión original para medir después plan contra
+  realidad. Ofrece conectar a Toggl los proyectos que aún no lo están. No
+  reordena ninguna cola. Todo sigue funcionando si un lunes no se planifica.
 - **balance** — Revisión para mejorar: tiempo de proyecto por cliente
   (Toggl) separado del tiempo real del usuario (registro de presencia),
-  imprevistos, sesgo de estimación por familia de tarea, candidatas a
+  plan contra realidad, imprevistos, sesgo de estimación por familia de tarea, candidatas a
   automatizar, salud (sesiones sin pausa, horas frente al computador),
   uso de aplicaciones y tiempo que Claude trabajó solo. **Solo lee.**
 - **content-sync-check** — Verifica que el contenido aprobado del cliente

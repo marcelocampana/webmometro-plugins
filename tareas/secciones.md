@@ -46,4 +46,4 @@ Los diez skills de la suite SEO y el flujo que los encadena (snapshots → anál
 Los seis skills del plugin: `agenda`, `balance`, `claude-activity-log`, `content-sync-check`,
 `documentar-proceso` y `tarea`.
 
-**Cerradas: ~2h 29m** · 10 archivadas
+**Cerradas: ~2h 48m** · 11 archivadas

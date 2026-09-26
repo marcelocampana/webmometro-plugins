@@ -1,0 +1,40 @@
+{
+  "skill_name": "plan-semanal",
+  "evals": [
+    {
+      "id": 1,
+      "name": "propone-y-espera",
+      "prompt": "Planifica la semana.",
+      "expected_output": "Lee la configuración de agenda y, por repo conectado, UNA consulta tasks list. Propone una tabla por día que llena cada día hasta la capacidad menos un 20%, con arrastre primero, luego Vence y luego ## Ahora en orden, repartiendo los repos entre días. Hace UNA sola pregunta al final. NO escribe nada en Toggl ni en local antes del visto bueno.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "sin-estimacion-pregunta-una-vez",
+      "prompt": "Planifica la semana; varias tareas no tienen estimación.",
+      "expected_output": "Junta todas las tareas sin estimación en una sola pregunta dentro de la propuesta, con la sugerencia del historial si existe. No inventa números. Las que el usuario deja fuera salen al pie como 'sin estimar' y no se planifican.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "escribe-en-bloque-y-guarda-original",
+      "prompt": "Sí, guárdala así.",
+      "expected_output": "Escribe el plan con UNA llamada tasks bulk-patch (start_date = end_date = el día, estimated_mins si hubo corrección) y guarda la versión con presencia.py plan guardar --semana. Cierra con una línea: tareas, horas planificadas de la capacidad. No reordena ## Ahora ni escribe filas en tareas.md.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "ofrece-conectar-repo",
+      "prompt": "Planifica la semana. (cdz no está conectado a Toggl.)",
+      "expected_output": "Ofrece en una línea conectar cdz para planificarlo. Con el sí, sigue tarea/references/toggl-conexion.md en ese repo; con el no, cuenta sus tareas al pie como 'sin planificar' y sigue con el resto.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "replanificar-no-pisa-original",
+      "prompt": "Replanifica: lo del martes pásalo al jueves.",
+      "expected_output": "Parte del plan vigente (plan leer --vigente), mueve solo lo pedido, muestra solo lo que cambió, y con el visto bueno escribe en Toggl y añade una versión nueva con plan guardar, sin tocar la original que balance compara.",
+      "files": []
+    }
+  ]
+}

@@ -12,6 +12,13 @@ aunque no quepa en la capacidad: ya está consumiendo el día.
 aparece siempre, marcada. Son las únicas dos cosas que pueden saltarse el orden del usuario, y solo
 para mostrarse: nunca se reordena el archivo.
 
+**Tramo 2b · Lo planificado para hoy** (solo con plan de la semana, `plan-semanal`): tareas de
+repos conectados cuya fecha en Toggl cubre hoy y no están `Done`, en el orden de su `## Ahora`,
+marcadas `plan`. Van antes del relleno y **no cuentan contra el tope de 5 filas**: el usuario ya
+decidió que son de hoy. Lo planificado para días anteriores y no hecho no se lista: se cuenta en un
+aviso («2 del plan de ayer quedaron pendientes: `plan-semanal --replanificar`»). **Sin plan esta
+semana, este tramo no existe** y todo sigue como siempre.
+
 **Tramo 3 · El relleno, por orden.** Se recorre el **registro de repos en el orden de la
 configuración** y, dentro de cada uno, `## Ahora` **desde arriba**, saltando `Bloqueada` y lo ya
 listado. Se para al llegar al primero de estos tres límites:
