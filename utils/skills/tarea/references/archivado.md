@@ -29,6 +29,10 @@ aparte. Se agrupa por su sección de origen — ver «El formato del mensual» a
 Comentarios pasa a ser ancla del mismo archivo (`[detalle](#el-ancla)`) — nunca
 `historial/AAAA-MM.md#...`, porque fila y comentario viven en el mismo mensual desde el principio.
 
+**En un repo conectado a Toggl**, la fila de la sección solo tiene Estado, Tarea y Comentarios: la
+del mensual **se arma** con las ocho columnas, tomando Vence, Coste, Inicio, Completada y Duración de
+`presencia.py tramos` (`toggl.md`), y el `<!-- toggl:id -->` se conserva en la celda Tarea.
+
 **En `tareas.md` no queda ningún rastro de la fila** — ni resumen, ni enlace, ni una fila en
 `Completada`. El único rastro es el total acumulado y el contador de archivadas, y viven en
 `tareas/secciones.md`, en la entrada de esa sección (`secciones-catalogo.md`). Mientras la sección
@@ -60,9 +64,8 @@ inicio de `tareas.md`:
 <!-- tarea: umbral 40000 chars · holgura 70% · última revisión 2026-08-20 -->
 ```
 
-Por defecto ~40.000 chars (~10k tokens). Al vivir en el archivo es visible y editable; el skill lo
-respeta y no lo reescribe sin permiso. **Se mide con `wc -c`**: exacto y sin depender de un
-tokenizador (4 chars ≈ 1 token, solo para explicárselo al usuario).
+Por defecto ~40.000 chars (~10k tokens); visible y editable, y no se reescribe sin permiso. **Se
+mide con `wc -c`** (4 chars ≈ 1 token, solo para explicarlo).
 
 Con archivado inmediato, el umbral **nunca puede deberse a filas cerradas acumuladas** — lo que ya
 cerró se movió al mensual en su momento. Si el archivo supera el umbral, el peso está en lo abierto

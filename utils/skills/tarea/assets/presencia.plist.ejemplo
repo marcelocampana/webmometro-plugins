@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Arranque de presencia.py al encender el Mac, una vez por minuto.
+     Instalación y retiro: assets/presencia-instalacion.md. Reemplaza {{RUTA_SCRIPT}}. -->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.webmometro.tarea.presencia</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/bin/python3</string>
+    <string>{{RUTA_SCRIPT}}</string>
+    <string>registrar</string>
+  </array>
+  <key>StartInterval</key>
+  <integer>60</integer>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>StandardErrorPath</key>
+  <string>/tmp/tarea-presencia.err</string>
+</dict>
+</plist>

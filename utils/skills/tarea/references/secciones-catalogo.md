@@ -54,7 +54,7 @@ cualquier otra. El catálogo crece con el proyecto; nunca al revés.
 | --- | --- |
 | Se propone y confirma una sección en `--init` | Se crea su entrada con nombre + ámbito, sin total todavía |
 | Se propone y confirma una sección nueva, no anticipada, en cualquier otro momento | Se **añade** una entrada al final del catálogo — no reemplaza ni «usa un cupo» de las existentes |
-| Se cierra una tarea de una sección | Su total acumulado sube, junto con el de `tareas.md` (movimiento del cierre: `modo-gestion.md`, `archivado.md`) |
+| Se cierra una tarea de una sección | Su total acumulado sube, junto con el de `tareas.md` (movimiento del cierre: `modo-gestion.md`, `archivado.md`); en un repo conectado, con la Duración de `toggl.md` |
 | Una sección se vacía de tareas activas en `tareas.md` | Su entrada **permanece**, con su total y su contador de archivadas — no se borra ni se marca especial |
 | Reversión de una tarea archivada, y su sección ya no tiene header en `tareas.md` | Se recrea el header en su posición de orden estable, y se resta 1 del contador de archivadas aquí |
 

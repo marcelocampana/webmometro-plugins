@@ -3,6 +3,11 @@
 `tareas.md` es la cola de lo confirmado: `## Ahora` más lo pendiente, en curso, pausado o bloqueado
 de cada sección. Nada completado se queda aquí — se archiva en el mismo cierre.
 
+**Repo conectado a Toggl** (marcador `<!-- tarea: toggl … -->`): crear, abrir, pausar y cerrar
+añaden su parte según `toggl.md` —marcas locales y, solo al crear y al cerrar, Toggl en bloque—, sin
+ninguna pregunta más. Donde abajo dice Inicio, Completada, Duración, `Vence` o `Coste`, en ese repo
+salen de ahí y no se escriben en `tareas.md`.
+
 **Abrir una tarea** — tres movimientos, en este orden. (Antes, si `tareas.md` está sobre el umbral,
 ofrécelo en una línea: `archivado.md`.)
 
@@ -37,11 +42,10 @@ ofrécelo en una línea: `archivado.md`.)
    2. **Commit**, en la rama de la tarea: lo resuelto y la fila cerrada, en un solo commit.
    3. **Merge a `main`**, sin pedir un tercer visto bueno.
 
-**Impacto documental** — con el merge ya hecho, mira si el cambio dejó la documentación corta. Del
-diff de la rama (`git diff --name-only main@{1}...`) busca señales: estructura de directorios, un
-archivo que el README enumera, un comando, una dependencia, o algo que `CLAUDE.md` describe como
-convención. **Sin señal, silencio total** — no lo menciones ni digas que lo miraste. Con señal, el
-procedimiento y sus límites están en `impacto-documental.md`.
+**Impacto documental** — con el merge hecho, busca en el diff de la rama (`git diff --name-only
+main@{1}...`) señales de documentación corta: estructura, un archivo que el README enumera, un
+comando, una dependencia o una convención de `CLAUDE.md`. **Sin señal, silencio total.** Con señal:
+`impacto-documental.md`.
 
 **Tres frenos, y solo esos, detienen la cadena** — no son ceremonia, son una excepción real que el
 usuario tiene que decidir:
@@ -52,11 +56,11 @@ usuario tiene que decidir:
 - **Al ir a commitear aparecen cambios sin relación con la tarea**: detente y pregunta si van
   incluidos en el commit o se dejan fuera, antes de seguir.
 
-Fuera de esos tres casos la cadena no se pausa. El resumen del comentario archivado se muestra
-**después**, en la misma línea de cierre: corregirlo es una edición posterior, no una pausa.
+Fuera de esos tres casos la cadena no se pausa. **Si el usuario encargó la tarea completa**
+(«termínala sin pedirme confirmación»), ese encargo ya es el visto bueno del paso 1. El resumen del
+comentario archivado se muestra **después**, en la línea de cierre.
 
-La Duración sale de `git reflog`/`git log` y es **tiempo de trabajo**: las pausas largas se descuentan
-y las cifras estimadas llevan `~` (`tiempos.md`).
+La Duración es **tiempo de trabajo**, con las pausas descontadas (`tiempos.md`).
 
 Al cerrar, **ofrece** para `revisar.md` lo que el trabajo dejó pendiente (propone y espera). Después
 **para**: puedes sugerir la siguiente, no empezarla.
@@ -69,7 +73,9 @@ Al cerrar, **ofrece** para `revisar.md` lo que el trabajo dejó pendiente (propo
 sin contexto del proyecto** (`contextualizacion.md`) y **toda sugerencia se ancla en algo verificable**
 —un archivo, una deuda declarada, un hallazgo de la conversación—; sin ancla, no se propone. Propón el
 enunciado afinado y **espera**: el protocolo es **propone y espera**, también para lo que dicta el
-usuario. Sugiere la sección por el ámbito del cambio.
+usuario. Sugiere la sección por el ámbito del cambio. **Las tareas ordenan al usuario; el plan, a
+Claude**: los pasos de un plan que Claude ejecuta de corrido son **una** tarea (`redaccion-tareas.md`,
+«Cuándo partir una tarea»).
 
 **La propuesta ya trae el `Coste` estimado**, y ahí ocurre toda la planificación de este skill: una
 pregunta, con el número puesto y la posición como única decisión del usuario. **Si no hay base va `—`
@@ -82,9 +88,8 @@ catálogo— si no existe en ninguno de los dos (`secciones-catalogo.md`). Va en
 Inicio; **sube a `## Ahora` solo cuando el usuario la prioriza**. Sobre el orden de la cola,
 **recomienda con motivo y no reordenes solo**.
 
-**Consultar** — «qué sigue», «qué hay bloqueado», «cuánto llevamos»: **solo lectura**. Al responder
-añade el aviso si el orden tiene un conflicto real (la primera depende de una de más abajo). Usa los
-resúmenes de la celda Comentarios: **no abras detalles del historial en una consulta**.
+**Consultar** — «qué sigue», «qué hay bloqueado», «cuánto llevamos»: **solo lectura**. Avisa si el
+orden tiene un conflicto real (la primera depende de una de más abajo). **No abras el historial.**
 
 **`Vence` audita ese orden, no lo cambia.** Si sumando los `Coste` de la cola una tarea fechada cae
 después de su límite, **dilo en una línea y ofrece subirla**; nunca la muevas solo. Sin `Coste` en las
@@ -95,9 +100,5 @@ filas de por medio no hay aviso que dar: no se avisa a ojo.
 
 ## Redacción y formato
 
-**Verbo + objeto concreto + ámbito**, en **una línea**; el detalle va a Comentarios. Si el enunciado
-necesita una «y», probablemente son dos tareas, y si el usuario rechaza tu redacción se usa la suya.
-Anatomía y ejemplos antes/después: `redaccion-tareas.md`.
-
-Las columnas verbatim y las reglas de celda están en `formato-tablas.md`. Lo que no se puede olvidar:
-**el archivo no se recalcula solo**.
+**Verbo + objeto concreto + ámbito**, en una línea (`redaccion-tareas.md`); columnas y celdas en
+`formato-tablas.md`. **El archivo no se recalcula solo.**

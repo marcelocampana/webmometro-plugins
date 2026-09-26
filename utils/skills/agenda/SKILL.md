@@ -12,7 +12,7 @@ description: >
   y ofrece crearla; no la inventa.
 argument-hint: "[--hoy | --config]"
 metadata:
-  version: 1.1.2
+  version: 1.2.0
 ---
 
 # Agenda diaria cross-repo (agenda)
@@ -70,6 +70,10 @@ un proyecto vivo ese archivo pasa de 25 KB y no aporta nada a la vista de hoy; d
 las filas. Las columnas se localizan **por nombre en la cabecera, no por posición**: hay repos en el
 formato anterior, sin `Vence` ni `Coste` (`references/contrato-formato.md`).
 
+**Un repo conectado a Toggl** (su `tareas.md` empieza con el marcador `<!-- tarea: toggl … -->`) no
+tiene `Vence` ni `Coste` en la tabla: salen de Toggl con una consulta por repo, y las horas del día,
+del registro de presencia (`references/toggl.md`). Sin Toggl, la agenda sigue y lo dice.
+
 Si una ruta del registro ya no existe, **se dice en una línea al pie y se sigue con las demás**. Un
 repo movido no puede dejar al usuario sin agenda.
 
@@ -105,10 +109,11 @@ sale en la agenda de mañana; un repo parado en una rama de tarea muestra el est
 | pide la agenda, el día, o qué le toca (por defecto) | `references/vista-diaria.md` |
 | pide crear o cambiar la configuración (`--config`) | `assets/agenda.esqueleto.md` |
 | tiene un repo cuya tabla no encaja, o pregunta qué columnas se leen | `references/contrato-formato.md` |
+| algún repo registrado lleva el marcador `<!-- tarea: toggl … -->` | `references/toggl.md` |
 
 ## Reglas invariantes
 
-1. **No escribe en ninguna lista de tareas**, ni siquiera para corregir un error evidente.
+1. **No escribe en ninguna lista de tareas ni en Toggl**, ni siquiera para corregir un error evidente.
 2. **No reordena ninguna cola**, ni propone reordenar sin decir en qué repo y en qué posición.
 3. **No inventa un coste.** Una fila sin `Coste` se cuenta aparte, nunca se estima aquí: estimar es de
    `tarea`, que tiene delante el historial de ese repo.

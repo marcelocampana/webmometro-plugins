@@ -14,6 +14,8 @@ cerrado.
 
 ## Lo que hay que saber, aparte de la tabla
 
+- **En un repo conectado a Toggl** no hay columna Inicio: la señal es la rama. Una `En curso` sin
+  rama, o una `Pendiente` con rama, es el mismo error de registro.
 - **`Pendiente` y `En curso` se distinguen por el Inicio, no solo por la etiqueta.** Una `En curso`
   sin Inicio, o una `Pendiente` con Inicio, es un error de registro: el Inicio es la creación de la
   rama, y las dos cosas se anotan en el mismo momento. Esa comprobación se hace **en la fila de la

@@ -11,10 +11,12 @@ description: >
   día el formato de un sistema de tareas ya existente (`--actualizar`); y montar el sistema donde no
   existe. NO lo uses para TODOs efímeros de la sesión (esa es la lista interna de Claude Code), para
   issues de GitHub/Jira/Linear, ni para pendientes sin esta estructura; si no existe y el usuario no
-  pidió nada de tareas, no lo actives ni lo propongas.
-argument-hint: "[--init | --revisar | --auditoria | --ingerir | --actualizar]"
+  pidió nada de tareas, no lo actives ni lo propongas. Si el repo está conectado a Toggl (o se pide
+  conectarlo: `--toggl`), registra en Toggl el tiempo de proyecto de cada tarea, recortado por la
+  presencia real del usuario, y avisa de las pausas.
+argument-hint: "[--init | --revisar | --auditoria | --ingerir | --actualizar | --toggl]"
 metadata:
-  version: 2.0.0
+  version: 2.1.0
 ---
 
 # Gestión de tareas por rama (tarea)
@@ -36,9 +38,10 @@ crear** las tareas: propone, afina y recomienda prioridad — no solo marca fila
 | pide revisar el proyecto completo (`--auditoria`) | `references/modo-auditoria.md` |
 | pasa un archivo de tareas, o pide extraerlas de la conversación (`--ingerir`) | `references/modo-ingesta.md` |
 | pide poner al día el formato, o el Paso 0 detecta una convención desactualizada (`--actualizar`) | `references/modo-actualizacion.md` |
+| pide conectar el repo con Toggl, o reconciliar lo pendiente (`--toggl`) | `references/toggl-conexion.md` |
 
 **Se lee la del modo invocado y ninguna más.** Las de apoyo —`archivado`, `contextualizacion`,
-`redaccion-tareas`, `estados`, `tiempos`, `estimacion`, `seccionamiento`, `secciones-catalogo`,
+`redaccion-tareas`, `estados`, `tiempos`, `estimacion`, `toggl`, `seccionamiento`, `secciones-catalogo`,
 `historial-lectura`, `formato-tablas`, `cierre-contenido`, `impacto-documental`— solo cuando la del
 modo las cite para el paso que estás
 ejecutando. Cargarlas «por si acaso» convierte este skill en su propio problema: el núcleo pesa ~2.400
@@ -70,7 +73,8 @@ tokens y cada referencia suma otros ~500-1.700.
 3. **Leer las secciones** con `grep -n '^## '` sobre el archivo resuelto, no sobre una ruta supuesta.
    Son las que hay: no inventes ni reordenes sin confirmación. Respeta el umbral si está anotado
    (`<!-- tarea: umbral … -->`; el marcador antiguo `<!-- task-flow: … -->` vale igual y no se
-   reescribe sin permiso).
+   reescribe sin permiso). Con el marcador `<!-- tarea: toggl … -->` el repo está conectado: sus
+   tablas no llevan columnas de tiempo y crear, abrir, pausar y cerrar siguen además `toggl.md`.
 
 ## Las tres listas
 
@@ -134,7 +138,8 @@ párrafos hace más caro anotar una tarea que hacerla.
 
 Lo que **no** se recorta: el cierre es **una** confirmación, y con ella corre la cadena completa
 —fila, commit, merge— sin pausas. Los únicos altos son `main` sucia/desactualizada, un conflicto de
-merge, o cambios ajenos a la tarea; fuera de eso, no hay una segunda ni tercera pregunta.
+merge, o cambios ajenos a la tarea; fuera de eso, no hay una segunda ni tercera pregunta. **Si el
+usuario encargó la tarea completa, ese encargo ya es el visto bueno del cierre.**
 
 > Propongo: **Corregir el desplegable del menú en móvil** (`AppHeader.vue`) → General. ¿La creo?
 

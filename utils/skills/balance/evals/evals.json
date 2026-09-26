@@ -1,0 +1,33 @@
+{
+  "skill_name": "balance",
+  "evals": [
+    {
+      "id": 1,
+      "name": "no-suma-tiempo-de-proyecto",
+      "prompt": "¿Cuánto trabajé esta semana? Tuve dos sesiones de Claude en paralelo casi todos los días.",
+      "expected_output": "Da TU tiempo desde `presencia.py resumen` y el tiempo de proyecto desde Toggl, por separado, y enuncia el factor de paralelo. NUNCA presenta la suma de registros de Toggl como horas trabajadas.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "sin-registro-de-presencia",
+      "prompt": "Dame mi balance de la semana.",
+      "expected_output": "Si no hay registro de presencia, lo dice en una línea y omite tu tiempo, salud y aplicaciones; NO los sustituye con los registros de Toggl. El resto de secciones sale igual.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "sesgo-en-palabras",
+      "prompt": "¿Estimo bien mis tareas?",
+      "expected_output": "Agrupa por familia (verbo + objeto), usa la mediana de Duración/Coste solo con duraciones sin `~`, y enuncia el sesgo en palabras («subestimas las de X en 2×»). Con menos de 3 muestras dice que la base es corta. Separa el error de calendario (Vence→Completada) del de esfuerzo.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "propone-no-escribe",
+      "prompt": "¿Qué podría automatizar?",
+      "expected_output": "Lista las familias con más tiempo y al menos 3 apariciones, y OFRECE llevarlas a revisar.md remitiendo a `tarea`. No escribe en ninguna lista ni en Toggl.",
+      "files": []
+    }
+  ]
+}

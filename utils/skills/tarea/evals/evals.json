@@ -343,6 +343,56 @@
         "evals/fixtures/proyecto-en-curso/tareas/secciones.md",
         "evals/fixtures/proyecto-en-curso/tareas/historial/2026-08.md"
       ]
+    },
+    {
+      "id": 34,
+      "name": "toggl-cierre-en-bloque",
+      "prompt": "Listo, el menú ya quedó. Ciérrala.",
+      "expected_output": "Repo conectado (marcador toggl). Tras la única confirmación de cierre corre la cadena: marca `cerrar` y `presencia.py tramos` en local, UNA llamada `time-entries bulk-create` con los registros devueltos y UNA `tasks bulk-patch` con el estado Done; luego marca `enviado`. NO inicia ni detiene cronómetros, NO lee Toggl para armar el historial: la fila del mensual lleva las ocho columnas con Inicio, Completada y Duración de `tramos` (sin `~`) y Coste/Vence del registro local, y conserva `<!-- toggl:16504199 -->`. En tareas.md no escribe columnas de tiempo. Si hubo `descontado`, lo dice en la línea de cierre.",
+      "files": [
+        "evals/fixtures/conectado-toggl/tareas/tareas.md",
+        "evals/fixtures/conectado-toggl/tareas/secciones.md"
+      ]
+    },
+    {
+      "id": 35,
+      "name": "toggl-abrir-no-toca-toggl",
+      "prompt": "Empiezo con la de precios.",
+      "expected_output": "Abre la tarea como siempre (rama desde main limpia, estado en los dos sitios, pregunta la posición) y anota `presencia.py marca --evento abrir`. NO hace ninguna llamada a Toggl al abrir y NO escribe Inicio en tareas.md: el repo conectado no tiene esa columna. Avisa que hay otra tarea `🔵 En curso` (el menú), porque solo una puede estarlo.",
+      "files": [
+        "evals/fixtures/conectado-toggl/tareas/tareas.md",
+        "evals/fixtures/conectado-toggl/tareas/secciones.md"
+      ]
+    },
+    {
+      "id": 36,
+      "name": "no-partir-pasos-de-un-plan",
+      "prompt": "Registra el plan que acabamos de aprobar: son siete pasos que vas a hacer tú de corrido, sin que yo tenga que validar nada entre medio.",
+      "expected_output": "Propone UNA sola tarea (o dos si hay una parte que exige al usuario presente), no siete: las tareas ordenan al usuario y los pasos de un plan que Claude ejecuta de corrido viven en el plan. Lo justifica en una línea (siete cierres que nadie supervisa, siete veces más llamadas a Toggl) y espera el visto bueno.",
+      "files": [
+        "evals/fixtures/conectado-toggl/tareas/tareas.md",
+        "evals/fixtures/conectado-toggl/tareas/secciones.md"
+      ]
+    },
+    {
+      "id": 37,
+      "name": "cierre-delegado",
+      "prompt": "Hazte cargo de la de precios completa y ciérrala al terminar; no me pidas confirmación.",
+      "expected_output": "Trabaja la tarea y, al terminar, ejecuta la cadena de cierre (fila, Toggl en bloque, commit, merge) SIN pedir la confirmación de cierre: el encargo ya es el visto bueno. Solo se detendría por main sucia o desactualizada, conflicto de merge o cambios ajenos a la tarea.",
+      "files": [
+        "evals/fixtures/conectado-toggl/tareas/tareas.md",
+        "evals/fixtures/conectado-toggl/tareas/secciones.md"
+      ]
+    },
+    {
+      "id": 38,
+      "name": "repo-sin-marcador-como-siempre",
+      "prompt": "Crea una tarea para corregir el footer en móvil.",
+      "expected_output": "El repo NO tiene marcador toggl: la tarea se propone y crea con el formato de siempre (Vence y Coste en las tablas), sin llamar a Toggl. A lo sumo ofrece conectar el repo en una línea, una sola vez en la sesión; no lo hace sin visto bueno.",
+      "files": [
+        "evals/fixtures/proyecto-en-curso/tareas/tareas.md",
+        "evals/fixtures/proyecto-en-curso/tareas/secciones.md"
+      ]
     }
   ]
 }

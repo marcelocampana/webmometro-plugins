@@ -21,6 +21,14 @@ La razón técnica es la misma que justifica el descuento de pausas: `Duración`
 tiempo de trabajo y no de calendario, así que `Coste` tiene que serlo también para ser comparable — y
 por eso mismo ninguno de los dos es comparable con `Vence`.
 
+## En un repo conectado a Toggl
+
+Inicio, Completada y Duración **no se miden contra git**: salen de `presencia.py tramos`, que cruza
+los tramos en que la tarea estuvo abierta con los minutos en que el usuario estaba presente
+(`toggl.md`). Es tiempo medido —ni noches ni tramos bloqueados que descontar a ojo— y va **sin `~`**.
+Git queda como respaldo cuando no hay registro de presencia (una sesión fuera del Mac): entonces rige
+todo lo de abajo, `~` incluido.
+
 ## Las dos marcas
 
 - **Inicio = creación de la rama de la tarea.**

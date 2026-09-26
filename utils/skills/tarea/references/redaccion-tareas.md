@@ -39,6 +39,13 @@ Si el enunciado no cabe en una línea, casi siempre es porque:
 
 ## Cuándo partir una tarea
 
+**Las tareas ordenan al usuario; el plan ordena a Claude.** Una tarea se parte solo si entre los
+trozos hay algo del usuario: tiene que **decidir, validar o hacer** algo antes de que siga el otro;
+tienen **distinta prioridad** o se harán en **momentos distintos**; o podría querer **quedarse con
+uno** y dejar el otro. Si no, es una sola tarea y sus pasos viven en el plan: siete filas para un
+trabajo que Claude hace de corrido son siete cierres que nadie supervisa y, en un repo conectado, siete
+veces más llamadas a Toggl.
+
 **Si el enunciado necesita una «y», probablemente son dos.** Propón partirla cuando:
 
 - Los dos trozos se pueden cerrar por separado y en distinto momento.

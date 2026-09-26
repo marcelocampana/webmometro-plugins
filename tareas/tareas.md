@@ -8,7 +8,7 @@ El orden de esta tabla **es** el orden de ejecución: se toma la primera fila qu
 
 | # | Tarea | Sección | Estado | Vence | Coste | Nota |
 | :--: | --- | --- | --- | --- | --- | --- |
-| 1 | Añadir a `agenda` el modo semanal y la calibración de estimaciones | utils | Pendiente | — | — | El último, y solo si a esas alturas se echa de menos. |
+| 1 | Instalar y activar Toggl en el Mac y en los repos | utils | Pendiente | — | — | Necesita al usuario presente. |
 
 ---
 
@@ -27,13 +27,13 @@ Documentación raíz (`README.md`, `CLAUDE.md`, `docs/`), configuración y todo 
 
 ## utils
 
-Los cuatro skills del plugin `utils`: `claude-activity-log`, `content-sync-check`, `documentar-proceso` y `tarea`.
+Los skills del plugin `utils`: `agenda`, `balance`, `claude-activity-log`, `content-sync-check`, `documentar-proceso` y `tarea`.
 
 | Estado | Tarea | Vence | Coste | Inicio | Completada | Duración | Comentarios |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Pendiente | Añadir a `agenda` el modo semanal y la calibración de estimaciones | — | — | — | — | — | Dos errores que **no se corrigen con el mismo número**: esfuerzo (`Coste`→`Duración`, horas de trabajo, mediana de razones sobre duraciones sin `~`) y calendario (`Vence`→`Completada`, días de reloj, que en realidad mide capacidad). La salida útil es el sesgo enunciado, no solo el número corregido. |
+| Pendiente | Instalar y activar Toggl en el Mac y en los repos | — | — | — | — | — | Activar el gancho `UserPromptSubmit` en `~/.claude/settings.json` y el arranque de `presencia.py` al encender el Mac; crear clientes y proyectos en Toggl y `~/Github/AI-kit/config/context/toggl.md`; migrar el primer repo (el de plugins) al formato sin columnas de tiempo. Cada cambio fuera del repo, con visto bueno en el momento. |
 
-**Cerradas en esta sección: ~2h 17m** · 8 archivadas
+**Cerradas en esta sección: ~2h 26m** · 9 archivadas
 
 ---
 

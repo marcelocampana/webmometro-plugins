@@ -61,7 +61,7 @@ Van al pie, **una línea cada uno**, y solo si se cumplen:
 ## La plantilla
 
 ```text
-Hoy · martes 15 · capacidad 4h
+Hoy · martes 15 · capacidad 4h · llevas 1h 10m trabajadas
 
   En curso   Crear el skill agenda con la vista diaria     plugins        —
   1          Aislar por qué el dev pierde la base          odc-clusters   ~25m
@@ -82,10 +82,10 @@ Hoy · martes 15 · capacidad 4h
 
 ## Qué NO entra
 
-- **`revisar.md`, `auditoria.md` y el historial.** La bandeja es material de la sesión de
-  planificación —modo semanal—, no de la mañana; abrirla a diario convierte la agenda en un volcado.
+- **`revisar.md`, `auditoria.md` y el historial.** La bandeja es material de la revisión semanal
+  —skill `balance`—, no de la mañana; abrirla a diario convierte la agenda en un volcado.
 - **Las secciones de `tareas.md`.** La fila de `## Ahora` ya trae lo necesario; el detalle es para
   cuando se abre la tarea, dentro de su repo.
-- **Nada calculado sobre el historial.** Calibrar es del modo semanal, y leer el mensual de cada repo
+- **Nada calculado sobre el historial.** Calibrar es de `balance`, y leer el mensual de cada repo
   cada mañana cuesta más que toda la vista.
 - **Lo que no cabe en la capacidad.** No se lista «por si acaso»: se cuenta y se calla.

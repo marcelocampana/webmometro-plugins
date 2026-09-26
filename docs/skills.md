@@ -88,13 +88,24 @@ Utilidades transversales de organización del trabajo.
   —estimado desde el historial al crearla, emparejando por familia de
   tarea— y un `Vence` opcional que audita el orden en vez de fijarlo.
   Solo se activa si el proyecto ya tiene esa estructura o si el usuario
-  pide montarla.
+  pide montarla. Cada repo se puede conectar a Toggl 2.0 (`--toggl`):
+  entonces las tablas pierden sus columnas de tiempo, que viven en Toggl,
+  y el tiempo de cada tarea se mide cruzando cuándo estuvo abierta con la
+  presencia real del usuario (`presencia.py`: teclado, aplicación en
+  primer plano y mensajes a Claude). Toggl se escribe solo al crear y al
+  cerrar, en bloque; y avisa de las pausas dentro de la conversación.
 - **agenda** — Compone la vista diaria del usuario cruzando todos los repos
   registrados: lee la cola `## Ahora` de cada uno y responde qué toca hoy y
   si cabe en la capacidad declarada. Avisa de lo vencido, de varias tareas
   abiertas a la vez y de las filas sin coste. **Solo lee**: nunca escribe en
   una lista de tareas ni reordena una cola, que es lo que le permite correr
-  desatendida desde una rutina.
+  desatendida desde una rutina. En los repos conectados toma Coste y Vence
+  de Toggl y las horas del día del registro de presencia.
+- **balance** — Revisión para mejorar: tiempo de proyecto por cliente
+  (Toggl) separado del tiempo real del usuario (registro de presencia),
+  imprevistos, sesgo de estimación por familia de tarea, candidatas a
+  automatizar, salud (sesiones sin pausa, horas frente al computador),
+  uso de aplicaciones y tiempo que Claude trabajó solo. **Solo lee.**
 - **content-sync-check** — Verifica que el contenido aprobado del cliente
   coincida en todos sus destinos (el repo del sitio, el proyecto de Claude
   Design y su espejo local) y repara las diferencias con confirmación pieza

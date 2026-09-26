@@ -12,6 +12,20 @@ Columnas verbatim de las cuatro tablas — **preservarlas exactamente**:
 Las tablas del mensual (`historial/AAAA-MM.md`) llevan **las mismas columnas que las secciones**:
 archivar es cortar y pegar, no reformatear (`archivado.md`).
 
+**Variante conectada a Toggl** (marcador `<!-- tarea: toggl … -->`, `toggl-conexion.md`): todo lo que
+es tiempo vive en Toggl y en el registro local, y `tareas.md` queda sin esas columnas.
+
+```text
+| # | Tarea | Sección | Estado | Nota |                                           ← ## Ahora
+| Estado | Tarea | Comentarios |                                                 ← secciones
+| Estado | Tarea | Vence | Coste | Inicio | Completada | Duración | Comentarios |  ← historial (igual)
+```
+
+La celda `Tarea` lleva el id de Toggl pegado al texto: `Corregir el menú <!-- toggl:16504199 -->`. Se
+lee igual y no añade columna; quien muestre la tarea quita el comentario. **El historial conserva las
+ocho columnas**: al cerrar, la fila se arma con los números de `presencia.py tramos` (`toggl.md`).
+Una fila cerrada ya no cambia, así que no se desincroniza, y la estimación sigue leyendo archivos.
+
 - **El `#` de `## Ahora` es el orden de ejecución**, empezando en 1: la fila 1 es la siguiente tarea
   a tomar. **Se renumera** cuando se inserta una fila o se borra al cerrar, para que no queden huecos
   ni números repetidos. Renumerar no es reordenar: el orden relativo de las demás filas no cambia.

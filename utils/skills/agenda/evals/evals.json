@@ -91,6 +91,26 @@
         "evals/fixtures/dos-repos/repo-b/tareas/tareas.md",
         "evals/fixtures/dos-repos/repo-b/tareas/revisar.md"
       ]
+    },
+    {
+      "id": 9,
+      "name": "repo-conectado-lee-toggl",
+      "prompt": "Usa la configuración de evals/fixtures/con-toggl/agenda.md. ¿Qué me toca hoy?",
+      "expected_output": "Detecta el marcador toggl con una lectura mínima. Toma Coste y Vence de Toggl con UNA consulta `tasks list` del proyecto 3967672, cruzando por el id de `<!-- toggl:… -->`, y muestra las tareas SIN el comentario. Si hay registro de presencia, añade «llevas X trabajadas» junto a la capacidad. No escribe en Toggl ni en tareas.md.",
+      "files": [
+        "evals/fixtures/con-toggl/agenda.md",
+        "evals/fixtures/con-toggl/repo-t/tareas/tareas.md"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "repo-conectado-sin-toggl",
+      "prompt": "Usa la configuración de evals/fixtures/con-toggl/agenda.md. Dame la agenda; el MCP de Toggl no está disponible en esta sesión.",
+      "expected_output": "La agenda NO se cae: lista por orden con el tope de 5 filas, sin horas, y dice al pie una vez «sin datos de Toggl: no puedo sumar horas de los repos conectados». No inventa costes.",
+      "files": [
+        "evals/fixtures/con-toggl/agenda.md",
+        "evals/fixtures/con-toggl/repo-t/tareas/tareas.md"
+      ]
     }
   ]
 }

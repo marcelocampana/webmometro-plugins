@@ -19,6 +19,13 @@ El bloque `## Ahora` de `<repo>/tareas/tareas.md`, y de él estas columnas:
 | `Coste` | La cuenta de horas | `—`: cuenta como fila, no como tiempo |
 | `Nota` | No se muestra | — |
 
+## Variante conectada a Toggl
+
+Con el marcador `<!-- tarea: toggl … -->`, `## Ahora` es `| # | Tarea | Sección | Estado | Nota |`:
+**sin `Vence` ni `Coste`**, que se toman de Toggl (`references/toggl.md`). La celda `Tarea` lleva
+`<!-- toggl:id -->` pegado al texto: se extrae el id para cruzar y **se quita al mostrar**. Leer por
+nombre de columna es lo que permite que las dos variantes convivan sin romper nada.
+
 ## Las columnas se localizan por nombre, nunca por posición
 
 **No es una precaución teórica: hay repos en producción con el formato anterior**, de seis columnas y
