@@ -14,7 +14,7 @@ description: >
   efímeros de la sesión.
 argument-hint: "[lo que el usuario quiere hacer]"
 metadata:
-  version: 4.4.0
+  version: 4.4.1
 ---
 
 # Tareas (tarea)
