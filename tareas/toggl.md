@@ -16,7 +16,7 @@ La primera línea de la descripción de cada tarea es `Área: <nombre>`, con uno
 | brand-voice-pro | Los skills, agents, commands y el `.mcp.json` del plugin. Es el único con las cuatro piezas. |
 | design-system | Los tres skills del plugin: `carousel-design`, `design-system` e `image-prompt`. |
 | seo-suite | Los diez skills de la suite SEO y el flujo que los encadena (snapshots → análisis → tracking). |
-| utils | Los skills del plugin: `agenda`, `balance`, `claude-activity-log`, `content-sync-check`, `documentar-proceso`, `plan-semanal`, `tarea` y `tarea-repo`. |
+| utils | Los skills del plugin: `agenda`, `balance`, `plan-semanal`, `tarea` y `tarea-repo`. |
 
 ## Reglas
 

@@ -21,7 +21,7 @@ contesta. Dos tiempos — detectar barato, y solo entonces leer.
    entrega.
 
 > Cerrada y mergeada. `docs/skills.md` lista 3 skills en utils y ahora son 4: falta
-> `content-sync-check`. ¿Lo anoto en la bandeja o lo corrijo ahora?
+> `agenda`. ¿Lo anoto en la bandeja o lo corrijo ahora?
 
 Si el usuario dice «corrígelo», es **una tarea nueva y corta** —rama, commit y merge propios—, no una
 extensión de la que acaba de cerrarse: esa cadena ya terminó. Esto **no es un cuarto freno**: ocurre

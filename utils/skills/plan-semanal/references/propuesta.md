@@ -28,7 +28,7 @@ historial de ese repo la tiene (`tarea-repo/references/estimacion.md`), o sin el
 
 ```text
 Sin estimación (dime un número o déjalas fuera):
-  · Documentar content-sync-check en el README (plugins) — historial: ~20m
+  · Documentar agenda en el README (plugins) — historial: ~20m
   · Revisar el copy de la home (webmometro) — sin base
 ```
 
@@ -53,7 +53,7 @@ Van al pie, una línea cada uno y solo si se cumplen:
 Semana del lunes 28 de septiembre · capacidad 20h (16h planificables, 20% libre)
 
 Lunes 28    ~3h 10m   Planificar la semana en Toggl (plugins) · Revisar el copy de la home (web)
-Martes 29   ~3h       Corregir el menú móvil (odc) · Documentar content-sync-check (plugins)
+Martes 29   ~3h       Corregir el menú móvil (odc) · Documentar agenda (plugins)
 Miércoles   ~2h 40m   Arrastre: Aplicar correcciones médicas (odc-clusters)
 Jueves      ~3h 20m   …
 Viernes     ~1h       Balance de la semana · margen

@@ -15,7 +15,7 @@ description: >
   usuario no pidió nada de tareas, no lo actives.
 argument-hint: "[--init | --migrar | --auditoria | --ingerir | --revisar | --toggl]"
 metadata:
-  version: 4.0.1
+  version: 4.0.2
 ---
 
 # Tareas de repositorio (tarea-repo)
@@ -94,9 +94,7 @@ están en Toggl; se leen con `tarea/scripts/cola.py leer --proyecto <ID del marc
    principal no son tareas: se encadenan.
 3. **El historial se escribe en el mismo cierre**, dentro de la cadena, nunca como paso aparte.
 4. **Del historial se lee la sección del ancla, nunca el archivo entero** (`historial-lectura.md`).
-5. **Si la tarea aprueba o publica contenido, su `estado:` se actualiza en el archivo fuente**, en la
-   misma cadena (`cierre-contenido.md`).
-6. **Las áreas salen de `toggl.md`**: un área nueva se añade ahí con visto bueno, no se inventa.
+5. **Las áreas salen de `toggl.md`**: un área nueva se añade ahí con visto bueno, no se inventa.
 
 ## Idioma
 
