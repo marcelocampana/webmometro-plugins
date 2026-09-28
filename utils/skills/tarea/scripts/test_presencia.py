@@ -41,6 +41,7 @@ class Base(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         os.environ["TAREA_PRESENCIA_DIR"] = self.tmp.name
         os.environ["TOGGL_CONFIG"] = os.path.join(self.tmp.name, "no-existe.md")
+        os.environ["CLAUDE_PROYECTOS_DIR"] = os.path.join(self.tmp.name, "claude")
 
     def tearDown(self):
         self.tmp.cleanup()
@@ -150,6 +151,64 @@ class Paralelo(Base):
         self.assertEqual(atencion["repo-a"], 15)
         self.assertEqual(atencion["repo-b"], 15)
         self.assertEqual(r["dias"]["2026-09-26"]["apps"]["Claude"], 30)
+
+
+class TiempoDeClaude(Base):
+    def sesion(self, nombre, lineas, proyecto="repo"):
+        """lineas: (hora, tipo) con tipo `a` (respuesta de Claude) o `r` (resultado de un comando)."""
+        ruta = Path(os.environ["CLAUDE_PROYECTOS_DIR"]) / "-x-" / (nombre + ".jsonl")
+        ruta.parent.mkdir(parents=True, exist_ok=True)
+        with open(ruta, "a", encoding="utf-8") as f:
+            for hora, tipo in lineas:
+                d = {"timestamp": t(hora).isoformat(), "cwd": "/no-existe/" + proyecto}
+                if tipo == "a":
+                    d["type"] = "assistant"
+                else:
+                    d.update(type="user", message={"content": [{"type": "tool_result"}]})
+                f.write(json.dumps(d) + "\n")
+
+    def cada(self, desde, hasta, minutos=2):
+        m, salida = t(desde), []
+        while m < t(hasta):
+            salida.append((m.strftime("%H:%M"), "a"))
+            m += timedelta(minutes=minutos)
+        return salida
+
+    def test_separa_con_el_usuario_y_solo(self):
+        self.marca("1", "abrir", "10:00")
+        self.mac("10:00", "10:20")
+        self.sesion("s1", self.cada("10:00", "10:50"))
+        self.marca("1", "cerrar", "11:00")
+        c = self.tramos("1", "11:00")["claude"]
+        self.assertEqual(c["claude"], "49m")
+        self.assertEqual(c["con_usuario"], "20m")
+        self.assertEqual(c["solo"], "29m")
+
+    def test_sesiones_en_paralelo_cuentan_una_vez(self):
+        self.marca("1", "abrir", "10:00")
+        self.sesion("s1", self.cada("10:00", "10:30"))
+        self.sesion("s2", self.cada("10:01", "10:31"))
+        self.marca("1", "cerrar", "11:00")
+        self.assertEqual(self.tramos("1", "11:00")["claude"]["claude"], "30m")  # por separado sumarían 58m
+
+    def test_un_comando_largo_cuenta_entero(self):
+        self.marca("1", "abrir", "10:00")
+        self.sesion("s1", [("10:00", "a"), ("10:20", "r"), ("10:21", "a")])
+        self.marca("1", "cerrar", "11:00")
+        self.assertEqual(self.tramos("1", "11:00")["claude"]["claude"], "22m")
+
+    def test_solo_cuenta_el_repo_y_el_tiempo_abierto(self):
+        self.marca("1", "abrir", "10:00")
+        self.sesion("s1", self.cada("09:00", "09:30"))
+        self.sesion("s2", self.cada("10:00", "10:30"), proyecto="otro-repo")
+        self.marca("1", "cerrar", "11:00")
+        self.assertEqual(self.tramos("1", "11:00")["claude"]["claude_s"], 0)
+
+    def test_resumen_por_proyecto(self):
+        self.mac("10:00", "10:10")
+        self.sesion("s1", self.cada("10:00", "10:30"))
+        r = correr("claude", "--desde", "2026-09-26", "--hasta", "2026-09-26")["proyectos"]["repo"]
+        self.assertEqual((r["claude"], r["con_usuario"], r["solo"]), ("29m", "10m", "19m"))
 
 
 class Aviso(Base):

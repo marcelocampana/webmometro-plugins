@@ -26,12 +26,12 @@ Con un rango `sed` hasta el siguiente `###` el último comentario se desborda a 
 
 ### {{Área A}}
 
-| Estado | Tarea | Vence | Coste | Inicio | Completada | Duración | Comentarios |
-| --- | --- | --- | --- | --- | --- | --- | --- |
+| Estado | Tarea | Vence | Coste | Inicio | Completada | Duración | Claude | Comentarios |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ### {{Área B}}
 
-| Estado | Tarea | Vence | Coste | Inicio | Completada | Duración | Comentarios |
-| --- | --- | --- | --- | --- | --- | --- | --- |
+| Estado | Tarea | Vence | Coste | Inicio | Completada | Duración | Claude | Comentarios |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 **Total del mes: {{Xh Ym}}**

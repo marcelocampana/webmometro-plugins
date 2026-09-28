@@ -18,19 +18,23 @@ medidas que no se recuperan del repo; lo relevante de las notas de la tarea en T
 el tiempo: la nota que vale es la que ahorraría un rato a quien vuelva.
 
 **La fila** va bajo `## Tareas archivadas`, en el `### <Área>` del área de la tarea (la primera línea
-de su descripción en Toggl), con ocho columnas:
+de su descripción en Toggl), con nueve columnas:
 
 ```text
-| Estado | Tarea | Vence | Coste | Inicio | Completada | Duración | Comentarios |
+| Estado | Tarea | Vence | Coste | Inicio | Completada | Duración | Claude | Comentarios |
 ```
 
-- Los números salen de `presencia.py tramos` (`inicio`, `fin`, `duracion`, `coste`, `vence`), no de
-  Toggl. Sin registro de presencia (se trabajó fuera del Mac), la Duración sale del intervalo de la
+- Los números salen de `presencia.py tramos` (`inicio`, `fin`, `duracion`, `coste`, `vence`,
+  `claude`), no de Toggl.
+- **Duración** es el tiempo del usuario; **Claude**, el de Claude en la tarea, como
+  `<claude> · <solo> solo` (`1h 10m · 40m solo`), o `—` sin respuestas suyas. Nunca se suman: un
+  minuto con los dos cuenta en ambas. No va a Toggl, así que el historial es su único registro (las
+  sesiones de Claude Code se borran con el tiempo). Sin registro de presencia (se trabajó fuera del Mac), la Duración sale del intervalo de la
   rama y lleva `~`, y se dice.
 - La celda Tarea conserva `<!-- toggl:id -->`; la de Comentarios termina en `[detalle](#el-ancla)`,
   ancla del mismo archivo.
 - **Una tarea con pasos es una sola fila**: la de la principal, con la suma de lo medido en sus pasos
-  y el coste que se le estimó. Los pasos no llevan fila propia.
+  y el coste que se le estimó; Claude, el `claude` de los `tramos` de la principal. Los pasos no llevan fila propia.
 - Una fila cerrada ya no cambia.
 
 ## El formato del mensual
@@ -39,6 +43,9 @@ Desde `assets/historial.esqueleto.md`: zona `## Comentarios` y zona `## Tareas a
 `### <Área>` por cada área que tenga alguna fila ese mes (el nombre tal cual está en `toggl.md`). El
 orden de los `###` es **del área más reciente en cerrar algo a la más antigua**: lo que se consulta
 primero es lo que se acaba de cerrar. El total del mes va al pie, una sola cifra.
+
+Una tabla de ocho columnas (sin **Claude**) es de antes de medir a Claude: al añadirle la primera
+fila de nueve, se le agrega la columna con `—` en las filas que ya estaban. Solo cambia el formato.
 
 Los mensuales anteriores a la migración usan el nombre de la **sección** en el `###`: es el mismo
 dato con el nombre de antes y se lee igual.
