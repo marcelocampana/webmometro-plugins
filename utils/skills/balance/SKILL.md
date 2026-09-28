@@ -1,7 +1,7 @@
 ---
 name: balance
 description: >
-  Revisión del trabajo para mejorar: cruza Toggl (tiempo de proyecto), el registro de presencia
+  Revisión del trabajo para mejorar: cruza Toggl (tiempo de proyecto: el trabajo de Claude por proyecto y cliente), el registro de presencia
   (tiempo real del usuario, pausas y aplicaciones) y los historiales de `tareas/` para responder a
   dónde se fue el tiempo, cuánto se desvían las estimaciones, qué se repite y se podría automatizar,
   y cómo va la salud (horas frente al computador, sesiones sin pausa). Úsalo cuando el usuario pida
@@ -34,13 +34,15 @@ una rutina: lo peor que puede pasar es un informe incompleto. Si de la revisión
 
 | Medida | Qué es | De dónde |
 | --- | --- | --- |
-| **Tiempo de proyecto** | Cuánto ocupó cada tarea, proyecto y cliente | Toggl: registros de tiempo |
+| **Tiempo de proyecto** | Lo que costó cada tarea, proyecto y cliente: el trabajo de Claude (tu tiempo solo en tareas sin Claude) | Toggl: registros de tiempo |
 | **Tu tiempo** | Cuánto estuvo trabajando el usuario, y en qué | `presencia.py resumen` |
 | **Tiempo de Claude** | Cuánto trabajó Claude, contigo y solo | `presencia.py claude` y la columna Claude del historial |
 
-Con dos sesiones en paralelo, las dos tareas cuentan el mismo tramo y el usuario lo vivió una vez.
-**Sumar tiempo de proyecto para obtener horas trabajadas es el error que este skill existe para no
-cometer.** Si hubo paralelo, se dice: «30h de proyecto con 18h tuyas: 1,7× en paralelo».
+Con dos sesiones en paralelo, Claude trabaja en dos proyectos a la vez y tú lo viviste una vez.
+**Sumar tiempo de proyecto para obtener tus horas es el error que este skill existe para no
+cometer.** La relación se dice como rendimiento: «30h de proyecto con 18h tuyas: 1,7×». Hasta el
+28-09-2026 por la tarde, Toggl guardaba tu presencia con tarea abierta, no el trabajo de Claude: al
+comparar con períodos anteriores, se dice.
 
 ## Paso 0 · Qué hay
 

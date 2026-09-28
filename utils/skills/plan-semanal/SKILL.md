@@ -30,7 +30,7 @@ el orden de los proyectos y `balance` dice que no hubo plan. Planificar es una m
 | | Dónde vive | Qué es |
 | --- | --- | --- |
 | **Plan** | Toggl: `start_date` = `end_date` = el día; `estimated_mins` | Una tarea con día y estimación, **sin registros de tiempo** |
-| **Realidad** | Toggl: registros de tiempo; y el registro de presencia | Lo que `tarea` mide al cerrar |
+| **Realidad** | El registro de presencia (tu tiempo); Toggl guarda el trabajo de Claude por proyecto | Lo que `tarea` mide al cerrar |
 | **Plan original** | `presencia.py plan` (local) | La versión del lunes, porque Toggl solo guarda la última |
 
 **Por día, no por hora.** Una hora exacta obliga a replanificar cada vez que la mañana cambia; un

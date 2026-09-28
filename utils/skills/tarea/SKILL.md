@@ -2,8 +2,9 @@
 name: tarea
 description: >
   Sistema de tareas del usuario, con Toggl 2.0 como única lista de pendientes para todos sus
-  proyectos. Crea, abre, pausa y cierra tareas en Toggl, mide su tiempo con la presencia real del
-  usuario y lo envía en bloque al cerrar. Úsalo cada vez que el usuario hable de una tarea o de su
+  proyectos. Crea, abre, pausa y cierra tareas en Toggl, envía en bloque al cerrar el trabajo de
+  Claude en cada proyecto (con tarea o sin ella) y mide aparte el tiempo real del usuario frente al
+  computador. Úsalo cada vez que el usuario hable de una tarea o de su
   trabajo pendiente: "qué sigue", "empiezo X", "anota esto", "haz lo siguiente", "listo, ya está",
   "pausa", "qué tengo abierto", "crea una tarea", "tengo que facturar", "estuve en una reunión",
   "terminé la llamada", o cuando pase un archivo o una conversación de la que extraer tareas. Si la
