@@ -30,20 +30,34 @@ existe, se crea antes (una llamada más). Con `P sesion`, si la sesión continua
 **Varias abiertas a la vez** se permite (una llamada mientras se factura), y se avisa en una línea:
 el tiempo de proyecto cuenta las dos; el del usuario, una vez (`balance`).
 
+## Qué va a Toggl
+
+**Toggl guarda lo que costó cada proyecto, por cliente: el trabajo de Claude.** Tu tiempo frente al
+computador se queda en local (`presencia.py`, avisos, `balance`) y no se mezcla con Toggl. El
+proyecto de cada tramo de Claude es el del repo cuyos archivos toca, no el de la carpeta donde se
+abrió la sesión. En una tarea sin repo, o si Claude no trabajó en ella (una reunión, algo que hiciste
+tú), va tu tiempo: es lo que costó.
+
 ## Cerrar
 
 En este orden, dentro de la misma cadena y sin pregunta aparte:
 
 1. `P marca --repo R --tarea ID --evento cerrar`.
-2. `P tramos --repo R --tarea ID`: devuelve `registros` (los tramos en que la tarea estuvo abierta
-   **y** el usuario presente), `duracion`, `descontado`, `coste`, `vence` y `claude` (lo que trabajó
-   Claude en la tarea: total, `con_usuario` y `solo`). `claude` no va a Toggl: lo guarda el
-   historial del repo.
+2. `P tramos --repo R --tarea ID`: devuelve `registros` (lo que va a Toggl: el trabajo de Claude en
+   el repo mientras la tarea estuvo abierta, o tu tiempo si `fuente` es `usuario`), `duracion` (tu
+   tiempo, para el historial), `descontado`, `coste`, `vence` y `claude` (total, `con_usuario` y
+   `solo`).
 3. `time-entries bulk-create` con esos `registros` y `task_id` = ID (fechas RFC3339 con zona). Una
    llamada.
 4. `tasks bulk-patch` con el estado Done. Una llamada. **En una tarea con pasos**, el último paso y la
    principal van juntos en esta misma llamada.
-5. `P marca --evento enviado` y `C invalidar`.
+5. `P marca --evento enviado`.
+6. **Lo que Claude trabajó sin tarea**: `P sin-tarea --hasta <ahora>` da, por repo, los tramos de
+   Claude en que no había ninguna tarea de ese repo abierta, con el `proyecto_toggl` de su
+   `tareas/toggl.md`. Van en una llamada `time-entries bulk-create` sin `task_id` y con
+   `project_id`; después `P sin-tarea --enviado --hasta <el mismo ahora>`. Un repo sin
+   `proyecto_toggl` no se envía y se dice en una línea.
+7. `C invalidar`.
 
 **El cálculo lo hace el script, no el modelo**: las mismas marcas dan siempre los mismos tramos. No
 se usa cronómetro: Toggl admite uno solo por persona y dos sesiones en paralelo se lo quitarían.

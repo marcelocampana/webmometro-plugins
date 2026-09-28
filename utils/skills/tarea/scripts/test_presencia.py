@@ -261,6 +261,42 @@ class Atribucion(Base):
         self.assertEqual(at.get("plugins"), 9)
 
 
+class ClaudeEnToggl(Atribucion):
+    def test_la_tarea_de_repo_envia_el_tiempo_de_claude(self):
+        presencia.anotar(t("10:00"), "tarea", "sitio", "1", "abrir")
+        self.mac("10:00", "10:05")                      # tú, 5 minutos
+        self.sesion("s1", [("10:00", "a", "sitio"), ("10:02", "a"), ("10:04", "a"), ("10:06", "a"),
+                           ("10:08", "a")])              # Claude, de 10:00 a 10:09
+        presencia.anotar(t("10:30"), "tarea", "sitio", "1", "cerrar")
+        r = correr("tramos", "--repo", "sitio", "--tarea", "1", "--hasta", t("10:30").isoformat())
+        self.assertEqual(r["fuente"], "claude")
+        self.assertEqual(sum(x["duration"] for x in r["registros"]), 9 * 60)
+        self.assertEqual(r["duracion"], "5m")            # tu tiempo, para el historial
+
+    def test_sin_trabajo_de_claude_va_tu_tiempo(self):
+        self.marca("R", "abrir", "10:00")
+        self.mac("10:00", "10:20")
+        self.marca("R", "cerrar", "10:20")
+        r = correr("tramos", "--repo", "sin-repo", "--tarea", "R", "--hasta", t("10:20").isoformat())
+        self.assertIn("error", r)                        # otra tarea: marcas de repo "repo"
+        r = self.tramos("R", "10:20")
+        self.assertEqual(r["fuente"], "usuario")
+        self.assertEqual(r["duracion"], "20m")
+
+    def test_sin_tarea_excluye_lo_que_tuvo_tarea_y_avanza_al_enviar(self):
+        (self.repos["plugins"] / "tareas").mkdir()
+        (self.repos["plugins"] / "tareas" / "toggl.md").write_text("<!-- tarea: toggl · proyecto 42 «P» · cliente 1 «C» -->\n")
+        presencia.anotar(t("10:20"), "tarea", "plugins", "7", "abrir")
+        presencia.anotar(t("10:40"), "tarea", "plugins", "7", "cerrar")
+        self.sesion("s1", [(h, "a", "plugins") for h in ("10:00", "10:02", "10:04", "10:21", "10:23", "10:50", "10:52")])
+        r = correr("sin-tarea", "--hasta", t("11:00").isoformat())
+        [p] = r["repos"]
+        self.assertEqual(p["proyecto_toggl"], 42)
+        self.assertEqual(p["total"], "8m")               # 10:00-10:05 y 10:50-10:53, no lo de la tarea
+        correr("sin-tarea", "--hasta", t("11:00").isoformat(), "--enviado")
+        self.assertEqual(correr("sin-tarea", "--hasta", t("11:30").isoformat())["repos"], [])
+
+
 class Aviso(Base):
     def test_avisa_una_vez_pasado_el_umbral(self):
         ajustes = presencia.leer_ajustes()

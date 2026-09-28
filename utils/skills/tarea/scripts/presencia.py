@@ -25,6 +25,7 @@ Uso:
     presencia.py sesion [--hasta ISO]
     presencia.py resumen --desde AAAA-MM-DD --hasta AAAA-MM-DD
     presencia.py claude --desde AAAA-MM-DD --hasta AAAA-MM-DD
+    presencia.py sin-tarea [--hasta ISO] [--enviado]    # Claude sin tarea abierta, por repo
     presencia.py plan guardar|leer|comparar [--semana AAAA-Www] [--vigente]
     presencia.py abiertas [--repo R]               # tareas abiertas o en pausa (sin cerrar)
 
@@ -243,19 +244,23 @@ def calcular_tramos(repo, tarea, hasta, todo, ajustes, completo=False):
     # `completo`: el usuario confirmó que trabajó fuera del computador (una reunión, una llamada):
     # el tramo abierto cuenta entero, sin recortar por presencia.
     trabajados = abiertos if completo else cortar(abiertos, presentes)
-    envio = ultimo_envio(eventos)
-    pendientes = trabajados if (todo or envio is None) else cortar(trabajados, [(envio, hasta)])
     abierto_s = sum((b - a).total_seconds() for a, b in abiertos)
     trabajado_s = sum((b - a).total_seconds() for a, b in trabajados)
     creacion = datos_creacion(eventos)
-    # Claude, sobre todo el tiempo abierto (no solo lo pendiente de envío): no va a Toggl.
+    # A Toggl va lo que costó la tarea: el trabajo de Claude en su repo mientras estuvo abierta. Si
+    # Claude no trabajó en ella (una tarea sin repo, una reunión, algo que hiciste tú), tu tiempo.
     claude = []
-    if abiertos:
-        claude = tramos_claude(abiertos[0][0], hasta, ajustes, repo).get(repo, [])
+    if abiertos and repo != "sin-repo":
+        claude = cortar(tramos_claude(abiertos[0][0], hasta, ajustes, repo).get(repo, []), abiertos)
+    fuente = "claude" if claude else "usuario"
+    enviables = claude or trabajados
+    envio = ultimo_envio(eventos)
+    pendientes = enviables if (todo or envio is None) else cortar(enviables, [(envio, hasta)])
     return {
         "repo": repo,
         "tarea": tarea,
-        "registros": [{"start": a.isoformat(), "duration": int((b - a).total_seconds()), "type": "activity"}
+        "fuente": fuente,
+        "registros": [{"start": a.replace(microsecond=0).isoformat(), "duration": int((b - a).total_seconds()), "type": "activity"}
                       for a, b in pendientes],
         "inicio": trabajados[0][0].isoformat() if trabajados else None,
         "fin": trabajados[-1][1].isoformat() if trabajados else None,
@@ -265,7 +270,7 @@ def calcular_tramos(repo, tarea, hasta, todo, ajustes, completo=False):
         "descontado_s": int(max(0, abierto_s - trabajado_s)),
         "coste": creacion.get("coste"),
         "vence": creacion.get("vence"),
-        "claude": reparto_claude(cortar(claude, abiertos), presentes),
+        "claude": reparto_claude(claude, presentes),
     }
 
 
@@ -538,6 +543,61 @@ def claude_solo(desde, hasta, ajustes):
     return {"desde": desde.isoformat(), "hasta": hasta.isoformat(), "proyectos": por_proyecto}
 
 
+def restar(intervalos, quitar):
+    """Lo de `intervalos` que no cae en ningún intervalo de `quitar`."""
+    salida = []
+    for a, b in intervalos:
+        trozos = [(a, b)]
+        for qa, qb in quitar:
+            nuevos = []
+            for x, y in trozos:
+                if qb <= x or qa >= y:
+                    nuevos.append((x, y))
+                    continue
+                if x < qa:
+                    nuevos.append((x, qa))
+                if qb < y:
+                    nuevos.append((qb, y))
+            trozos = nuevos
+        salida.extend(trozos)
+    return salida
+
+
+def proyecto_toggl(raiz):
+    """El proyecto de Toggl de un repo, del marcador de su `tareas/toggl.md`."""
+    try:
+        texto = (Path(raiz) / "tareas" / "toggl.md").read_text(encoding="utf-8")
+    except (OSError, TypeError):
+        return None
+    m = re.search(r"<!--\s*tarea:\s*toggl\s*·\s*proyecto\s+(\d+)", texto)
+    return int(m.group(1)) if m else None
+
+
+def claude_sin_tarea(hasta, ajustes, dias=14):
+    """El trabajo de Claude en cada repo mientras no había ninguna tarea de ese repo abierta, desde el
+    último envío (o desde el inicio del día). Va a Toggl como registro sin tarea en el proyecto del
+    repo, para que Toggl tenga todo lo que costó cada proyecto y no solo lo que tuvo tarea."""
+    lineas = leer_lineas(hasta.date() - timedelta(days=dias), hasta.date())
+    envios = [datetime.fromisoformat(c[1]) for m, t, c in lineas if t == "sin-tarea" and len(c) > 1 and c[0] == "enviado"]
+    desde = max(envios) if envios else datetime.combine(hasta.date(), datetime.min.time()).astimezone()
+    abiertas = {}
+    for repo, tarea in {(c[0], c[1]) for m, t, c in lineas if t == "tarea" and len(c) >= 3}:
+        abiertas.setdefault(repo, []).extend(abierta_en(eventos_tarea(lineas, repo, tarea), hasta))
+    sesiones = leer_sesiones(desde, hasta, ajustes)
+    raices = {nombre_repo(r): r for s in sesiones.values() for _, _, r in s["marcas"]}
+    repos = []
+    for nombre, tramos in sorted(tramos_claude(desde, hasta, ajustes, sesiones=sesiones).items()):
+        libres = [(a, b) for a, b in restar(tramos, sorted(abiertas.get(nombre, [])))
+                  if (b - a).total_seconds() >= 60]
+        if libres:
+            total = sum((b - a).total_seconds() for a, b in libres)
+            repos.append({"repo": nombre, "proyecto_toggl": proyecto_toggl(raices.get(nombre)),
+                          "total": fmt_duracion(total), "total_s": int(total),
+                          "registros": [{"start": a.replace(microsecond=0).isoformat(), "duration": int((b - a).total_seconds()),
+                                         "type": "activity"} for a, b in libres]})
+    return {"desde": desde.isoformat(), "hasta": hasta.isoformat(), "repos": repos}
+
+
 def tareas_abiertas(hasta, repo=None, dias=30):
     """Estado de cada tarea con marcas recientes: la última marca manda. Es la forma local de saber
     cuáles quedaron abiertas o en pausa, sin preguntarle a Toggl."""
@@ -668,6 +728,9 @@ def main(argv=None):
     t.add_argument("--completo", action="store_true", help="sin recortar por presencia (trabajo fuera del Mac)")
     s = sub.add_parser("sesion")
     s.add_argument("--hasta")
+    st = sub.add_parser("sin-tarea", help="trabajo de Claude sin tarea abierta, por repo, desde el último envío")
+    st.add_argument("--hasta")
+    st.add_argument("--enviado", action="store_true", help="marca como enviado hasta --hasta")
     ab = sub.add_parser("abiertas")
     ab.add_argument("--repo", help="solo este repo; `sin-repo` para las de un proyecto sin repositorio")
     ab.add_argument("--hasta")
@@ -731,6 +794,15 @@ def main(argv=None):
 
     if a.orden == "resumen":
         print(json.dumps(resumen(a.desde, a.hasta, ajustes), ensure_ascii=False))
+        return 0
+
+    if a.orden == "sin-tarea":
+        t = momento(a.hasta)
+        if a.enviado:
+            anotar(t, "sin-tarea", "enviado", t.isoformat())
+            print(json.dumps({"ok": True, "hasta": t.isoformat()}))
+        else:
+            print(json.dumps(claude_sin_tarea(t, ajustes), ensure_ascii=False))
         return 0
 
     if a.orden == "abiertas":
