@@ -69,7 +69,7 @@
       "displayName": "Utils",
       "source": "./utils",
       "description": "Skills personales de utilidad general: sistema de tareas con Toggl 2.0 como única lista para todos los proyectos, con el trabajo de Claude por proyecto y cliente en Toggl y el tiempo real del usuario medido aparte y leído por una copia local reducida (Tarea), ceremonia de repositorio con rama por tarea, cierre en cadena e historial de lo hecho como memoria del repo, más la migración de repos con el formato anterior (Tarea Repo), planificación de la semana por día en Toggl (Plan Semanal), revisión semanal de tiempo, plan contra realidad, estimación, salud, uso de aplicaciones y tiempo de Claude por tarea, de solo lectura (Balance) y vista diaria con todos los proyectos y la jornada de Toggl, de solo lectura (Agenda)",
-      "version": "4.4.1",
+      "version": "4.5.0",
       "keywords": [
         "utils",
         "productividad",

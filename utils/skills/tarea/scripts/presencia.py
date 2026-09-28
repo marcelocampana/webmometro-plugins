@@ -26,6 +26,7 @@ Uso:
     presencia.py resumen --desde AAAA-MM-DD --hasta AAAA-MM-DD
     presencia.py claude --desde AAAA-MM-DD --hasta AAAA-MM-DD
     presencia.py sin-tarea [--hasta ISO] [--enviado]    # Claude sin tarea abierta, por repo
+    presencia.py mi-tiempo [--hasta ISO] [--desde ISO] [--enviado]   # tu tiempo, por aplicación
     presencia.py plan guardar|leer|comparar [--semana AAAA-Www] [--vigente]
     presencia.py abiertas [--repo R]               # tareas abiertas o en pausa (sin cerrar)
 
@@ -58,6 +59,7 @@ AJUSTES = {
     "claude_hueco_min": 5,   # hueco entre mensajes de Claude que corta su tramo de trabajo
     "claude_herramienta_max_min": 30,  # un comando de Claude cuenta entero hasta esto
     "notificar_mac": 1,      # 1: el aviso de pausa también sale como notificación de macOS
+    "proyecto_mi_tiempo": 0,  # id del proyecto de Toggl donde va tu tiempo frente al computador
 }
 
 
@@ -600,6 +602,36 @@ def claude_sin_tarea(hasta, ajustes, dias=31):
     return {"desde": desde.isoformat(), "hasta": hasta.isoformat(), "repos": repos}
 
 
+def mi_tiempo(hasta, ajustes, dias=31, desde=None):
+    """Tu tiempo frente al computador desde el último envío (o desde el inicio del día): un registro
+    por tramo continuo de presencia, con sus aplicaciones principales en la descripción. Los minutos
+    sin muestra propia (leyendo, pensando, un mensaje desde el celular) cuentan en el tramo. Va a
+    Toggl a un proyecto propio, sin cliente: no es tiempo de proyecto."""
+    lineas = leer_lineas(hasta.date() - timedelta(days=dias), hasta.date())
+    envios = [datetime.fromisoformat(c[1]) for m, t, c in lineas if t == "mi-tiempo" and len(c) > 1 and c[0] == "enviado"]
+    if desde is None:
+        desde = max(envios) if envios else datetime.combine(hasta.date(), datetime.min.time()).astimezone()
+    activos = minutos_activos(lineas)
+    registros, total = [], 0
+    for a, b in cortar(tramos_presentes(activos, ajustes["ausencia_min"]), [(desde, hasta)]):
+        apps, m = {}, minuto(a)
+        while m < b:
+            app = (activos.get(m, {}).get("app") or "").replace("\u200e", "").strip()
+            if app and app not in ("-", "loginwindow"):
+                apps[app] = apps.get(app, 0) + 1
+            m += timedelta(minutes=1)
+        if not apps or (b - a).total_seconds() < 60:
+            continue   # solo la pantalla de inicio de sesión, o un instante: no es trabajo frente al Mac
+        total += (b - a).total_seconds()
+        principales = sorted(apps.items(), key=lambda x: -x[1])[:3]
+        registros.append({"start": a.replace(microsecond=0).isoformat(), "duration": int((b - a).total_seconds()),
+                          "type": "activity",
+                          "description": " · ".join("%s %s" % (n, fmt_duracion(v * 60)) for n, v in principales)})
+    return {"desde": desde.isoformat(), "hasta": hasta.isoformat(),
+            "proyecto_toggl": ajustes["proyecto_mi_tiempo"] or None,
+            "total": fmt_duracion(total), "total_s": int(total), "registros": registros}
+
+
 def tareas_abiertas(hasta, repo=None, dias=30):
     """Estado de cada tarea con marcas recientes: la última marca manda. Es la forma local de saber
     cuáles quedaron abiertas o en pausa, sin preguntarle a Toggl."""
@@ -733,6 +765,10 @@ def main(argv=None):
     st = sub.add_parser("sin-tarea", help="trabajo de Claude sin tarea abierta, por repo, desde el último envío")
     st.add_argument("--hasta")
     st.add_argument("--enviado", action="store_true", help="marca como enviado hasta --hasta")
+    mt = sub.add_parser("mi-tiempo", help="tu tiempo frente al computador, por aplicación, desde el último envío")
+    mt.add_argument("--hasta")
+    mt.add_argument("--desde", help="ISO; por defecto, el último envío o el inicio del día")
+    mt.add_argument("--enviado", action="store_true", help="marca como enviado hasta --hasta")
     ab = sub.add_parser("abiertas")
     ab.add_argument("--repo", help="solo este repo; `sin-repo` para las de un proyecto sin repositorio")
     ab.add_argument("--hasta")
@@ -805,6 +841,15 @@ def main(argv=None):
             print(json.dumps({"ok": True, "hasta": t.isoformat()}))
         else:
             print(json.dumps(claude_sin_tarea(t, ajustes), ensure_ascii=False))
+        return 0
+
+    if a.orden == "mi-tiempo":
+        t = momento(a.hasta)
+        if a.enviado:
+            anotar(t, "mi-tiempo", "enviado", t.isoformat())
+            print(json.dumps({"ok": True, "hasta": t.isoformat()}))
+        else:
+            print(json.dumps(mi_tiempo(t, ajustes, desde=momento(a.desde) if a.desde else None), ensure_ascii=False))
         return 0
 
     if a.orden == "abiertas":
