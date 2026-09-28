@@ -9,11 +9,7 @@ El orden de esta tabla **es** el orden de ejecución: se toma la primera fila qu
 
 | # | Tarea | Sección | Estado | Nota |
 | :--: | --- | --- | --- | --- |
-| 1 | Llevar a `tarea` el ciclo común en Toggl y fundir `tarea-suelta` <!-- toggl:16580515 --> | utils | Pendiente | — |
-| 2 | Quitar `tareas.md`, `revisar.md` y `secciones.md` de `tarea-repo` <!-- toggl:16580516 --> | utils | Pendiente | — |
-| 3 | Leer `agenda` y `plan-semanal` desde la copia de Toggl <!-- toggl:16580517 --> | utils | Pendiente | — |
-| 4 | Crear el script que migra un repo a Toggl <!-- toggl:16580518 --> | utils | Pendiente | — |
-| 5 | Subir `utils` a 4.0.0 y actualizar `docs/skills.md` y el README <!-- toggl:16580519 --> | Manifests | Pendiente | Al final |
+| 1 | Hacer de Toggl la única lista de tareas <!-- toggl:16580898 --> | utils | 🔵 En curso | 5 pasos, sin confirmación entre ellos |
 
 ---
 
@@ -30,28 +26,13 @@ Documentación raíz (`README.md`, `CLAUDE.md`, `docs/`), configuración y todo 
 
 ---
 
-## Manifests
-
-`.claude-plugin/marketplace.json` y los cuatro `plugin.json`.
-
-| Estado | Tarea | Comentarios |
-| --- | --- | --- |
-| Pendiente | Subir `utils` a 4.0.0 y actualizar `docs/skills.md` y el README <!-- toggl:16580519 --> | Cierra el cambio a Toggl como única lista. Plan: `~/.claude/plans/s-haz-las-consultas-zesty-beaver.md`. |
-
-**Cerradas en esta sección: 1m** · 1 archivada
-
----
-
 ## utils
 
 Los skills del plugin: `agenda`, `balance`, `claude-activity-log`, `content-sync-check`, `documentar-proceso`, `plan-semanal`, `tarea` (entrada), `tarea-repo` y `tarea-suelta`.
 
 | Estado | Tarea | Comentarios |
 | --- | --- | --- |
-| Pendiente | Llevar a `tarea` el ciclo común en Toggl y fundir `tarea-suelta` <!-- toggl:16580515 --> | Crear, abrir, pausar y cerrar en Toggl para todas; `tarea-repo` solo añade git e historial. Desaparece el nombre «suelta»: lo que no tiene repo lo dice su proyecto. Abrir tiene que pasar el estado a In Progress en Toggl (hoy se queda en Todo). |
-| Pendiente | Quitar `tareas.md`, `revisar.md` y `secciones.md` de `tarea-repo` <!-- toggl:16580516 --> | En el repo quedan `historial/`, `auditoria.md` y `toggl.md` (enlace, áreas, reglas y comentarios). El área va en la primera línea de la descripción en Toggl. |
-| Pendiente | Leer `agenda` y `plan-semanal` desde la copia de Toggl <!-- toggl:16580517 --> | Capacidad desde `capacities` de Toggl; `agenda.md` queda solo con `## Repos`. Las madres de tareas con pasos toman la fecha del último paso. |
-| Pendiente | Crear el script que migra un repo a Toggl <!-- toggl:16580518 --> | Arma el `bulk-create` desde `tareas.md`, `revisar.md` y `secciones.md`, lo muestra, y con visto bueno lo envía y limpia el repo. Reutiliza `emparejar_ahora.py`. |
+| 🔵 En curso | Hacer de Toggl la única lista de tareas <!-- toggl:16580898 --> | Plan: `~/.claude/plans/s-haz-las-consultas-zesty-beaver.md`. Pasos (subtareas en Toggl), de corrido y sin confirmación entre ellos: ✅ copia reducida de la cola (`cola.py`) · 1) `tarea` con el ciclo común en Toggl, se funde `tarea-suelta` y abrir pasa a In Progress · 2) `tarea-repo` sin `tareas.md`, `revisar.md` ni `secciones.md` (quedan `historial/`, `auditoria.md` y `toggl.md`) · 3) `agenda` y `plan-semanal` desde la copia, capacidad de Toggl · 4) script de migración de un repo · 5) `utils` 4.0.0, `docs/skills.md` y README. Se confirma solo el cierre de esta tarea. |
 
 **Cerradas en esta sección: ~3h 4m** · 14 archivadas
 

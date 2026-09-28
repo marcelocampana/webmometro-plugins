@@ -1,75 +1,108 @@
 ---
 name: tarea
 description: >
-  Entrada del sistema de tareas del usuario: entiende qué va a hacer, decide el carril y delega en el
-  skill específico. Úsalo cada vez que el usuario hable de una tarea o de su trabajo pendiente: "qué
-  sigue", "empiezo X", "anota esto", "haz lo siguiente", "listo, ya está", "pausa", "qué tengo
-  abierto", "crea una tarea", "tengo que facturar", "estuve en una reunión", o cuando pase un archivo
-  o una conversación de la que extraer tareas. **Carril repositorio** (`tarea-repo`): trabajo que
-  cambia archivos de un repo con `tareas/` y termina en commit. **Carril suelto** (`tarea-suelta`):
-  tareas que no viven en ningún repo —facturar, reuniones, llamadas, trámites—, registradas solo en
-  Toggl, sin git. Si no está claro, hace una sola pregunta. NO lo uses para la vista de hoy (eso es
+  Sistema de tareas del usuario, con Toggl 2.0 como única lista de pendientes para todos sus
+  proyectos. Crea, abre, pausa y cierra tareas en Toggl, mide su tiempo con la presencia real del
+  usuario y lo envía en bloque al cerrar. Úsalo cada vez que el usuario hable de una tarea o de su
+  trabajo pendiente: "qué sigue", "empiezo X", "anota esto", "haz lo siguiente", "listo, ya está",
+  "pausa", "qué tengo abierto", "crea una tarea", "tengo que facturar", "estuve en una reunión",
+  "terminé la llamada", o cuando pase un archivo o una conversación de la que extraer tareas. Si la
+  tarea es de un proyecto enlazado a un repo (su `tareas/toggl.md`), el trabajo además lleva rama,
+  commit e historial: esa parte la pone `tarea-repo`. NO lo uses para la vista de hoy (eso es
   `agenda`), para planificar la semana (`plan-semanal`) ni para revisarla (`balance`), ni para TODOs
   efímeros de la sesión.
 argument-hint: "[lo que el usuario quiere hacer]"
 metadata:
-  version: 3.0.0
+  version: 4.0.0
 ---
 
-# Tareas: la entrada (tarea)
+# Tareas (tarea)
 
-El usuario no debería tener que saber qué skill se encarga de qué. Dice lo que va a hacer; este
-skill decide **por dónde va** y pasa el control. **No gestiona tareas él mismo**: es un desvío corto.
+**Toggl es la única lista de pendientes.** Una sola vista para todos los proyectos, que el usuario
+también edita a mano. Cada repo guarda solo lo que ya se hizo y por qué (`tareas/historial/`), que
+es lo que le da contexto a Claude; esa parte es de `tarea-repo`.
 
-## Los dos carriles
+`C=utils/skills/tarea/scripts/cola.py` y `P=utils/skills/tarea/scripts/presencia.py` (en el repo del
+plugin o en su caché).
 
-| | `tarea-repo` | `tarea-suelta` |
+## Cómo es una tarea en Toggl
+
+| Campo | Qué lleva |
+| --- | --- |
+| Proyecto | El repo (lo enlaza su `tareas/toggl.md`) o un proyecto sin repo, como «Administración» |
+| Descripción | 1.ª línea `Área: <área>` (las áreas del repo están en su `toggl.md`); después, qué se espera. La escribe Claude al crear |
+| Notas | Comentarios sobre la marcha, del usuario a mano o de Claude mientras trabaja |
+| Estado | Todo · In Progress · Blocked · Done |
+| `estimated_mins` / `end_date` | El coste y el vence |
+| `start_date` = `end_date` | El día planificado (`plan-semanal`) |
+| Asignación | Toda tarea real, al usuario: sin eso `capacities` no la cuenta |
+| Etiquetas | Solo transversales: `imprevisto` y `por-revisar` (la bandeja) |
+
+**No hay secciones en Toggl** (subproyectos y etiquetas ensucian las listas). El orden: el día entre
+proyectos, `priority` dentro del día, `position` dentro del proyecto.
+
+## Leer: siempre por la copia
+
+`python3 $C leer --vista hoy|semana|pendientes [--proyecto ID]` y `python3 $C tarea ID`. **Nunca
+`tasks list` del MCP**: cada tarea cruda pesa ~2.000 caracteres. Tras cualquier escritura en Toggl,
+`python3 $C invalidar`. Si sale con código 3 (sesión caducada), una consulta cualquiera por el MCP la
+renueva y se reintenta; con código 4, se dice y se sigue sin Toggl.
+
+## El ciclo
+
+| Momento | Toggl (MCP) | Local |
 | --- | --- | --- |
-| **Qué** | Trabajo que cambia archivos de un repo y termina en commit | Todo lo demás que requiere tiempo: facturar, reuniones, llamadas, trámites, revisar algo fuera de un repo |
-| **Dónde vive** | `tareas/` del repo (y en Toggl si el repo está conectado) | Solo en Toggl |
-| **Ceremonia** | Rama, commit, merge, historial | Empezar y terminar; sin git |
-| **Quién la hace** | Casi siempre Claude | El usuario, o Claude si se lo delega |
+| **Crear** | 1 llamada: proyecto, descripción, asignación, estimación y, si hay fecha, `start_date` + `end_date` (Toggl rechaza una sin la otra) | `P marca --repo R --tarea ID --evento crear --coste …` |
+| **Abrir** | 1 llamada: estado In Progress | `--evento abrir` |
+| **Pausar / bloquear / retomar** | 1 llamada: Todo, Blocked o In Progress; lo bloqueado lleva el motivo en las notas | `--evento pausar` / `retomar` |
+| **Cerrar** | 2 llamadas: registros de tiempo y estado Done | `--evento cerrar`, `P tramos`, envío, `--evento enviado` |
 
-Los dos miden igual: marcas locales en `presencia.py`, tramos recortados por la presencia real y
-envío a Toggl en bloque al terminar. Lo que cambia es solo si hay git.
+`R` es el nombre del repo, o `sin-repo` si el proyecto no tiene repo. El detalle de cada momento
+—campos, formato de los registros, trabajo fuera del computador, tiempo declarado, varias abiertas,
+si Toggl falla— está en `references/ciclo.md`.
 
-## Cómo decidir
+**¿Tiene repo?** Lo dice el proyecto. Si el `tareas/toggl.md` del repo actual enlaza el proyecto de
+la tarea, abrir y cerrar llevan además rama, commit, merge e historial: se invoca `tarea-repo` con lo
+que dijo el usuario. Si ningún repo lo enlaza, no hay git: **cerrar no pide confirmación aparte**,
+«listo» ya lo es. Un repo que aún tiene `tareas/tareas.md` está **sin migrar**: se dice en una línea
+y se ofrece `tarea-repo --migrar`.
 
-En este orden; la primera que responda, manda:
+## Tareas con pasos
 
-1. **El usuario lo dice** («es de repo», «no va en ningún repo») → ese carril.
-2. **Es una tarea que ya existe**: si está en el `tareas.md` del repo actual → `tarea-repo`; si
-   aparece en `presencia.py abiertas --repo suelta` o es una tarea de Toggl con la etiqueta `suelta`
-   → `tarea-suelta`.
-3. **El trabajo va a cambiar archivos de un repo que tiene `tareas/`** y es para commitear
-   (código, contenido, configuración, documentación) → `tarea-repo`.
-4. **No toca ningún repo**: una reunión, una llamada, facturar, responder correos, un trámite,
-   algo que el usuario hace fuera de Claude → `tarea-suelta`.
-5. **No está claro** → **una sola pregunta**, corta: «¿Esto termina en un commit en algún repo, o
-   es trabajo suelto?». No se adivina.
+Cuando un trabajo tiene varios pasos que Claude ejecuta de corrido, es **una tarea principal con los
+pasos como subtareas** (`parent_task_id`), no una tarea por paso.
 
-**Consultas generales** («qué tengo abierto», «qué sigue»): se miran los dos carriles —`tareas.md`
-del repo actual, si lo hay, y `presencia.py abiertas --repo suelta`— y se responde en una sola
-lista. Para la vista de todos los proyectos, se remite a `agenda`.
+- **Se confirma solo la principal.** Los pasos se encadenan sin pedir visto bueno entre uno y otro:
+  cada uno se abre, se cierra y envía su tiempo solo. Pedir confirmación por paso obliga al usuario a
+  estar frente a la pantalla. Solo se para por un freno real (conflicto, `main` sucia, cambios ajenos
+  o una decisión que es del usuario).
+- **La principal va sin asignar y sin estimación**, así no cuenta dos veces en la capacidad; los
+  pasos sí llevan las suyas.
+- **Su fecha es la del último paso**, para que en la vista por fecha se vean como árbol. Quien mueva
+  un paso de día la recalcula en la misma llamada. Si los pasos cruzan de semana, los que quedan
+  atrás se ven con la ruta «Paso › Principal»: se acepta.
+- **Un solo nivel.** Un paso no tiene subtareas.
 
-## Cuando una tarea cambia de carril
+## Consultar
 
-- **Una suelta que empieza a producir commits** (Claude va a automatizar la facturación con un script
-  en un repo): se cierra la suelta con lo medido y se crea la de repo, con visto bueno. No se mezclan.
-- **Una de repo que resulta no necesitar commit** (era solo investigar): se cierra en su repo como
-  siempre; `tarea-repo` sabe cerrar sin cambios de código.
+«Qué tengo abierto», «qué sigue»: `C leer --vista hoy` más `P abiertas`, en una sola lista. Para la
+vista de todos los proyectos con la capacidad del día, se remite a `agenda`.
 
-## Después de decidir
+## Reglas invariantes
 
-Se invoca el skill del carril con lo que dijo el usuario, sin repetirle nada ni anunciar el desvío
-con más de media línea («Va por el carril suelto»). Las reglas, los estados y los tiempos son de
-cada carril: este archivo no los duplica.
+1. **Toggl es la única lista.** No se escriben pendientes en ningún markdown.
+2. **Se lee por la copia**, nunca con `tasks list` crudo.
+3. **Crear proyectos o clientes en Toggl pide visto bueno**; crear, abrir y cerrar tareas se hace con
+   lo que el usuario dijo.
+4. **Tiempo medido y tiempo declarado no se mezclan**: el declarado se marca como tal.
+5. **Si Toggl falla**, las marcas locales quedan y el siguiente cierre lo envía; se dice en una línea.
 
-La infraestructura común vive aquí: `scripts/presencia.py` (presencia, marcas, tramos, plan),
-`scripts/cola.py` (copia local de la cola de Toggl: solo los campos útiles, con descripción y notas;
+## Infraestructura
+
+Vive aquí y no cambia de ruta, porque el agente del Mac y el gancho apuntan a ella:
+`scripts/presencia.py` (presencia, marcas, tramos, plan), `scripts/cola.py` (la copia de la cola:
 usa la sesión del conector y nunca la renueva) y `assets/` (instalación del registro y del gancho, y
-la configuración global de Toggl). **Para leer tareas de Toggl, `cola.py leer`, no `tasks list` del
-MCP**: cada tarea cruda pesa ~2.000 caracteres. Tras escribir en Toggl, `cola.py invalidar`.
+la configuración global de Toggl).
 
 ## Idioma
 

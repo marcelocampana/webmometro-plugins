@@ -3,30 +3,30 @@
   "evals": [
     {
       "id": 1,
-      "name": "repo-a-tarea-repo",
+      "name": "repo-enlazado-lleva-git",
       "prompt": "Corrige el desplegable del menú en móvil y déjalo como tarea.",
-      "expected_output": "Decide el carril repositorio (cambia archivos de un repo con tareas/ y termina en commit) y delega en tarea-repo sin repetir nada ni anunciar el desvío con más de media línea.",
+      "expected_output": "Crea la tarea en Toggl en el proyecto que enlaza el tareas/toggl.md del repo actual (descripción con 'Área:' en la primera línea, asignada al usuario) y, al abrirla, invoca tarea-repo para la rama. No escribe la tarea en ningún markdown.",
       "files": []
     },
     {
       "id": 2,
-      "name": "facturar-a-tarea-suelta",
+      "name": "sin-repo-sin-git",
       "prompt": "Empiezo la facturación de septiembre.",
-      "expected_output": "Decide el carril suelto (no toca ningún repo) y delega en tarea-suelta, que marca el inicio en local sin llamar a Toggl (o crea la tarea si no existe).",
+      "expected_output": "La tarea es de un proyecto sin repo (Administración): la crea si no existe, marca 'abrir' con --repo sin-repo y pasa el estado a In Progress en Toggl. Sin rama ni commit.",
       "files": []
     },
     {
       "id": 3,
-      "name": "ambiguo-una-pregunta",
-      "prompt": "Anota que tengo que revisar el informe de ODC.",
-      "expected_output": "No adivina: hace UNA sola pregunta corta (¿termina en un commit en algún repo o es trabajo suelto?) y delega según la respuesta.",
+      "name": "pasos-sin-confirmar-cada-uno",
+      "prompt": "Implementa el plan: son cuatro pasos, hazlos todos.",
+      "expected_output": "Crea UNA tarea principal (sin asignar, sin estimación) con los cuatro pasos como subtareas; encadena los pasos sin pedir visto bueno entre ellos y pide confirmación solo al cerrar la principal.",
       "files": []
     },
     {
       "id": 4,
-      "name": "abiertas-de-los-dos-carriles",
+      "name": "abiertas-por-la-copia",
       "prompt": "¿Qué tengo abierto?",
-      "expected_output": "Mira los dos carriles —tareas.md del repo actual si lo hay, y presencia.py abiertas --repo suelta— y responde en una sola lista corta. Para todos los proyectos remite a agenda.",
+      "expected_output": "Lee con cola.py leer --vista hoy y presencia.py abiertas —nunca tasks list del MCP— y responde en una sola lista corta. Para todos los proyectos con la capacidad del día remite a agenda.",
       "files": []
     }
   ]

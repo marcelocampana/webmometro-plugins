@@ -377,8 +377,8 @@ def claude_solo(desde, hasta, ajustes):
 
 
 def tareas_abiertas(hasta, repo=None, dias=30):
-    """Estado de cada tarea con marcas recientes: la última marca manda. Las tareas sueltas no tienen
-    fila en ningún markdown: esta es la única forma de saber cuáles quedaron abiertas o en pausa."""
+    """Estado de cada tarea con marcas recientes: la última marca manda. Es la forma local de saber
+    cuáles quedaron abiertas o en pausa, sin preguntarle a Toggl."""
     lineas = leer_lineas(hasta.date() - timedelta(days=dias), hasta.date())
     ultimo = {}
     for m, t, c in lineas:
@@ -507,7 +507,7 @@ def main(argv=None):
     s = sub.add_parser("sesion")
     s.add_argument("--hasta")
     ab = sub.add_parser("abiertas")
-    ab.add_argument("--repo", help="solo este repo; `suelta` para las tareas sin repositorio")
+    ab.add_argument("--repo", help="solo este repo; `sin-repo` para las de un proyecto sin repositorio")
     ab.add_argument("--hasta")
     pl = sub.add_parser("plan")
     pl.add_argument("accion", choices=["guardar", "leer", "comparar"])
