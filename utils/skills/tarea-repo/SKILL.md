@@ -15,7 +15,7 @@ description: >
   usuario no pidió nada de tareas, no lo actives.
 argument-hint: "[--init | --migrar | --auditoria | --ingerir | --revisar | --toggl]"
 metadata:
-  version: 4.0.2
+  version: 4.1.0
 ---
 
 # Tareas de repositorio (tarea-repo)
