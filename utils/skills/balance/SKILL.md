@@ -25,10 +25,10 @@ cuerpo**. Por defecto, la semana pasada de lunes a domingo; `--mes` o un rango, 
 
 ## Solo lee
 
-No escribe en Toggl, ni en `tareas.md`, `revisar.md` ni el historial. Así puede correr desatendido
-desde una rutina: lo peor que puede pasar es un informe incompleto. Si de la revisión sale algo que
-hacer —automatizar una familia de tareas, partir mejor—, **lo propone para `revisar.md`** en una
-línea y lo deja a `tarea`.
+No escribe en Toggl ni en ningún repo (tampoco en el historial). Así puede correr desatendido desde
+una rutina: lo peor que puede pasar es un informe incompleto. Si de la revisión sale algo que hacer
+—automatizar una familia de tareas, partir mejor—, **lo propone para la bandeja** (etiqueta
+`por-revisar` en Toggl) en una línea y lo deja a `tarea`.
 
 ## Dos medidas que nunca se suman
 

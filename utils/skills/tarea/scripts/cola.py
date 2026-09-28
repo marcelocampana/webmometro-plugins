@@ -20,7 +20,8 @@ Uso:
     cola.py invalidar                # tras una escritura en Toggl: la próxima lectura va a la red
 
 Vistas:
-    hoy         en curso, vencidas y las del día; con descripción y notas completas.
+    hoy         en curso, vencidas y las del día; con descripción y notas completas. Las tareas
+                principales no salen: salen sus pasos.
     semana      en curso, lo vencido y lo que cae de lunes a domingo; primera línea de la descripción.
     pendientes  todo lo que no está hecho; primera línea de la descripción.
 
@@ -184,6 +185,10 @@ def filtrar(tareas, vista, dia, proyecto=None):
     abiertas = pendientes(tareas)
     if proyecto:
         abiertas = [t for t in abiertas if str(t.get("proyecto_id")) == str(proyecto)]
+    if vista in ("hoy", "semana"):
+        # Una tarea principal es un contenedor (sin asignar ni estimación): en el día y la semana se
+        # listan sus pasos, que son los que llevan fecha y estimación.
+        abiertas = [t for t in abiertas if not t.get("subtareas")]
     if vista == "hoy":
         elegidas = [t for t in abiertas if t.get("tipo_estado") == "in_progress"
                     or vencida(t, dia) or en_rango(t, dia, dia)]

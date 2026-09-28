@@ -140,6 +140,14 @@ class Vistas(unittest.TestCase):
         self.assertNotIn(6, self.ids("pendientes"))
         self.assertEqual(len(self.ids("pendientes")), 7)
 
+    def test_la_principal_no_sale_en_el_dia_pero_si_en_pendientes(self):
+        principal = cola.reducir(cruda(20, "Principal", inicio="2026-09-28", fin="2026-09-28",
+                                       sub_task_total_count=2, assignee_user_ids=[]))
+        paso = cola.reducir(cruda(21, "Paso", inicio="2026-09-28", fin="2026-09-28", parent_task_id=20))
+        tareas = [principal, paso]
+        self.assertEqual([t["id"] for t in cola.filtrar(tareas, "hoy", DIA)], [21])
+        self.assertEqual([t["id"] for t in cola.filtrar(tareas, "pendientes", DIA)], [20, 21])
+
     def test_filtro_por_proyecto(self):
         self.assertEqual(self.ids("pendientes", proyecto="999"), [])
 

@@ -1,98 +1,71 @@
 # La vista diaria
 
-Una pantalla que responde **qué toca hoy y si cabe**. Todo lo que no sirva a esa pregunta sobra, por
-interesante que sea.
+Una pantalla que responde **qué toca hoy y si cabe**. Todo lo que no sirva a esa pregunta sobra.
 
 ## Qué entra, en tres tramos
 
-**Tramo 1 · Lo que ya está abierto.** Toda fila `🔵 En curso`, en cualquier repo. Siempre aparece,
-aunque no quepa en la capacidad: ya está consumiendo el día.
+**Tramo 1 · Lo que ya está abierto.** Toda tarea en In Progress. Siempre aparece, aunque no quepa:
+ya está consumiendo el día. Una tarea principal (con pasos) no se lista: se listan sus pasos.
 
-**Tramo 2 · Lo que tiene la fecha encima.** `Vence` anterior a hoy (vencida) o igual a hoy. También
-aparece siempre, marcada. Son las únicas dos cosas que pueden saltarse el orden del usuario, y solo
-para mostrarse: nunca se reordena el archivo.
+**Tramo 2 · Lo que tiene la fecha encima.** Lo vencido (fin anterior a hoy, sin hacer) y lo que es
+de hoy (su día o su vence es hoy): es lo que `plan-semanal` o el usuario ya pusieron en este día.
+Siempre aparece, marcado. Lo planificado para días anteriores y no hecho se marca `arrastre`, y si
+son varias, un aviso: «3 del plan de ayer quedaron pendientes: `plan-semanal --replanificar`».
 
-**Tramo 2b · Lo planificado para hoy** (solo con plan de la semana, `plan-semanal`): tareas de
-repos conectados cuya fecha en Toggl cubre hoy y no están `Done`, en el orden de su `## Ahora`,
-marcadas `plan`. Van antes del relleno y **no cuentan contra el tope de 5 filas**: el usuario ya
-decidió que son de hoy. Lo planificado para días anteriores y no hecho no se lista: se cuenta en un
-aviso («2 del plan de ayer quedaron pendientes: `plan-semanal --replanificar`»). **Sin plan esta
-semana, este tramo no existe** y todo sigue como siempre.
-
-**Tramo 3 · El relleno, por orden.** Se recorre el **registro de repos en el orden de la
-configuración** y, dentro de cada uno, `## Ahora` **desde arriba**, saltando `Bloqueada` y lo ya
-listado. Se para al llegar al primero de estos tres límites:
+**Tramo 3 · El relleno, por orden.** Solo si queda capacidad. De las pendientes **sin día**, sin
+`por-revisar` y no bloqueadas: por prioridad, después por el orden de los proyectos en la
+configuración, y dentro de cada proyecto por su posición en Toggl. Se para al llegar a:
 
 | Límite | Valor |
 | --- | --- |
-| La capacidad declarada se llena | Suma de `Coste` de lo listado |
+| La capacidad del día se llena | La suma de estimaciones de lo listado |
 | Se alcanza el tope de filas | **5** en el tramo 3 |
-| Se acaban las colas | — |
-
-El tope de filas no es decoración: **el día uno casi nada tiene `Coste`**, y sin él la capacidad no se
-llena nunca. Sin tope, la agenda se convierte en el backlog completo justo cuando menos informa.
+| Se acaban las pendientes | — |
 
 ## Las dos cuentas corren en paralelo
 
-- **Horas** — suma de los `Coste` presentes. Una fila sin `Coste` **no suma cero: no suma**, y se
-  cuenta aparte. Decir «1h 20m de 4h» ocultando que hay tres filas sin estimar es mentir con datos
-  ciertos.
+- **Horas** — suma de las estimaciones presentes contra la jornada de Toggl (`working_minutes`). Una
+  tarea sin estimación **no suma cero: no suma**, y se cuenta aparte.
 - **Filas** — cuántas se listan de cuántas hay disponibles.
 
 ```text
-3 tareas · ~1h 20m de 4h · entra con holgura
-3 tareas · 2 sin coste, así que la cuenta de horas va incompleta
-5 tareas · ~4h 10m de 4h · se pasa; la última no cabe
+3 tareas · ~1h 20m de 8h · entra con holgura
+3 tareas · 2 sin estimación, así que la cuenta de horas va incompleta
 ```
 
 ## Los avisos
 
-Van al pie, **una línea cada uno**, y solo si se cumplen:
+Al pie, **una línea cada uno**, y solo si se cumplen:
 
-- **Dos o más `🔵 En curso`.** Rompe «una tarea a la vez» de hecho, aunque cada repo cumpla la regla
-  por separado. Se nombra: «dos ramas abiertas a la vez: X en *a*, Y en *b*».
-- **Un `Vence` que el orden no alcanza.** Solo se enuncia **si todas las filas que van por delante
-  tienen `Coste`**: la proyección se calcula acumulando costes y dividiendo por la capacidad diaria.
-  Si falta un coste por el camino, se dice que no se puede proyectar, en vez de inventar el día.
-- **El día se lo lleva un solo repo.** Cuando el tramo 3 sale entero de un repo, se dice en una línea
-  para que el usuario decida; no se reparte por cuenta propia.
-- **El empujón a planificar**, y **por umbral, nunca por calendario**: ≥5 filas sin `Coste` o ≥2
-  vencidas, sumando repos. Una línea, y no se repite dentro de la misma respuesta.
-
-```text
-⚠ «Cerrar la validación médica» vence el jueves (~50m) y va en la 6: por orden cae el viernes.
-⚠ «Cerrar la validación médica» vence el jueves y va en la 6: no se puede proyectar el día,
-  faltan costes en dos filas por delante.
-```
+- **Dos o más tareas en In Progress** de proyectos distintos: «dos abiertas a la vez: X y Y».
+- **Un vence que no se alcanza** con lo que va por delante, solo si todo lo de delante tiene
+  estimación; si falta alguna, se dice que no se puede proyectar.
+- **Atención sin tarea abierta**: si `presencia.py resumen` muestra más de 15 min en un repo sin
+  ninguna tarea abierta de su proyecto: «40 min en odc-clusters sin tarea abierta».
+- **La jornada es la de por defecto**: si `working-hours` del usuario está vacío, una vez: «la
+  jornada de Toggl no está configurada: uso sus 8h por defecto».
+- **El empujón a planificar**, por umbral: ≥5 pendientes sin estimación o ≥2 vencidas.
 
 ## La plantilla
 
 ```text
-Hoy · martes 15 · capacidad 4h · llevas 1h 10m trabajadas
+Hoy · martes 29 · jornada 8h · llevas 1h 10m trabajadas · copia de hace 3 min
 
-  En curso   Crear el skill agenda con la vista diaria     plugins        —
-  1          Aislar por qué el dev pierde la base          odc-clusters   ~25m
-  2          Aplicar las correcciones médicas de HER2      odc-clusters   ~15m
+  En curso   Crear el script de migración              Plugins de IA   ~30m
+  Hoy        Aplicar las correcciones médicas de HER2  Contenidos ODC  ~15m
+  1          Aislar por qué el dev pierde la base      Clusters ODC    ~25m
   ─────────────────────────────────────────────────────────────────────────
-  3 tareas · ~40m de 4h · 1 sin coste, la cuenta va incompleta
-
-  ⚠ odc-clusters no tiene Coste en ninguna fila: `tarea` allí los estima al abrirlas.
+  3 tareas · ~1h 10m de 8h · 1 sin estimación, la cuenta va incompleta
 ```
 
-- **El enunciado de la tarea, tal cual está en el archivo**, recortado por la derecha si no cabe.
-  Nunca reescrito: el usuario tiene que reconocerlo de un vistazo.
-- **El recorte cuenta caracteres, no bytes.** El `substr` de `awk` corta bytes y parte un acento por
-  la mitad —`calibraci` seguido de basura—, justo en un idioma donde casi toda línea larga lleva uno.
-  Se recorta al componer la salida, no dentro del `awk`.
-- **La etiqueta del repo es la del registro**, no la ruta.
-- **`—` donde no hay coste.** No se rellena con un guion largo que parezca un número.
+- **El nombre, tal cual está en Toggl**, recortado por la derecha si no cabe, **contando caracteres
+  y no bytes** (un acento no se parte).
+- **El proyecto de Toggl**, no la ruta del repo. Un paso lleva el nombre de su principal si cabe.
+- **`—` donde no hay estimación.**
 
 ## Qué NO entra
 
-- **`revisar.md`, `auditoria.md` y el historial.** La bandeja es material de la revisión semanal
-  —skill `balance`—, no de la mañana; abrirla a diario convierte la agenda en un volcado.
-- **Las secciones de `tareas.md`.** La fila de `## Ahora` ya trae lo necesario; el detalle es para
-  cuando se abre la tarea, dentro de su repo.
-- **Nada calculado sobre el historial.** Calibrar es de `balance`, y leer el mensual de cada repo
-  cada mañana cuesta más que toda la vista.
+- **La bandeja (`por-revisar`), la auditoría y el historial.** Son de la revisión semanal
+  (`balance`), no de la mañana.
+- **Nada calculado sobre el historial.** Calibrar es de `balance`.
 - **Lo que no cabe en la capacidad.** No se lista «por si acaso»: se cuenta y se calla.

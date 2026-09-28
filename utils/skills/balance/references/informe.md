@@ -44,8 +44,8 @@ la **mediana de las razones** Duración ÷ Coste:
 - Fuera de ese rango, el sesgo en palabras: «subestimas las de alinear con el diseño: tardan 2×».
 - Con menos de 3 muestras en una familia, no se enuncia sesgo: se dice que la base es corta.
 
-**El tiempo declarado** de `tarea-suelta` («estuve 40 min en una llamada») no se usa para
-calibrar: no se midió.
+**El tiempo declarado** («estuve 40 min en una llamada», registro marcado «declarado») no se usa
+para calibrar: no se midió.
 
 **Dos errores que no se corrigen con el mismo número**: esfuerzo (`Coste` → `Duración`, horas de
 trabajo) y calendario (`Vence` → `Completada`, días de reloj, que en realidad mide capacidad). Si
@@ -54,8 +54,8 @@ esfuerzo.
 
 ## 6. Qué optimizar
 
-Las familias con más tiempo acumulado **y** al menos 3 apariciones, **de los dos carriles**: las
-tareas sueltas manuales que se repiten (facturar, conciliar, responder lo mismo) son las mejores
+Las familias con más tiempo acumulado **y** al menos 3 apariciones, **con o sin repo**: las
+tareas manuales sin repo que se repiten (facturar, conciliar, responder lo mismo) son las mejores
 candidatas a que las haga Claude, y se dicen primero. Todas son candidatas a automatizar,
 a plantilla o a un skill. Una línea por candidata, con su tiempo y cuántas veces apareció. Si
 `claude` muestra que Claude ya las hace solo casi enteras, se dice: ya están automatizadas en la

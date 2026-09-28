@@ -5,7 +5,7 @@
       "id": 1,
       "name": "propone-y-espera",
       "prompt": "Planifica la semana.",
-      "expected_output": "Lee la configuración de agenda y, por repo conectado, UNA consulta tasks list. Propone una tabla por día que llena cada día hasta la capacidad menos un 20%, con arrastre primero, luego Vence y luego ## Ahora en orden, repartiendo los repos entre días. Hace UNA sola pregunta al final. NO escribe nada en Toggl ni en local antes del visto bueno.",
+      "expected_output": "Lee la cola con cola.py leer --vista pendientes (nunca tasks list del MCP) y la jornada con capacities (una llamada). Propone una tabla por día que llena cada día hasta la jornada menos un 20%, con arrastre primero, luego vence, luego las pendientes sin día por prioridad y orden de proyectos, repartiendo proyectos entre días. Hace UNA sola pregunta al final. NO escribe nada antes del visto bueno.",
       "files": []
     },
     {
@@ -19,18 +19,25 @@
       "id": 3,
       "name": "escribe-en-bloque-y-guarda-original",
       "prompt": "Sí, guárdala así.",
-      "expected_output": "Escribe el plan con UNA llamada tasks bulk-patch (start_date = end_date = el día, estimated_mins si hubo corrección) y guarda la versión con presencia.py plan guardar --semana. Cierra con una línea: tareas, horas planificadas de la capacidad. No reordena ## Ahora ni escribe filas en tareas.md.",
+      "expected_output": "Escribe el plan con UNA llamada tasks bulk-patch (start_date = end_date = el día, estimated_mins si hubo corrección, y la fecha del último paso en cada tarea principal), invalida la copia con cola.py invalidar y guarda la versión con presencia.py plan guardar --semana. Cierra con una línea: tareas y horas planificadas de la jornada.",
       "files": []
     },
     {
       "id": 4,
-      "name": "ofrece-conectar-repo",
-      "prompt": "Planifica la semana. (cdz no está conectado a Toggl.)",
-      "expected_output": "Ofrece en una línea conectar cdz para planificarlo. Con el sí, sigue tarea-repo/references/toggl-conexion.md en ese repo; con el no, cuenta sus tareas al pie como 'sin planificar' y sigue con el resto.",
+      "name": "planifica-pasos-no-la-principal",
+      "prompt": "Planifica la semana. (Hay una tarea principal con tres pasos.)",
+      "expected_output": "Reparte los tres pasos (que llevan estimación y asignación) juntos y en orden; la principal no se planifica sola: toma la fecha del último paso en la misma llamada de escritura.",
       "files": []
     },
     {
       "id": 5,
+      "name": "ofrece-migrar-repo",
+      "prompt": "Planifica la semana. (cdz está en la agenda pero aún tiene tareas/tareas.md.)",
+      "expected_output": "Ofrece en una línea tarea-repo --migrar en cdz; mientras, lo nombra al pie como 'sin migrar' y planifica el resto.",
+      "files": []
+    },
+    {
+      "id": 6,
       "name": "replanificar-no-pisa-original",
       "prompt": "Replanifica: lo del martes pásalo al jueves.",
       "expected_output": "Parte del plan vigente (plan leer --vigente), mueve solo lo pedido, muestra solo lo que cambió, y con el visto bueno escribe en Toggl y añade una versión nueva con plan guardar, sin tocar la original que balance compara.",
