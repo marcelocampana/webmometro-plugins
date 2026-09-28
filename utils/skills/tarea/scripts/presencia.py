@@ -573,10 +573,12 @@ def proyecto_toggl(raiz):
     return int(m.group(1)) if m else None
 
 
-def claude_sin_tarea(hasta, ajustes, dias=14):
+def claude_sin_tarea(hasta, ajustes, dias=31):
     """El trabajo de Claude en cada repo mientras no había ninguna tarea de ese repo abierta, desde el
     último envío (o desde el inicio del día). Va a Toggl como registro sin tarea en el proyecto del
-    repo, para que Toggl tenga todo lo que costó cada proyecto y no solo lo que tuvo tarea."""
+    repo, para que Toggl tenga todo lo que costó cada proyecto y no solo lo que tuvo tarea. El último
+    envío se busca 31 días atrás: Claude Code borra sus sesiones a los 30, y más allá no hay qué
+    recuperar."""
     lineas = leer_lineas(hasta.date() - timedelta(days=dias), hasta.date())
     envios = [datetime.fromisoformat(c[1]) for m, t, c in lineas if t == "sin-tarea" and len(c) > 1 and c[0] == "enviado"]
     desde = max(envios) if envios else datetime.combine(hasta.date(), datetime.min.time()).astimezone()
