@@ -55,6 +55,8 @@ AJUSTES = {
     "pausa_min": 10,         # hueco que cuenta como pausa y corta la sesión
     "repetir_aviso_min": 30,  # no se repite el aviso antes de esto
     "claude_hueco_min": 5,   # hueco entre mensajes de Claude que corta su tramo de trabajo
+    "claude_herramienta_max_min": 30,  # un comando de Claude cuenta entero hasta esto
+    "notificar_mac": 1,      # 1: el aviso de pausa también sale como notificación de macOS
 }
 
 
@@ -246,6 +248,10 @@ def calcular_tramos(repo, tarea, hasta, todo, ajustes, completo=False):
     abierto_s = sum((b - a).total_seconds() for a, b in abiertos)
     trabajado_s = sum((b - a).total_seconds() for a, b in trabajados)
     creacion = datos_creacion(eventos)
+    # Claude, sobre todo el tiempo abierto (no solo lo pendiente de envío): no va a Toggl.
+    claude = []
+    if abiertos:
+        claude = tramos_claude(abiertos[0][0], hasta, ajustes, repo).get(repo, [])
     return {
         "repo": repo,
         "tarea": tarea,
@@ -259,6 +265,7 @@ def calcular_tramos(repo, tarea, hasta, todo, ajustes, completo=False):
         "descontado_s": int(max(0, abierto_s - trabajado_s)),
         "coste": creacion.get("coste"),
         "vence": creacion.get("vence"),
+        "claude": reparto_claude(cortar(claude, abiertos), presentes),
     }
 
 
@@ -291,6 +298,25 @@ def aviso_pausa(hasta, ajustes):
         return None
     estado.write_text(json.dumps({"ultimo": hasta.isoformat(), "sesion": sesion["inicio"]}), encoding="utf-8")
     return sesion
+
+
+def notificar(titulo, texto):
+    """Notificación de macOS. El texto va como argumento, nunca dentro del código AppleScript."""
+    subprocess.run(["osascript", "-e", "on run argv",
+                    "-e", 'display notification (item 2 of argv) with title (item 1 of argv) sound name "Glass"',
+                    "-e", "end run", titulo, texto], capture_output=True, timeout=10)
+
+
+def avisar_desde_el_mac(hasta, inactivo, ajustes):
+    """El aviso de pausa sin depender de que el usuario le escriba a Claude. Comparte `aviso.json`
+    con el gancho: sale por uno o por otro, nunca por los dos. Solo con alguien frente al Mac."""
+    if not ajustes["notificar_mac"] or inactivo >= 60:
+        return None
+    aviso = aviso_pausa(hasta, ajustes)
+    if aviso:
+        notificar("Toca una pausa", "Llevas %s seguidas sin una pausa de %d min."
+                  % (fmt_duracion(aviso["minutos"] * 60), ajustes["pausa_min"]))
+    return aviso
 
 
 # ── Resúmenes ─────────────────────────────────────────────────────────────────────────────────
@@ -330,49 +356,84 @@ def resumen(desde, hasta, ajustes):
             "total_min": total, "dias": dias}
 
 
+def raiz_claude():
+    return Path(os.environ.get("CLAUDE_PROYECTOS_DIR", Path.home() / ".claude" / "projects")).expanduser()
+
+
+def tramos_claude(desde, hasta, ajustes, proyecto=None):
+    """Tramos en que Claude trabajó, por proyecto, desde las sesiones locales de Claude Code
+    (subagentes incluidos). Cada respuesta marca un minuto; un comando largo cuenta entero, de la
+    respuesta que lo lanzó a su resultado (hasta `claude_herramienta_max_min`). Las marcas se unen con
+    `claude_hueco_min` y **entre sesiones**: un minuto con dos sesiones o un subagente cuenta una vez.
+    `desde` y `hasta` son momentos con zona."""
+    hueco = timedelta(minutes=ajustes["claude_hueco_min"])
+    herramienta = timedelta(minutes=ajustes["claude_herramienta_max_min"])
+    raiz = raiz_claude()
+    proyectos, marcas = {}, {}
+    for archivo in raiz.rglob("*.jsonl") if raiz.exists() else []:
+        try:
+            if datetime.fromtimestamp(archivo.stat().st_mtime).astimezone() < desde:
+                continue
+            ultima = None
+            with open(archivo, encoding="utf-8") as f:
+                for linea in f:
+                    if '"timestamp"' not in linea:
+                        continue
+                    try:
+                        d = json.loads(linea)
+                        t = datetime.fromisoformat(d["timestamp"].replace("Z", "+00:00")).astimezone()
+                    except (ValueError, KeyError, TypeError, AttributeError):
+                        continue
+                    tipo = d.get("type")
+                    if tipo == "assistant":
+                        tramo = (t, t)
+                        ultima = t
+                    elif tipo == "user" and ultima and es_resultado(d) and t - ultima <= herramienta:
+                        tramo = (ultima, t)
+                    else:
+                        continue
+                    if tramo[1] < desde or tramo[0] >= hasta:
+                        continue
+                    cwd = d.get("cwd")
+                    if cwd not in proyectos:
+                        proyectos[cwd] = proyecto_de(cwd) if cwd else archivo.parent.name
+                    if proyecto and proyectos[cwd] != proyecto:
+                        continue
+                    marcas.setdefault(proyectos[cwd], []).append((tramo[0], tramo[1] + timedelta(minutes=1)))
+        except OSError:
+            continue
+    salida = {}
+    for nombre, lista in marcas.items():
+        unidos = []
+        for a, b in sorted(lista):
+            if unidos and a - unidos[-1][1] < hueco:
+                unidos[-1][1] = max(unidos[-1][1], b)
+            else:
+                unidos.append([a, b])
+        salida[nombre] = [(max(a, desde), min(b, hasta)) for a, b in unidos]
+    return salida
+
+
+def es_resultado(d):
+    contenido = (d.get("message") or {}).get("content")
+    return isinstance(contenido, list) and any(isinstance(x, dict) and x.get("type") == "tool_result" for x in contenido)
+
+
+def reparto_claude(claude, presentes):
+    """Claude total, con el usuario presente y solo, en segundos y legible."""
+    total = sum((b - a).total_seconds() for a, b in claude)
+    con = sum((b - a).total_seconds() for a, b in cortar(claude, presentes))
+    return {"claude_s": int(total), "con_usuario_s": int(con), "solo_s": int(total - con),
+            "claude": fmt_duracion(total), "con_usuario": fmt_duracion(con), "solo": fmt_duracion(total - con)}
+
+
 def claude_solo(desde, hasta, ajustes):
-    """Tramos en que Claude trabajó (mensajes suyos seguidos) sin el usuario presente, por proyecto.
-    Se leen las marcas de tiempo de las sesiones locales de Claude Code."""
-    raiz = Path.home() / ".claude" / "projects"
+    """Por proyecto: cuánto trabajó Claude en el período, con el usuario presente y solo."""
     presentes = tramos_presentes(minutos_activos(leer_lineas(desde, hasta)), ajustes["ausencia_min"])
     limite_a = datetime.combine(desde, datetime.min.time()).astimezone()
     limite_b = datetime.combine(hasta + timedelta(days=1), datetime.min.time()).astimezone()
-    por_proyecto = {}
-    for archivo in raiz.glob("*/*.jsonl") if raiz.exists() else []:
-        try:
-            if datetime.fromtimestamp(archivo.stat().st_mtime).astimezone() < limite_a:
-                continue
-            marcas, cwd = [], None
-            with open(archivo, encoding="utf-8") as f:
-                for linea in f:
-                    try:
-                        d = json.loads(linea)
-                    except ValueError:
-                        continue
-                    if d.get("type") == "assistant" and d.get("timestamp"):
-                        t = datetime.fromisoformat(d["timestamp"].replace("Z", "+00:00")).astimezone()
-                        if limite_a <= t < limite_b:
-                            marcas.append(t)
-                    cwd = cwd or d.get("cwd")
-        except OSError:
-            continue
-        if not marcas:
-            continue
-        marcas.sort()
-        tramos = [[marcas[0], marcas[0] + timedelta(minutes=1)]]
-        for t in marcas[1:]:
-            if t - tramos[-1][1] < timedelta(minutes=ajustes["claude_hueco_min"]):
-                tramos[-1][1] = t + timedelta(minutes=1)
-            else:
-                tramos.append([t, t + timedelta(minutes=1)])
-        total = sum((b - a).total_seconds() for a, b in tramos)
-        con_usuario = sum((b - a).total_seconds() for a, b in cortar([tuple(x) for x in tramos], presentes))
-        proyecto = Path(cwd).name if cwd else archivo.parent.name
-        p = por_proyecto.setdefault(proyecto, {"claude_s": 0, "solo_s": 0})
-        p["claude_s"] += int(total)
-        p["solo_s"] += int(total - con_usuario)
-    for p in por_proyecto.values():
-        p["claude"], p["solo"] = fmt_duracion(p["claude_s"]), fmt_duracion(p["solo_s"])
+    por_proyecto = {nombre: reparto_claude(tramos, presentes)
+                    for nombre, tramos in tramos_claude(limite_a, limite_b, ajustes).items()}
     return {"desde": desde.isoformat(), "hasta": hasta.isoformat(), "proyectos": por_proyecto}
 
 
@@ -525,7 +586,9 @@ def main(argv=None):
         try:
             inactivo = segundos_inactivo()
             if inactivo is not None:
-                anotar(ahora(), "mac", inactivo, app_al_frente() if inactivo < 60 else "-")
+                t = ahora()
+                anotar(t, "mac", inactivo, app_al_frente() if inactivo < 60 else "-")
+                avisar_desde_el_mac(t, inactivo, ajustes)
         except Exception:  # noqa: BLE001 — desde launchd no hay a quién avisar
             pass
         return 0

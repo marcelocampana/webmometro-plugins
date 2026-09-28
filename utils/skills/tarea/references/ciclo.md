@@ -34,7 +34,9 @@ En este orden, dentro de la misma cadena y sin pregunta aparte:
 
 1. `P marca --repo R --tarea ID --evento cerrar`.
 2. `P tramos --repo R --tarea ID`: devuelve `registros` (los tramos en que la tarea estuvo abierta
-   **y** el usuario presente), `duracion`, `descontado`, `coste` y `vence`.
+   **y** el usuario presente), `duracion`, `descontado`, `coste`, `vence` y `claude` (lo que trabajó
+   Claude en la tarea: total, `con_usuario` y `solo`). `claude` no va a Toggl: lo guarda el
+   historial del repo.
 3. `time-entries bulk-create` con esos `registros` y `task_id` = ID (fechas RFC3339 con zona). Una
    llamada.
 4. `tasks bulk-patch` con el estado Done. Una llamada. **En una tarea con pasos**, el último paso y la

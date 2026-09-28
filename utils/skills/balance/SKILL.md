@@ -7,14 +7,14 @@ description: >
   y cómo va la salud (horas frente al computador, sesiones sin pausa). Úsalo cuando el usuario pida
   "mi balance", "revisión semanal", "cómo me fue esta semana", "en qué se me va el tiempo", "cuánto le
   dedico a cada cliente", "estadísticas de Toggl", "cuánto trabajé", "cuánto tiempo frente al
-  computador", "qué aplicaciones uso más", "qué podría automatizar", "cuánto trabajó Claude solo",
+  computador", "qué aplicaciones uso más", "qué podría automatizar", "cuánto trabajó Claude solo", "cuánto tarda Claude en una tarea",
   "estimo bien?", "¿cumplí el plan?", "cuánto de lo que hice estaba planificado", o cuando una rutina programada pida el resumen de la semana. **Solo lee: nunca
   escribe en Toggl ni en ninguna lista de tareas**; lo que haya que cambiar lo propone para
-  `revisar.md` y lo deja a `tarea`. NO lo uses para la vista de hoy (eso es `agenda`), ni para abrir,
+  la bandeja (`por-revisar`) y lo deja a `tarea`. NO lo uses para la vista de hoy (eso es `agenda`), ni para abrir,
   cerrar o crear tareas (eso es `tarea`).
 argument-hint: "[--semana | --mes | --desde AAAA-MM-DD --hasta AAAA-MM-DD]"
 metadata:
-  version: 1.2.0
+  version: 1.3.0
 ---
 
 # Balance del trabajo (balance)
@@ -30,12 +30,13 @@ una rutina: lo peor que puede pasar es un informe incompleto. Si de la revisión
 —automatizar una familia de tareas, partir mejor—, **lo propone para la bandeja** (etiqueta
 `por-revisar` en Toggl) en una línea y lo deja a `tarea`.
 
-## Dos medidas que nunca se suman
+## Tres medidas que nunca se suman
 
 | Medida | Qué es | De dónde |
 | --- | --- | --- |
 | **Tiempo de proyecto** | Cuánto ocupó cada tarea, proyecto y cliente | Toggl: registros de tiempo |
 | **Tu tiempo** | Cuánto estuvo trabajando el usuario, y en qué | `presencia.py resumen` |
+| **Tiempo de Claude** | Cuánto trabajó Claude, contigo y solo | `presencia.py claude` y la columna Claude del historial |
 
 Con dos sesiones en paralelo, las dos tareas cuentan el mismo tramo y el usuario lo vivió una vez.
 **Sumar tiempo de proyecto para obtener horas trabajadas es el error que este skill existe para no
@@ -46,7 +47,7 @@ cometer.** Si hubo paralelo, se dice: «30h de proyecto con 18h tuyas: 1,7× en 
 ```bash
 P="$HOME/Github/AI-kit/plugins/webmometro-plugins/utils/skills/tarea/scripts/presencia.py"
 python3 "$P" resumen --desde "$DESDE" --hasta "$HASTA"   # tu tiempo, atención, apps, sesiones
-python3 "$P" claude  --desde "$DESDE" --hasta "$HASTA"   # Claude trabajando solo
+python3 "$P" claude  --desde "$DESDE" --hasta "$HASTA"   # Claude por proyecto: total, contigo y solo
 python3 "$P" plan comparar --semana "$SEMANA"            # plan original contra lo medido
 ```
 

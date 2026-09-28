@@ -18,6 +18,12 @@ arranque apuntando a un archivo borrado.
 **Comprobar:** tras dos minutos, `tail -2 ~/.local/share/tarea/presencia/$(date +%F).log` muestra
 líneas `mac`.
 
+Este mismo arranque da el **aviso de pausa como notificación de macOS** cuando la sesión continua pasa
+de `sesion_min`, aunque el usuario no le esté escribiendo a Claude. Comparte estado con el gancho del
+paso 2: el aviso sale por uno o por otro, nunca por los dos. La primera vez macOS puede pedir permiso
+de notificaciones para «Editor de Scripts»; sin él, el aviso queda solo en la conversación. Se apaga
+con `notificar_mac` = 0 en la configuración global.
+
 **Quitar:** `launchctl unload ~/Library/LaunchAgents/com.webmometro.tarea.presencia.plist` y borrar
 el archivo. Los registros de `~/.local/share/tarea/presencia/` se conservan hasta que se borren.
 
