@@ -11,8 +11,9 @@ en el repo solo la memoria. **En una pasada y con un solo visto bueno.**
 2. **Armar la carga:** `python3 $M armar tareas/ --proyecto ID --usuario UID`. Lee `tareas.md`,
    `revisar.md` y `secciones.md` y devuelve, sin tocar nada:
    - las tareas abiertas en orden (`## Ahora` primero, después las `Pendiente` de cada sección),
-     con `Área: <sección>` y el comentario en la descripción, la estimación desde `Coste`, el vence
-     desde `Vence` y el estado;
+     con `Área: <sección>` y el comentario en la descripción, la etiqueta del área (si se pasan sus
+     ids con `--areas '{"Informes":ID}'`; las que falten se crean antes con `tags create`), la
+     estimación desde `Coste`, el vence desde `Vence` y el estado;
    - la bandeja con la etiqueta `por-revisar`, sin fecha ni asignación;
    - las que **ya tienen `<!-- toggl:id -->`**, aparte: se actualizan (descripción, área) en vez de
      crearse de nuevo;
@@ -52,4 +53,4 @@ coinciden) y lo dice en una línea. No reescribe lo ya enviado.
 | Límite: ~30 consultas por hora | Todo va en bloque |
 | `start_date` sin `end_date` (o al revés) se rechaza | Van siempre juntas |
 | Toggl 2.0 no acepta token de API: solo la sesión OAuth del conector | `cola.py` lee esa sesión y nunca la renueva |
-| Subproyectos y etiquetas se ven al mismo nivel que el resto | No hay secciones en Toggl: el área va en la descripción |
+| Subproyectos se ven al mismo nivel que el resto | Sin subproyectos: el área es una etiqueta |

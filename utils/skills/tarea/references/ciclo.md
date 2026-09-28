@@ -10,9 +10,11 @@
   encaja, se ofrece crear uno. **Los proyectos se crean públicos**: los privados son de pago (402).
 - **Nombre:** verbo + objeto concreto + ámbito, en una línea. Corto: en la vista por fecha, lo que no
   cabe se corta.
-- **Descripción:** `Área: <área>` en la primera línea, con un área de las que lista el `toggl.md` del
-  repo (o una nueva, que se añade ahí con visto bueno); después, qué se espera y el contexto que haga
-  falta. Las dependencias («necesita X») van aquí o en las notas: deciden el orden.
+- **Área:** una de las que lista el `toggl.md` del repo (o una nueva, que se añade ahí con visto
+  bueno). Va como **etiqueta** (`tag_ids`; `tags list` da los ids, y la que falte se crea con `tags
+  create` antes) **y** en la primera línea de la descripción, `Área: <área>`.
+- **Descripción:** tras la línea del área, qué se espera y el contexto que haga falta. Las
+  dependencias («necesita X») van aquí o en las notas: deciden el orden.
 - **Asignada al usuario**, con `estimated_mins` si hay base (desde el historial del repo,
   `tarea-repo/references/estimacion.md`); sin base, sin estimación y se dice.
 - Un lote de tareas relacionadas va en **una** llamada (`tasks bulk-create`); una principal con sus

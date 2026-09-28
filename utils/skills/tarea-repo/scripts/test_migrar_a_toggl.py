@@ -89,7 +89,8 @@ class Migracion(unittest.TestCase):
         (c / "revisar.md").write_text(REVISAR, encoding="utf-8")
         (c / "secciones.md").write_text(SECCIONES, encoding="utf-8")
         self.c = c
-        self.r = m.armar(c, 42, 7, {"todo": 1, "in_progress": 2, "blocked": 3}, 99, "2026-09-28")
+        self.r = m.armar(c, 42, 7, {"todo": 1, "in_progress": 2, "blocked": 3}, 99, "2026-09-28",
+                         {"Componentes": 11, "General": 10})
 
     def tearDown(self):
         self.dir.cleanup()
@@ -118,13 +119,14 @@ class Migracion(unittest.TestCase):
         self.assertEqual(menu["payload"]["status_id"], 2)
         self.assertEqual(menu["payload"]["estimated_mins"], 45)
         self.assertEqual(menu["payload"]["assignee_user_ids"], [7])
+        self.assertEqual(menu["payload"]["tag_ids"], [11])
         pago = self.r["actualizar"][0]["payload"]
         self.assertEqual((pago["start_date"], pago["end_date"], pago["status_id"]), ("2026-09-28", "2026-10-10", 3))
         self.assertEqual(pago["estimated_mins"], 150)
 
     def test_bandeja_con_etiqueta_sin_asignar_ni_fecha(self):
         [b] = [t for t in self.r["crear"] if t["bandeja"]]
-        self.assertEqual(b["payload"]["tag_ids"], [99])
+        self.assertEqual(b["payload"]["tag_ids"], [10, 99])
         self.assertNotIn("assignee_user_ids", b["payload"])
         self.assertIn("Origen: auditoría del 20-09", b["descripcion"])
 

@@ -110,8 +110,15 @@ def traer_todas(sesion, pedir=pedir_pagina):
         pagina += 1
 
 
-def area_de(descripcion):
-    """El área va en la primera línea de la descripción: `Área: Informes`."""
+TRANSVERSALES = {"imprevisto", "por-revisar"}
+
+
+def area_de(descripcion, etiquetas=()):
+    """El área es la etiqueta que no es transversal; si no hay, la primera línea de la descripción
+    (`Área: Informes`), que es su respaldo."""
+    for e in etiquetas:
+        if e and e.lower() not in TRANSVERSALES:
+            return e
     primera = (descripcion or "").strip().splitlines()[:1]
     if primera and primera[0].lower().startswith(("área:", "area:")):
         return primera[0].split(":", 1)[1].strip() or None
@@ -139,7 +146,7 @@ def reducir(t):
         "posicion": t.get("position"),
         "etiquetas": [e.get("name") for e in (t.get("tags") or [])],
         "asignada": bool(t.get("assignee_user_ids")),
-        "area": area_de(t.get("description")),
+        "area": area_de(t.get("description"), [e.get("name") for e in (t.get("tags") or [])]),
         "descripcion": t.get("description") or "",
         "notas": t.get("notes") or "",
     }
@@ -225,8 +232,9 @@ def linea(t):
         partes.append("área %s" % t["area"])
     if t.get("madre"):
         partes.append("paso de %s" % t["madre"])
-    if t.get("etiquetas"):
-        partes.append("#" + " #".join(t["etiquetas"]))
+    otras = [e for e in t.get("etiquetas") or [] if e != t.get("area")]
+    if otras:
+        partes.append("#" + " #".join(otras))
     return " · ".join(partes)
 
 

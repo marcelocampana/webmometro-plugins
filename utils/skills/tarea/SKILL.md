@@ -30,16 +30,18 @@ plugin o en su caché).
 | Campo | Qué lleva |
 | --- | --- |
 | Proyecto | El repo (lo enlaza su `tareas/toggl.md`) o un proyecto sin repo, como «Administración» |
-| Descripción | 1.ª línea `Área: <área>` (las áreas del repo están en su `toggl.md`); después, qué se espera. La escribe Claude al crear |
+| Etiqueta de área | La del área de la tarea (las áreas del repo están en su `toggl.md`): es lo que se ve y se filtra en Toggl |
+| Descripción | 1.ª línea `Área: <área>`, la misma de la etiqueta (respaldo para los scripts); después, qué se espera. La escribe Claude al crear |
 | Notas | Comentarios sobre la marcha, del usuario a mano o de Claude mientras trabaja |
 | Estado | Todo · In Progress · Blocked · Done |
 | `estimated_mins` / `end_date` | El coste y el vence |
 | `start_date` = `end_date` | El día planificado (`plan-semanal`) |
 | Asignación | Toda tarea real, al usuario: sin eso `capacities` no la cuenta |
-| Etiquetas | Solo transversales: `imprevisto` y `por-revisar` (la bandeja) |
+| Otras etiquetas | Las transversales: `imprevisto` y `por-revisar` (la bandeja) |
 
-**No hay secciones en Toggl** (subproyectos y etiquetas ensucian las listas). El orden: el día entre
-proyectos, `priority` dentro del día, `position` dentro del proyecto.
+**El área es una etiqueta**, una por tarea, con el nombre exacto del área; si no existe en el espacio
+de trabajo, se crea al crear la tarea. Subproyectos, no. El orden: el día entre proyectos, `priority`
+dentro del día, `position` dentro del proyecto.
 
 ## Leer: siempre por la copia
 
