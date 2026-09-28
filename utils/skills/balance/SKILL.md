@@ -14,7 +14,7 @@ description: >
   cerrar o crear tareas (eso es `tarea`).
 argument-hint: "[--semana | --mes | --desde AAAA-MM-DD --hasta AAAA-MM-DD]"
 metadata:
-  version: 1.3.0
+  version: 1.4.0
 ---
 
 # Balance del trabajo (balance)
