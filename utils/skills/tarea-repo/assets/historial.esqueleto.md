@@ -1,10 +1,10 @@
 # Historial · {{AAAA-MM}}
 
-Tareas cerradas de este mes y el texto íntegro de sus comentarios. Se llega aquí desde el enlace
-`[detalle](...)` de cada fila en `tareas/tareas.md`.
+Tareas cerradas de este mes y el texto íntegro de sus comentarios: la memoria del repo. Los
+pendientes viven en Toggl; aquí queda lo hecho y por qué.
 
 **Se lee la sección concreta, no el archivo entero.** Con veinte comentarios acumulados, leerlo
-completo cuesta más que el `tareas.md` que se quiso aligerar:
+completo cuesta mucho más que lo que se buscaba:
 
 ```bash
 awk -v a='### el-ancla-de-la-tarea' 'index($0,a)==1{f=1;print;next} f&&/^#/{exit} f' \
@@ -20,16 +20,16 @@ Con un rango `sed` hasta el siguiente `###` el último comentario se desborda a 
 
 ## Tareas archivadas
 
-<!-- Un ### por sección de origen, con el mismo nombre que en tareas.md — solo las secciones que
-     tengan alguna fila archivada este mes. De la más reciente en cerrar algo a la más antigua.
-     Bajo cada ### va su tabla, mismas columnas que en tareas.md. Ejemplo con dos secciones: -->
+<!-- Un ### por área (la de la primera línea de la descripción en Toggl, tal cual está en
+     tareas/toggl.md) — solo las que tengan alguna fila este mes, de la más reciente en cerrar algo
+     a la más antigua. Una tarea con pasos es una sola fila: la de la principal. -->
 
-### {{Sección de origen A}}
+### {{Área A}}
 
 | Estado | Tarea | Vence | Coste | Inicio | Completada | Duración | Comentarios |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 
-### {{Sección de origen B}}
+### {{Área B}}
 
 | Estado | Tarea | Vence | Coste | Inicio | Completada | Duración | Comentarios |
 | --- | --- | --- | --- | --- | --- | --- | --- |

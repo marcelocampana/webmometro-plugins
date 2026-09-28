@@ -2,8 +2,8 @@
 
 Solo bajo petición explícita. Recorre el proyecto **por áreas** y propone para `auditoria.md` lo que
 sea recomendable para completarlo, con la condición que define el modo: **solo tareas que no estén ya
-en ninguna de las otras dos listas**. Antes de escribir, contrasta contra `tareas.md` —abiertas **y
-cerradas**, que el historial cuenta— y contra `revisar.md`.
+en Toggl ni en el historial**. Antes de escribir, contrasta contra lo pendiente del proyecto
+(`cola.py leer --vista pendientes --proyecto <ID>`, bandeja incluida) y contra el historial.
 
 **Áreas: el checklist base + las propias del proyecto** (en un sitio, SEO y OG; en un repo de plugins,
 sincronía de manifests). El checklist completo, con la evidencia que hace válida cada fila, está más
@@ -29,8 +29,8 @@ mismo, así que la diferencia entre ellas significa algo.
 
 ## Antes de escribir una fila
 
-Tres filtros; una fila que no los pase **no se escribe**: (1) no está ya en `tareas.md` —abiertas *o*
-cerradas— ni en `revisar.md`; (2) tiene evidencia concreta; (3) no es un marcador intencional del
+Tres filtros; una fila que no los pase **no se escribe**: (1) no está ya pendiente en Toggl (ni en la
+bandeja) ni cerrada en el historial; (2) tiene evidencia concreta; (3) no es un marcador intencional del
 proyecto.
 
 ## El checklist base

@@ -17,11 +17,11 @@ contesta. Dos tiempos — detectar barato, y solo entonces leer.
 3. **Decir lo que sepas, y solo eso.** Con una discrepancia verificada, **una línea**: qué archivo,
    qué afirma hoy y qué dice el repo, con las dos salidas en la misma pregunta. Si el paso 2 no pudo
    concluir —archivo demasiado grande, afirmación ambigua—, di la sospecha sin resolverla y ofrece
-   solo `revisar.md`. **No redactes el reemplazo** en ninguno de los dos casos: el diagnóstico es la
+   solo la bandeja (`por-revisar`). **No redactes el reemplazo** en ninguno de los dos casos: el diagnóstico es la
    entrega.
 
 > Cerrada y mergeada. `docs/skills.md` lista 3 skills en utils y ahora son 4: falta
-> `content-sync-check`. ¿Lo anoto en `revisar.md` o lo corrijo ahora?
+> `content-sync-check`. ¿Lo anoto en la bandeja o lo corrijo ahora?
 
 Si el usuario dice «corrígelo», es **una tarea nueva y corta** —rama, commit y merge propios—, no una
 extensión de la que acaba de cerrarse: esa cadena ya terminó. Esto **no es un cuarto freno**: ocurre

@@ -43,7 +43,7 @@ las largas son páginas enteras, las cortas secciones sueltas. ¿Cuál se parece
 ## De dónde se leen las muestras
 
 ```bash
-# Filas archivadas de la sección candidata, en el mes en curso y el anterior
+# Filas archivadas del área candidata, en el mes en curso y el anterior
 awk '/^## Tareas archivadas/,0' tareas/historial/2026-09.md | grep '^| ✅'
 ```
 
@@ -95,7 +95,7 @@ Coste — · sin base: 1 cierre en este proyecto y su duración es estimada.
 ```
 
 **El número propuesto lleva `~`; si el usuario lo corrige, el `~` desaparece.** Esa marca es la que
-después permite medir si el skill estima bien (`tiempos.md`).
+después permite medir si el skill estima bien (`balance`).
 
 ## Qué NO hace este archivo
 
@@ -104,4 +104,4 @@ después permite medir si el skill estima bien (`tiempos.md`).
   vigente si está escrito; no se calcula sobre la marcha.
 - **No estima retrasos.** Llegar tarde es un problema de capacidad, no de estimación, y se mide en
   días de calendario, no en horas de trabajo. Son dos errores distintos y no se corrigen con el mismo
-  número (`tiempos.md`).
+  número.

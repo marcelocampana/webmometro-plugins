@@ -9,7 +9,7 @@ acaso», se lee lo mismo repartido en más archivos y con más llamadas.
 | --- | --- | --- |
 | Solo la sección del ancla | **~1.000 chars (~250 tok)** | constante |
 | El mensual entero, 10 comentarios | ~10.000 | 10× |
-| El mensual entero, 20 comentarios | ~20.000 | **20× — más que el `tareas.md` completo** |
+| El mensual entero, 20 comentarios | ~20.000 | **20× — más que toda la cola de pendientes** |
 
 Con veinte comentarios acumulados, leer el mensual entero cuesta más que no haber archivado nunca. La
 lectura va acotada:

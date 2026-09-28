@@ -9,7 +9,7 @@ parte de un dato falso (`content-sync-check` solo compara lo aprobado).
 **`validado` no es un `aprobado` más fuerte: es otra cosa.** `aprobado` dice que la redacción está
 cerrada; `validado` dice que un equipo externo —médico, legal— revisó **una versión concreta**, que
 queda congelada con su hash. Solo se entra ahí cuando el usuario lo dice explícitamente. (No lo
-confundas con los estados de la *tarea*, que son otros y viven en `estados.md`.)
+confundas con los estados de la *tarea*, que son otros y viven en Toggl.)
 
 **Va dentro de la cadena de cierre, no como paso aparte**: sin una segunda pregunta, igual que el
 archivado. Tres movimientos, el último condicional:

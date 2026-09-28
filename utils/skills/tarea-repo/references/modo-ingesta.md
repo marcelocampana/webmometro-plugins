@@ -6,7 +6,7 @@ producido por otro skill (una auditoría SEO, un análisis UX).
 Cada tarea propuesta se afina con `redaccion-tareas.md` y se ancla en la fuente; el contexto del
 proyecto sale de `contextualizacion.md`.
 
-**Regla única de destino: todo entra por `revisar.md`.** Nada de una fuente externa aterriza en la cola
+**Regla única de destino: todo entra por la bandeja** (tareas del proyecto en Toggl con la etiqueta `por-revisar`, sin fecha ni asignación). Nada de una fuente externa aterriza en la cola
 de prioridad sin pasar por la bandeja y un ascenso explícito del usuario. Y como siempre: **se propone
 y se espera**, nunca se escribe directo.
 
@@ -25,7 +25,7 @@ La tercera es la que más rinde **y la que siempre se pierde**: el hallazgo de u
 no está escrito en ningún sitio cuando la sesión termina. La segunda se olvida por otro motivo: la IA
 tiende a mirar solo lo que el usuario dijo.
 
-`Origen` se rellena con el tema y la fecha de la conversación, no con «conversación» a secas.
+El origen —que va en la descripción, después del área— se rellena con el tema y la fecha de la conversación, no con «conversación» a secas.
 
 ## Fuente B · Un archivo
 
@@ -37,32 +37,33 @@ tiende a mirar solo lo que el usuario dijo.
    y recomendaciones, y **solo las recomendaciones son tareas**. «El LCP es de 4,2 s» es un dato;
    «comprimir las imágenes del hero» es una tarea.
 4. **Afinar y deduplicar** (abajo).
-5. **Proponer en una tabla compacta** y esperar. `Origen` = ruta del archivo y su fecha, para poder
+5. **Proponer en una tabla compacta** y esperar. El origen = ruta del archivo y su fecha, para poder
    rastrear de qué informe salió cada fila.
 
 ### Mapeo por forma del archivo
 
 | Forma | Cómo se lee |
 | --- | --- |
-| **Tabla Markdown** | Una fila por tarea. La columna que describe la acción → `Tarea`; severidad, prioridad o impacto → `Motivo` |
-| **Lista de viñetas** | Un ítem por tarea; si un ítem tiene subítems, suelen ser el detalle → `Motivo` |
-| **Encabezados por hallazgo** (`### …`) | El encabezado → `Tarea`; su primer párrafo, condensado → `Motivo` |
+| **Tabla Markdown** | Una fila por tarea. La columna que describe la acción → `Tarea`; severidad, prioridad o impacto → el motivo, en la descripción |
+| **Lista de viñetas** | Un ítem por tarea; si un ítem tiene subítems, suelen ser el detalle → la descripción |
+| **Encabezados por hallazgo** (`### …`) | El encabezado → `Tarea`; su primer párrafo, condensado → la descripción |
 | **Prosa corrida** | Extrae solo las frases imperativas o recomendatorias. Si no hay ninguna clara, **dilo** en vez de inventar tareas |
 
-**Las severidades y prioridades ajenas se conservan como texto en `Motivo`** («severidad alta según el
-informe»). No se traducen a los cinco estados ni a la cola `## Ahora`: son criterios de otro sistema y
+**Las severidades y prioridades ajenas se conservan como texto en la descripción** («severidad alta según el
+informe»). No se traducen a estados ni a la prioridad de Toggl: son criterios de otro sistema y
 mezclarlos falsearía la prioridad, que la decide el usuario.
 
 ### Deduplicar contra cuatro fuentes
 
-Antes de proponer, descarta lo que ya esté en: `tareas.md` **abiertas**, `tareas.md`
-**`✅ Completada`** (el historial cuenta: algo ya resuelto no vuelve), `revisar.md` y `auditoria.md`.
+Antes de proponer, descarta lo que ya esté en: lo **pendiente** del proyecto en Toggl, incluida la
+bandeja (`cola.py leer --vista pendientes --proyecto <ID>`), **el historial** (algo ya resuelto no
+vuelve) y `auditoria.md`.
 Si un ítem es una variante de algo existente, dilo en una línea en vez de crear un duplicado.
 
 ## Qué NO hace la ingesta
 
 - **No ejecuta** ninguna tarea.
-- **No prioriza** ni sube nada a `## Ahora`.
+- **No prioriza** ni saca nada de la bandeja.
 - **No reinterpreta** el informe de origen: si una recomendación es ambigua, la propone marcada como
   tal en vez de inventarle alcance.
 - **No copia el informe.** Solo sus tareas; el archivo sigue siendo la fuente y se referencia por ruta.
@@ -70,7 +71,7 @@ Si un ítem es una variante de algo existente, dilo en una línea en vez de crea
 ## Disponible en cualquier modo
 
 No hace falta la flag: si el usuario pasa un archivo de tareas mientras hace otra cosa, **ofrece
-ingerirlo** en una línea. El destino sigue siendo `revisar.md`.
+ingerirlo** en una línea. El destino sigue siendo la bandeja.
 
 ## Errores
 
@@ -79,5 +80,5 @@ ingerirlo** en una línea. El destino sigue siendo `revisar.md`.
 | El archivo no existe o no se puede leer | Dilo y para. No adivines su contenido. |
 | No contiene nada accionable | Dilo en una línea: «son datos, no recomendaciones». No fuerces tareas. |
 | Trae decenas de ítems | Propón los que pasen el filtro y di cuántos descartaste y por qué. No los escribas todos por volumen. |
-| El usuario pide que vayan directo a `tareas.md` | Es su lista: se acepta, pero se dice que lo normal es ascender desde la bandeja. |
+| El usuario pide que vayan directo a la cola | Es su lista: se acepta, pero se dice que lo normal es ascender desde la bandeja. |
 | La conversación no tiene material | Dilo. Una ingesta vacía es un resultado válido. |

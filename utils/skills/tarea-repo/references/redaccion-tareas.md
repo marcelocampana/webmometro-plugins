@@ -10,7 +10,7 @@ saber si se hizo.
 - *Verbo*: qué acción. `Corregir`, `Alinear`, `Convertir`, `Separar`, `Añadir`. No `revisar` ni
   `mejorar` a secas: no se puede declarar terminado.
 - *Objeto concreto*: qué cosa, nombrada como se llama en el proyecto.
-- *Ámbito*: dónde vive, entre paréntesis si hace falta. Es lo que decide la sección y lo que evita
+- *Ámbito*: dónde vive, entre paréntesis si hace falta. Es lo que decide el área y lo que evita
   abrir la tarea a ciegas.
 
 ## Antes y después
@@ -28,13 +28,13 @@ El patrón: el «después» dice **qué se verá distinto cuando esté hecho**. 
 
 ## La columna Tarea es una línea
 
-El detalle —mockups, secciones afectadas, alcance, medidas— **va en Comentarios**, que es donde acaba
+El detalle —mockups, secciones afectadas, alcance, medidas— **va en la descripción de la tarea en Toggl**, que es donde acaba
 de todos modos al cerrarla. Una Tarea de tres líneas rompe la lectura de la tabla y duplica lo que el
 cierre va a escribir igual.
 
 Si el enunciado no cabe en una línea, casi siempre es porque:
 
-- Lleva el **por qué** dentro. Va a Comentarios.
+- Lleva el **por qué** dentro. Va a la descripción.
 - Lleva **dos tareas**. Se parte.
 
 ## Cuándo partir una tarea
@@ -49,7 +49,7 @@ veces más llamadas a Toggl.
 **Si el enunciado necesita una «y», probablemente son dos.** Propón partirla cuando:
 
 - Los dos trozos se pueden cerrar por separado y en distinto momento.
-- Tocan **secciones distintas** — entonces obligatoriamente son dos filas.
+- Tocan **áreas distintas** — entonces obligatoriamente son dos tareas.
 - Uno está bloqueado y el otro no: mantenerlos juntos bloquea trabajo que podría avanzar.
 
 **No la partas** si los trozos son inseparables en la práctica —un cambio que solo tiene sentido
@@ -57,10 +57,10 @@ completo— o si son pasos de la misma ejecución. El historial de tareas cerrad
 puede cerrar trabajo en varias páginas a la vez y seguir siendo **una** tarea: lo que la define es
 dónde vive el cambio, no cuántas cosas mejora.
 
-## El ámbito decide la sección
+## El ámbito decide el área
 
-- El cambio vive en **una** área → la sección de esa área.
-- El cambio vive en **código o contenido compartido** → la sección de lo compartido, **una sola fila**.
+- El cambio vive en **una** área → esa área.
+- El cambio vive en **código o contenido compartido** → el área de lo compartido, **una sola tarea**.
   Nunca una por consumidor: duplicarla cuenta su intervalo dos veces.
 - El cambio es de configuración, despliegue o transversal → `General`.
 
@@ -70,8 +70,8 @@ Cuando dudes entre dos secciones, la pregunta útil es: **¿dónde lo buscaría 
 
 En una línea, y solo si aporta:
 
-- «Ya está en `revisar.md` (fila 3)» — evita el duplicado.
-- «Toca `AppHeader.vue`, afecta a todo el sitio → sección General» — corrige la sección.
+- «Ya está en la bandeja (`por-revisar`)» — evita el duplicado.
+- «Toca `AppHeader.vue`, afecta a todo el sitio → área General» — corrige el área.
 - «Depende de la tarea 2, que está `Bloqueada`» — evita abrir algo que no avanzará.
 - «El historial dice que se intentó y se descartó por X» — evita repetir.
 - «Son dos: el estilo y el contenido. ¿Las separo?» — evita una tarea que no se puede cerrar.
