@@ -79,9 +79,6 @@ seguimiento de cambios.
 
 Utilidades transversales de organización del trabajo.
 
-- **claude-activity-log** — Mantiene un registro persistente y cross-cuenta
-  de las tareas realizadas en Claude, para no perder el rastro de en qué
-  cuenta, proyecto y contexto se hizo cada cosa.
 - **tarea** — El sistema de tareas, con **Toggl 2.0 como única lista** para
   todos los proyectos. Crea, abre, pausa y cierra tareas en Toggl y mide su
   tiempo cruzando cuándo estuvieron abiertas con la presencia real del
@@ -115,8 +112,3 @@ Utilidades transversales de organización del trabajo.
   plan contra realidad, imprevistos, sesgo de estimación por familia de tarea, candidatas a
   automatizar, salud (sesiones sin pausa, horas frente al computador),
   uso de aplicaciones y tiempo que Claude trabajó solo. **Solo lee.**
-- **content-sync-check** — Verifica que el contenido aprobado del cliente
-  coincida en todos sus destinos (el repo del sitio, el proyecto de Claude
-  Design y su espejo local) y repara las diferencias con confirmación pieza
-  por pieza. La fuente del workspace manda: las correcciones se hacen ahí
-  primero y los destinos se alimentan de ella.
