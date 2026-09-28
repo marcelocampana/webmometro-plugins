@@ -56,7 +56,8 @@ En este orden, dentro de la misma cadena y sin pregunta aparte:
    Claude en que no había ninguna tarea de ese repo abierta, con el `proyecto_toggl` de su
    `tareas/toggl.md`. Van en una llamada `time-entries bulk-create` sin `task_id` y con
    `project_id`; después `P sin-tarea --enviado --hasta <el mismo ahora>`. Un repo sin
-   `proyecto_toggl` no se envía y se dice en una línea.
+   `proyecto_toggl` no se envía y se dice en una línea. Además, una rutina programada lo envía cada
+   noche (`assets/presencia-instalacion.md`, paso 3), para que Toggl no dependa de cerrar tareas.
 7. `C invalidar`.
 
 **El cálculo lo hace el script, no el modelo**: las mismas marcas dan siempre los mismos tramos. No

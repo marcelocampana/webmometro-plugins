@@ -297,6 +297,20 @@ class ClaudeEnToggl(Atribucion):
         self.assertEqual(correr("sin-tarea", "--hasta", t("11:30").isoformat())["repos"], [])
 
 
+class SinTareaTrasDiasSinEnviar(Atribucion):
+    def test_retoma_desde_un_envio_de_hace_tres_semanas(self):
+        presencia.anotar(t("2026-09-05T22:00"), "sin-tarea", "enviado", t("2026-09-05T22:00").isoformat())
+        ruta = Path(os.environ["CLAUDE_PROYECTOS_DIR"]) / "-x-" / "s9.jsonl"
+        ruta.parent.mkdir(parents=True, exist_ok=True)
+        with open(ruta, "w", encoding="utf-8") as f:
+            for h in ("10:00", "10:02"):
+                f.write(json.dumps({"timestamp": t("2026-09-10T" + h).isoformat(), "cwd": str(self.repos["plugins"]),
+                                    "type": "assistant", "message": {"content": []}}) + "\n")
+        r = correr("sin-tarea", "--hasta", t("2026-09-26T22:00").isoformat())
+        self.assertEqual(r["desde"][:10], "2026-09-05")
+        self.assertEqual([p["total"] for p in r["repos"]], ["3m"])
+
+
 class Aviso(Base):
     def test_avisa_una_vez_pasado_el_umbral(self):
         ajustes = presencia.leer_ajustes()
