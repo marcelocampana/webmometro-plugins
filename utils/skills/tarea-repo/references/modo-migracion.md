@@ -40,8 +40,9 @@ en el repo solo la memoria. **En una pasada y con un solo visto bueno.**
 ## Reconciliar (`--toggl`)
 
 Si Toggl no respondía en un cierre, o una sesión se cortó, `presencia.py tramos` sigue teniendo lo
-pendiente: `--toggl` **envía lo que falte** (registros sin marca `enviado`, estados que no
-coinciden) y lo dice en una línea. No reescribe lo ya enviado.
+pendiente: `--toggl` **envía lo que falte** (registros sin marca `enviado`, el trabajo de Claude
+sin tarea de `presencia.py sin-tarea`, estados que no coinciden) y lo dice en una línea. No
+reescribe lo ya enviado.
 
 ## Hallazgos de la API (26 y 28-09-2026)
 

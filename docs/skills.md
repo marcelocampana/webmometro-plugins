@@ -80,10 +80,11 @@ seguimiento de cambios.
 Utilidades transversales de organización del trabajo.
 
 - **tarea** — El sistema de tareas, con **Toggl 2.0 como única lista** para
-  todos los proyectos. Crea, abre, pausa y cierra tareas en Toggl y mide su
-  tiempo cruzando cuándo estuvieron abiertas con la presencia real del
-  usuario (`presencia.py`: teclado, aplicación en primer plano y mensajes a
-  Claude); lo envía en bloque al cerrar y avisa de las pausas. Un plan de
+  todos los proyectos. Crea, abre, pausa y cierra tareas en Toggl y envía en
+  bloque al cerrar **el trabajo de Claude** en cada proyecto, atribuido al
+  repo cuyos archivos toca, con tarea o sin ella. **Tu tiempo** frente al
+  computador se mide aparte y se queda en local (`presencia.py`: teclado,
+  aplicación en primer plano y mensajes a Claude), con avisos de pausa. Un plan de
   varios pasos es una tarea principal con sus pasos como subtareas: se
   encadenan sin preguntar y se confirma solo el cierre de la principal. Lee
   la cola por una copia local reducida (`cola.py`), no por la respuesta

@@ -211,6 +211,92 @@ class TiempoDeClaude(Base):
         self.assertEqual((r["claude"], r["con_usuario"], r["solo"]), ("29m", "10m", "19m"))
 
 
+class Atribucion(Base):
+    """El repo de un tramo es el de los archivos que toca, no el de la carpeta de la sesión."""
+
+    def setUp(self):
+        super().setUp()
+        import subprocess
+        self.repos = {}
+        for nombre in ("sitio", "plugins"):
+            r = Path(self.tmp.name) / nombre
+            r.mkdir()
+            subprocess.run(["git", "init", "-q", str(r)], check=True)
+            self.repos[nombre] = r
+
+    def sesion(self, sid, lineas, abierta_en="sitio"):
+        ruta = Path(os.environ["CLAUDE_PROYECTOS_DIR"]) / "-x-" / (sid + ".jsonl")
+        ruta.parent.mkdir(parents=True, exist_ok=True)
+        with open(ruta, "a", encoding="utf-8") as f:
+            for hora, tipo, *toca in lineas:
+                d = {"timestamp": t(hora).isoformat(), "cwd": str(self.repos[abierta_en])}
+                if tipo == "u":
+                    d.update(type="user", message={"content": "hola"})
+                else:
+                    contenido = [{"type": "tool_use", "name": "Edit",
+                                  "input": {"file_path": str(self.repos[toca[0]] / "a.md")}}] if toca else []
+                    d.update(type="assistant", message={"content": contenido})
+                f.write(json.dumps(d) + "\n")
+
+    def test_una_sesion_abierta_en_un_repo_trabaja_en_otro(self):
+        self.sesion("s1", [("10:00", "u"), ("10:01", "a", "plugins"), ("10:03", "a"), ("10:05", "a"),
+                           ("10:20", "a", "sitio"), ("10:22", "a")])
+        r = correr("claude", "--desde", "2026-09-26", "--hasta", "2026-09-26")["proyectos"]
+        self.assertEqual(r["plugins"]["claude"], "5m")    # 10:01-10:06: lo que no toca archivos, sigue ahí
+        self.assertEqual(r["sitio"]["claude"], "3m")      # 10:20-10:23
+
+    def test_la_atencion_sigue_a_la_sesion_y_no_a_la_carpeta(self):
+        self.mac("10:00", "10:30")
+        presencia.anotar(t("10:00"), "mensaje", "sitio", "s1")
+        self.sesion("s1", [("10:00", "u"), ("10:01", "a", "plugins"), ("10:10", "a")])
+        at = correr("resumen", "--desde", "2026-09-26", "--hasta", "2026-09-26")["dias"]["2026-09-26"]["atencion"]
+        self.assertEqual(at.get("plugins"), 29)
+        self.assertEqual(at.get("sitio"), 1)   # 10:00, antes de que Claude tocara nada
+
+    def test_marca_antigua_sin_sesion_se_empareja_por_hora(self):
+        self.mac("10:00", "10:10")
+        presencia.anotar(t("10:00"), "mensaje", "sitio")
+        self.sesion("s1", [("10:00", "u"), ("10:01", "a", "plugins")])
+        at = correr("resumen", "--desde", "2026-09-26", "--hasta", "2026-09-26")["dias"]["2026-09-26"]["atencion"]
+        self.assertEqual(at.get("plugins"), 9)
+
+
+class ClaudeEnToggl(Atribucion):
+    def test_la_tarea_de_repo_envia_el_tiempo_de_claude(self):
+        presencia.anotar(t("10:00"), "tarea", "sitio", "1", "abrir")
+        self.mac("10:00", "10:05")                      # tú, 5 minutos
+        self.sesion("s1", [("10:00", "a", "sitio"), ("10:02", "a"), ("10:04", "a"), ("10:06", "a"),
+                           ("10:08", "a")])              # Claude, de 10:00 a 10:09
+        presencia.anotar(t("10:30"), "tarea", "sitio", "1", "cerrar")
+        r = correr("tramos", "--repo", "sitio", "--tarea", "1", "--hasta", t("10:30").isoformat())
+        self.assertEqual(r["fuente"], "claude")
+        self.assertEqual(sum(x["duration"] for x in r["registros"]), 9 * 60)
+        self.assertEqual(r["duracion"], "5m")            # tu tiempo, para el historial
+
+    def test_sin_trabajo_de_claude_va_tu_tiempo(self):
+        self.marca("R", "abrir", "10:00")
+        self.mac("10:00", "10:20")
+        self.marca("R", "cerrar", "10:20")
+        r = correr("tramos", "--repo", "sin-repo", "--tarea", "R", "--hasta", t("10:20").isoformat())
+        self.assertIn("error", r)                        # otra tarea: marcas de repo "repo"
+        r = self.tramos("R", "10:20")
+        self.assertEqual(r["fuente"], "usuario")
+        self.assertEqual(r["duracion"], "20m")
+
+    def test_sin_tarea_excluye_lo_que_tuvo_tarea_y_avanza_al_enviar(self):
+        (self.repos["plugins"] / "tareas").mkdir()
+        (self.repos["plugins"] / "tareas" / "toggl.md").write_text("<!-- tarea: toggl · proyecto 42 «P» · cliente 1 «C» -->\n")
+        presencia.anotar(t("10:20"), "tarea", "plugins", "7", "abrir")
+        presencia.anotar(t("10:40"), "tarea", "plugins", "7", "cerrar")
+        self.sesion("s1", [(h, "a", "plugins") for h in ("10:00", "10:02", "10:04", "10:21", "10:23", "10:50", "10:52")])
+        r = correr("sin-tarea", "--hasta", t("11:00").isoformat())
+        [p] = r["repos"]
+        self.assertEqual(p["proyecto_toggl"], 42)
+        self.assertEqual(p["total"], "8m")               # 10:00-10:05 y 10:50-10:53, no lo de la tarea
+        correr("sin-tarea", "--hasta", t("11:00").isoformat(), "--enviado")
+        self.assertEqual(correr("sin-tarea", "--hasta", t("11:30").isoformat())["repos"], [])
+
+
 class Aviso(Base):
     def test_avisa_una_vez_pasado_el_umbral(self):
         ajustes = presencia.leer_ajustes()
