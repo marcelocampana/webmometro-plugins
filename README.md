@@ -15,7 +15,8 @@ Incluye cuatro plugins:
   snapshots de datos, auditoría, CRO, clústeres de contenido, blueprints de
   landing y seguimiento de cambios.
 - **utils** — utilidades personales: registro de actividad cross-cuenta y
-  gestión de tareas por rama.
+  sistema de tareas con Toggl 2.0 como única lista, rama por tarea e
+  historial en cada repo.
 
 ## Dónde ver qué hace cada skill
 

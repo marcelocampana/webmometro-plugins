@@ -82,39 +82,34 @@ Utilidades transversales de organización del trabajo.
 - **claude-activity-log** — Mantiene un registro persistente y cross-cuenta
   de las tareas realizadas en Claude, para no perder el rastro de en qué
   cuenta, proyecto y contexto se hizo cada cosa.
-- **tarea** — La entrada del sistema de tareas: entiende qué vas a hacer,
-  decide el carril (repositorio o suelto) y pasa al skill que corresponde;
-  si no está claro, hace una sola pregunta.
-- **tarea-suelta** — Tareas que no viven en ningún repositorio ni terminan
-  en commit (facturar, reuniones, llamadas, trámites): solo en Toggl, con la
-  etiqueta `suelta`. Se empiezan y terminan diciéndoselo a Claude, sin git;
-  se miden con la presencia real y, si hubo trabajo fuera del computador, se
-  pregunta antes de descontarlo.
-- **tarea-repo** — Gestiona las tareas de un proyecto en el directorio
-  `tareas/`: cola de tareas con flujo "una tarea, una rama, un commit",
-  bandeja de revisión y auditoría por áreas. Cada fila lleva `Coste`
-  —estimado desde el historial al crearla, emparejando por familia de
-  tarea— y un `Vence` opcional que audita el orden en vez de fijarlo.
-  Solo se activa si el proyecto ya tiene esa estructura o si el usuario
-  pide montarla. Cada repo se puede conectar a Toggl 2.0 (`--toggl`):
-  entonces las tablas pierden sus columnas de tiempo, que viven en Toggl,
-  y el tiempo de cada tarea se mide cruzando cuándo estuvo abierta con la
-  presencia real del usuario (`presencia.py`: teclado, aplicación en
-  primer plano y mensajes a Claude). Toggl se escribe solo al crear y al
-  cerrar, en bloque; y avisa de las pausas dentro de la conversación.
-- **agenda** — Compone la vista diaria del usuario cruzando todos los repos
-  registrados: lee la cola `## Ahora` de cada uno y responde qué toca hoy y
-  si cabe en la capacidad declarada. Avisa de lo vencido, de varias tareas
-  abiertas a la vez y de las filas sin coste. **Solo lee**: nunca escribe en
-  una lista de tareas ni reordena una cola, que es lo que le permite correr
-  desatendida desde una rutina. En los repos conectados toma Coste y Vence
-  de Toggl y las horas del día del registro de presencia.
-- **plan-semanal** — Planifica la semana por día cruzando los repos: propone
-  qué tarea va cada día según la capacidad y las estimaciones (dejando un 20%
-  para imprevistos), y con visto bueno escribe el día y la estimación en
-  Toggl y guarda la versión original para medir después plan contra
-  realidad. Ofrece conectar a Toggl los proyectos que aún no lo están. No
-  reordena ninguna cola. Todo sigue funcionando si un lunes no se planifica.
+- **tarea** — El sistema de tareas, con **Toggl 2.0 como única lista** para
+  todos los proyectos. Crea, abre, pausa y cierra tareas en Toggl y mide su
+  tiempo cruzando cuándo estuvieron abiertas con la presencia real del
+  usuario (`presencia.py`: teclado, aplicación en primer plano y mensajes a
+  Claude); lo envía en bloque al cerrar y avisa de las pausas. Un plan de
+  varios pasos es una tarea principal con sus pasos como subtareas: se
+  encadenan sin preguntar y se confirma solo el cierre de la principal. Lee
+  la cola por una copia local reducida (`cola.py`), no por la respuesta
+  cruda de Toggl. Las tareas sin repo (facturar, reuniones) son las de un
+  proyecto que ningún repo enlaza.
+- **tarea-repo** — La parte de repositorio: para las tareas de un proyecto
+  enlazado a un repo (`tareas/toggl.md`), rama por tarea, cierre en cadena
+  con commit y merge, e historial de lo hecho y por qué como memoria del
+  repo (`tareas/historial/`). Estima el coste desde ese historial, audita el
+  proyecto por áreas, ingiere tareas de una conversación o un archivo a la
+  bandeja (`por-revisar` en Toggl) y migra a Toggl los repos con el formato
+  anterior (`--migrar`, con `migrar_a_toggl.py`).
+- **agenda** — Compone la vista diaria con todos los proyectos: lee la cola
+  de Toggl por la copia local y la jornada de Toggl, y responde qué toca hoy
+  y si cabe. Avisa de lo vencido, de varias tareas abiertas a la vez y de las
+  que no tienen estimación. **Solo lee**: nunca escribe en Toggl ni en un
+  repo, que es lo que le permite correr desatendida desde una rutina.
+- **plan-semanal** — Planifica la semana por día con todos los proyectos:
+  propone qué tarea va cada día según la jornada y las estimaciones (dejando
+  un 20% para imprevistos), y con visto bueno escribe el día y la estimación
+  en Toggl y guarda la versión original para medir después plan contra
+  realidad. Solo escribe días y estimaciones. Todo sigue funcionando si un
+  lunes no se planifica.
 - **balance** — Revisión para mejorar: tiempo de proyecto por cliente
   (Toggl) separado del tiempo real del usuario (registro de presencia),
   plan contra realidad, imprevistos, sesgo de estimación por familia de tarea, candidatas a

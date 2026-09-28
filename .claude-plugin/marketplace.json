@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Plugins personales de Webmometro para Claude Code / Claude Desktop",
-    "version": "1.11.0"
+    "version": "1.12.0"
   },
   "plugins": [
     {
@@ -68,8 +68,8 @@
       "name": "utils",
       "displayName": "Utils",
       "source": "./utils",
-      "description": "Skills personales de utilidad general: registro de actividad cross-cuenta (Claude Activity Log), sistema de tareas con entrada que decide el carril (Tarea), carril de repositorio con rama por tarea, cierre en cadena, archivado inmediato y conexión opcional con Toggl 2.0 medida por la presencia real del usuario (Tarea Repo), y carril de tareas sueltas solo en Toggl, sin git (Tarea Suelta), planificación de la semana por día en Toggl (Plan Semanal), revisión semanal de tiempo, plan contra realidad, estimación, salud y uso de aplicaciones, de solo lectura (Balance), vista diaria de tareas cruzando todos los repos registrados, de solo lectura (Agenda), y verificación determinista de contenido entre la fuente del cliente, el repo del sitio y Claude Design, con ancla de validación para garantizar que lo publicado sea idéntico a lo que revisó el equipo médico (Content Sync Check)",
-      "version": "3.1.0",
+      "description": "Skills personales de utilidad general: registro de actividad cross-cuenta (Claude Activity Log), sistema de tareas con Toggl 2.0 como única lista para todos los proyectos, medido por la presencia real del usuario y leído por una copia local reducida (Tarea), ceremonia de repositorio con rama por tarea, cierre en cadena e historial de lo hecho como memoria del repo, más la migración de repos con el formato anterior (Tarea Repo), planificación de la semana por día en Toggl (Plan Semanal), revisión semanal de tiempo, plan contra realidad, estimación, salud y uso de aplicaciones, de solo lectura (Balance), vista diaria con todos los proyectos y la jornada de Toggl, de solo lectura (Agenda), y verificación determinista de contenido entre la fuente del cliente, el repo del sitio y Claude Design, con ancla de validación para garantizar que lo publicado sea idéntico a lo que revisó el equipo médico (Content Sync Check)",
+      "version": "4.0.0",
       "keywords": [
         "utils",
         "productividad",
@@ -80,7 +80,6 @@
         "tareas",
         "tarea",
         "tarea-repo",
-        "tarea-suelta",
         "agenda",
         "balance",
         "plan-semanal",
