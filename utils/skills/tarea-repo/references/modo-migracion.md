@@ -17,11 +17,18 @@ en el repo solo la memoria. **En una pasada y con un solo visto bueno.**
    - las que **ya tienen `<!-- toggl:id -->`**, aparte: se actualizan (descripción, área) en vez de
      crearse de nuevo;
    - el contenido de `tareas/toggl.md` (marcador y áreas con su ámbito, desde `secciones.md`).
-3. **Mostrarla** en una tabla corta (cuántas crear, cuántas actualizar, cuántas a la bandeja, y las
-   áreas) y **pedir el visto bueno una vez**. Los pares dudosos de `## Ahora` con su sección los
-   resuelve el script con `emparejar_ahora.py`; los `dudoso` se muestran en la misma tabla.
-4. **Enviar**, con el sí: `tasks bulk-create` para las nuevas (una llamada) y `tasks bulk-patch` para
-   las que ya existían (otra). Validar antes con `dry_run: true`.
+3. **Agrupar por objetivo.** Las tareas que persiguen un mismo objetivo —una cadena de «necesita…»,
+   un plan del repo, lo que falta para publicar— van como **una tarea principal con sus pasos**, no
+   como tareas sueltas (`tarea`, «Tareas con pasos»). Se propone la agrupación (principal y sus
+   pasos, en su orden) y lo que queda suelto; una tarea sin relación con otras se queda sola.
+4. **Mostrarla** en una tabla corta (cuántas crear, cuántas actualizar, cuántas a la bandeja, las
+   áreas y las principales con sus pasos) y **pedir el visto bueno una vez**. Los pares dudosos de
+   `## Ahora` con su sección los resuelve el script con `emparejar_ahora.py`; los `dudoso` se
+   muestran en la misma tabla. Las dependencias por número de fila («necesita la 3») se reescriben
+   con el nombre de la tarea: en Toggl no hay números.
+5. **Enviar**, con el sí: `tasks bulk-create` para las nuevas y las principales, `tasks bulk-patch`
+   para las que ya existían y para colgar cada paso de su principal (`parent_task_id`). Validar
+   antes con `dry_run: true`.
 5. **Limpiar el repo**, en una rama y un commit:
    - `git rm` de `tareas/tareas.md`, `tareas/revisar.md` y `tareas/secciones.md`;
    - escribir `tareas/toggl.md` (`python3 $M toggl-md …` lo genera);
