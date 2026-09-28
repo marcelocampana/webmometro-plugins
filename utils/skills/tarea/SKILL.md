@@ -65,8 +65,11 @@ Se invoca el skill del carril con lo que dijo el usuario, sin repetirle nada ni 
 con más de media línea («Va por el carril suelto»). Las reglas, los estados y los tiempos son de
 cada carril: este archivo no los duplica.
 
-La infraestructura común vive aquí: `scripts/presencia.py` (presencia, marcas, tramos, plan) y
-`assets/` (instalación del registro y del gancho, y la configuración global de Toggl).
+La infraestructura común vive aquí: `scripts/presencia.py` (presencia, marcas, tramos, plan),
+`scripts/cola.py` (copia local de la cola de Toggl: solo los campos útiles, con descripción y notas;
+usa la sesión del conector y nunca la renueva) y `assets/` (instalación del registro y del gancho, y
+la configuración global de Toggl). **Para leer tareas de Toggl, `cola.py leer`, no `tasks list` del
+MCP**: cada tarea cruda pesa ~2.000 caracteres. Tras escribir en Toggl, `cola.py invalidar`.
 
 ## Idioma
 
