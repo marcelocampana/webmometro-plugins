@@ -167,6 +167,45 @@ class Aviso(Base):
         self.assertEqual(presencia.sesion_actual(t("10:30"), ajustes)["minutos"], 30)
 
 
+class AvisoDesdeElMac(Base):
+    def setUp(self):
+        super().setUp()
+        self.enviadas = []
+        self._notificar = presencia.notificar
+        presencia.notificar = lambda titulo, texto: self.enviadas.append((titulo, texto))
+
+    def tearDown(self):
+        presencia.notificar = self._notificar
+        super().tearDown()
+
+    def test_notifica_sin_mensajes_a_claude(self):
+        ajustes = presencia.leer_ajustes()
+        self.mac("09:00", "10:40", app="Figma")
+        presencia.avisar_desde_el_mac(t("10:40"), 5, ajustes)
+        self.assertEqual(len(self.enviadas), 1)
+        self.assertIn("1h 4", self.enviadas[0][1])
+
+    def test_gancho_y_notificacion_no_avisan_dos_veces(self):
+        ajustes = presencia.leer_ajustes()
+        self.mac("09:00", "10:40")
+        presencia.avisar_desde_el_mac(t("10:40"), 5, ajustes)
+        self.assertIsNone(presencia.aviso_pausa(t("10:41"), ajustes))
+        presencia.avisar_desde_el_mac(t("10:42"), 5, ajustes)
+        self.assertEqual(len(self.enviadas), 1)
+
+    def test_sin_nadie_frente_al_mac_no_notifica(self):
+        ajustes = presencia.leer_ajustes()
+        self.mac("09:00", "10:40")
+        presencia.avisar_desde_el_mac(t("10:40"), 300, ajustes)
+        self.assertEqual(self.enviadas, [])
+
+    def test_se_puede_apagar(self):
+        ajustes = dict(presencia.leer_ajustes(), notificar_mac=0)
+        self.mac("09:00", "10:40")
+        presencia.avisar_desde_el_mac(t("10:40"), 5, ajustes)
+        self.assertEqual(self.enviadas, [])
+
+
 class Plan(Base):
     SEMANA = "2026-W40"  # lunes 28-09 a domingo 04-10
 

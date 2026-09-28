@@ -19,9 +19,10 @@ Vive en `~/Github/AI-kit/config/context/toggl.md` (o donde diga `TOGGL_CONFIG`).
 | Clave | Valor | Qué es |
 | --- | --- | --- |
 | `ausencia_min` | 10 | Sin teclado, mouse ni mensajes durante esto → ausente desde la última actividad |
-| `sesion_min` | 90 | Sesión continua a partir de la cual Claude avisa de una pausa |
+| `sesion_min` | 90 | Sesión continua a partir de la cual se avisa de una pausa |
 | `pausa_min` | 10 | Hueco que cuenta como pausa y corta la sesión |
 | `repetir_aviso_min` | 30 | El aviso no se repite antes de esto |
+| `notificar_mac` | 1 | 1: el aviso también sale como notificación de macOS, aunque no le escribas a Claude; 0: solo en la conversación |
 | `imprevisto_min` | 30 | Hasta aquí, un trabajo no planificado sin commit va solo a Toggl |
 
 ## Registro de presencia

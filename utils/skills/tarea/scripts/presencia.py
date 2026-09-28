@@ -55,6 +55,7 @@ AJUSTES = {
     "pausa_min": 10,         # hueco que cuenta como pausa y corta la sesión
     "repetir_aviso_min": 30,  # no se repite el aviso antes de esto
     "claude_hueco_min": 5,   # hueco entre mensajes de Claude que corta su tramo de trabajo
+    "notificar_mac": 1,      # 1: el aviso de pausa también sale como notificación de macOS
 }
 
 
@@ -293,6 +294,25 @@ def aviso_pausa(hasta, ajustes):
     return sesion
 
 
+def notificar(titulo, texto):
+    """Notificación de macOS. El texto va como argumento, nunca dentro del código AppleScript."""
+    subprocess.run(["osascript", "-e", "on run argv",
+                    "-e", 'display notification (item 2 of argv) with title (item 1 of argv) sound name "Glass"',
+                    "-e", "end run", titulo, texto], capture_output=True, timeout=10)
+
+
+def avisar_desde_el_mac(hasta, inactivo, ajustes):
+    """El aviso de pausa sin depender de que el usuario le escriba a Claude. Comparte `aviso.json`
+    con el gancho: sale por uno o por otro, nunca por los dos. Solo con alguien frente al Mac."""
+    if not ajustes["notificar_mac"] or inactivo >= 60:
+        return None
+    aviso = aviso_pausa(hasta, ajustes)
+    if aviso:
+        notificar("Toca una pausa", "Llevas %s seguidas sin una pausa de %d min."
+                  % (fmt_duracion(aviso["minutos"] * 60), ajustes["pausa_min"]))
+    return aviso
+
+
 # ── Resúmenes ─────────────────────────────────────────────────────────────────────────────────
 
 
@@ -525,7 +545,9 @@ def main(argv=None):
         try:
             inactivo = segundos_inactivo()
             if inactivo is not None:
-                anotar(ahora(), "mac", inactivo, app_al_frente() if inactivo < 60 else "-")
+                t = ahora()
+                anotar(t, "mac", inactivo, app_al_frente() if inactivo < 60 else "-")
+                avisar_desde_el_mac(t, inactivo, ajustes)
         except Exception:  # noqa: BLE001 — desde launchd no hay a quién avisar
             pass
         return 0
