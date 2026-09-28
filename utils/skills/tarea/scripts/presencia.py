@@ -338,11 +338,14 @@ def resumen(desde, hasta, ajustes):
     # Atención: cada minuto presente va al repo en que trabajaba la sesión a la que se escribió por
     # última vez (no a la carpeta donde se abrió esa sesión).
     brutos = sorted((m, c[0], c[1] if len(c) > 1 else None) for m, t, c in lineas if t == "mensaje" and c)
-    de_claude = {}
-    if brutos:
-        de_claude = leer_sesiones(datetime.combine(desde, datetime.min.time()).astimezone(),
-                                 datetime.combine(hasta + timedelta(days=1), datetime.min.time()).astimezone(),
-                                 ajustes)
+    inicio = datetime.combine(desde, datetime.min.time()).astimezone()
+    fin = datetime.combine(hasta + timedelta(days=1), datetime.min.time()).astimezone()
+    de_claude = leer_sesiones(inicio, fin, ajustes)
+    # Desempeño: cuánto de tu tiempo fue con Claude trabajando en algún proyecto, y cuántas horas de
+    # Claude salieron por cada hora tuya.
+    claude = tramos_claude(inicio, fin, ajustes, sesiones=de_claude)
+    union = unir(sorted(x for v in claude.values() for x in v))
+    inicios_union = [a for a, _ in union]
     mensajes = [(minuto(m), anotado, sesion_del_mensaje(de_claude, m, sid)) for m, anotado, sid in brutos]
     horas_msg = [t for t, _, _ in mensajes]
     for a, b in presentes:
@@ -359,18 +362,53 @@ def resumen(desde, hasta, ajustes):
             app = activos.get(m, {}).get("app")
             if app:
                 dia["apps"][app] = dia["apps"].get(app, 0) + 1
+            j = bisect_right(inicios_union, m)
+            if j and m < union[j - 1][1]:
+                dia["con_claude_min"] = dia.get("con_claude_min", 0) + 1
             m += timedelta(minutes=1)
     for a, b in sesiones:
         dia = dias.setdefault(a.date().isoformat(), {"minutos": 0, "atencion": {}, "apps": {}})
         largo = int((b - a).total_seconds() // 60)
         dia["sesion_max_min"] = max(dia.get("sesion_max_min", 0), largo)
         dia["sesiones"] = dia.get("sesiones", 0) + 1
+    for tramos in claude.values():
+        for a, b in tramos:
+            while a < b:   # partido por día
+                corte = min(b, datetime.combine(a.date() + timedelta(days=1), datetime.min.time()).astimezone())
+                dia = dias.setdefault(a.date().isoformat(), {"minutos": 0, "atencion": {}, "apps": {}})
+                dia["claude_min"] = dia.get("claude_min", 0) + (corte - a).total_seconds() / 60
+                a = corte
     for dia in dias.values():
         dia["pausas"] = max(0, dia.get("sesiones", 1) - 1)
         dia["horas"] = fmt_duracion(dia["minutos"] * 60)
+        dia.update(desempeno(dia["minutos"], dia.get("con_claude_min", 0), dia.get("claude_min", 0)))
     total = sum(d["minutos"] for d in dias.values())
-    return {"desde": desde.isoformat(), "hasta": hasta.isoformat(), "total": fmt_duracion(total * 60),
-            "total_min": total, "dias": dias}
+    salida = {"desde": desde.isoformat(), "hasta": hasta.isoformat(), "total": fmt_duracion(total * 60),
+              "total_min": total, "dias": dias}
+    salida.update(desempeno(total, sum(d.get("con_claude_min", 0) for d in dias.values()),
+                            sum(d.get("claude_min", 0) for d in dias.values())))
+    return salida
+
+
+def desempeno(tuyos, con_claude, de_claude):
+    """Tu tiempo con y sin Claude trabajando, qué parte fue con Claude en algún proyecto, y cuántas
+    horas de Claude (sumadas por proyecto) salieron por cada hora tuya."""
+    return {"con_claude_min": int(con_claude), "sin_claude_min": int(tuyos - con_claude),
+            "sin_claude": fmt_duracion((tuyos - con_claude) * 60),
+            "en_proyectos_pct": round(100 * con_claude / tuyos) if tuyos else None,
+            "claude_min": int(round(de_claude)),
+            "rendimiento": round(de_claude / tuyos, 1) if tuyos else None}
+
+
+def unir(intervalos):
+    """Une intervalos ordenados que se tocan o se pisan."""
+    salida = []
+    for a, b in intervalos:
+        if salida and a <= salida[-1][1]:
+            salida[-1] = (salida[-1][0], max(salida[-1][1], b))
+        else:
+            salida.append((a, b))
+    return salida
 
 
 def raiz_claude():

@@ -311,6 +311,19 @@ class SinTareaTrasDiasSinEnviar(Atribucion):
         self.assertEqual([p["total"] for p in r["repos"]], ["3m"])
 
 
+class Desempeno(Atribucion):
+    def test_tu_tiempo_con_y_sin_claude_y_rendimiento(self):
+        self.mac("10:00", "11:00")                                          # tú: 60 min
+        self.sesion("s1", [(h, "a", "plugins") for h in ("10:00", "10:02", "10:04", "10:06", "10:08")])
+        self.sesion("s2", [(h, "a", "sitio") for h in ("10:00", "10:02", "10:04", "10:06", "10:08")])
+        r = correr("resumen", "--desde", "2026-09-26", "--hasta", "2026-09-26")
+        self.assertEqual(r["con_claude_min"], 9)       # 10:00-10:09, una vez aunque sean dos proyectos
+        self.assertEqual(r["sin_claude"], "51m")
+        self.assertEqual(r["en_proyectos_pct"], 15)
+        self.assertEqual(r["claude_min"], 18)          # 9 + 9: Claude trabajó en los dos
+        self.assertEqual(r["rendimiento"], 0.3)
+
+
 class MiTiempo(Base):
     def test_un_registro_por_tramo_con_sus_aplicaciones(self):
         self.mac("10:00", "10:20", app="Claude")

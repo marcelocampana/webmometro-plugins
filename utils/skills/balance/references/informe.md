@@ -15,6 +15,12 @@ De `resumen`: total del período, promedio por día trabajado, y **a qué proyec
 (`atencion`: cada minuto presente va al último proyecto al que le escribiste). Si el tiempo de
 proyecto supera al tuyo, el paralelo se dice con su factor: «30h de proyecto con 18h tuyas: 1,7×».
 
+**Desempeño**, de `resumen`, con números exactos (no de Toggl): tu tiempo **sin Claude** trabajando
+(`sin_claude`), qué parte de tu tiempo fue **con Claude en algún proyecto** (`en_proyectos_pct`) y el
+**rendimiento**: horas de Claude por cada hora tuya (`rendimiento`), frente a la semana anterior si
+hay datos. «Sin Claude» no es tiempo perdido: incluye lo que trabajaste tú solo (buscar, llamar,
+revisar); se dice así, sin juicio.
+
 ## 3. Plan contra realidad
 
 De `presencia.py plan comparar --semana AAAA-Www`: el plan **original** de la semana (el del lunes,
@@ -95,7 +101,8 @@ Tres números por proyecto y por tarea: **total** (Claude trabajando), **contigo
 Balance · 15 al 21 de septiembre
 
 Proyecto    ODC 6h (+2h) · Webmómetro 4h 30m · Plugins 2h
-Tu tiempo   9h 20m en 5 días · atención: Webmómetro 45%, ODC 40% · 1,3× en paralelo
+Tu tiempo   9h 20m en 5 días · atención: Webmómetro 45%, ODC 40%
+Desempeño   66% con Claude en proyectos · 3h 10m sin Claude · 0,7h de Claude por hora tuya (antes 0,5)
 Plan        6 de 9 a tiempo · 62% del tiempo en tareas del plan (semana anterior 48%)
 Imprevisto  22% del tiempo de proyecto
 Estimación  estimas bien las de «Corregir»; subestimas las de «Alinear con el diseño» (2×, 5 casos)
