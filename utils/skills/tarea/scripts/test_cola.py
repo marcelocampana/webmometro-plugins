@@ -98,14 +98,22 @@ class Reducir(unittest.TestCase):
     def test_deja_lo_util_y_quita_el_relleno(self):
         t = cola.reducir(cruda(1, descripcion="Área: Informes\nQué se espera: algo", notas="Necesita la 3"))
         self.assertEqual(t["proyecto"], "Webmómetro")
-        self.assertEqual(t["area"], "Informes")
+        self.assertEqual(t["area"], "utils")   # la etiqueta manda sobre la descripción
         self.assertEqual(t["etiquetas"], ["utils"])
+
         self.assertEqual(t["notas"], "Necesita la 3")
         self.assertTrue(t["asignada"])
         texto = json.dumps(t)
         self.assertNotIn("permissions", texto)
         self.assertNotIn("color", texto)
         self.assertLess(len(texto), len(json.dumps(cruda(1))) + 60)
+
+    def test_sin_etiqueta_de_area_usa_la_descripcion(self):
+        cr = cruda(1, descripcion="Área: Informes\nAlgo")
+        cr["tags"] = [{"id": 9, "name": "por-revisar"}]
+        self.assertEqual(cola.reducir(cr)["area"], "Informes")
+        cr["tags"] = []
+        self.assertEqual(cola.reducir(cr)["area"], "Informes")
 
     def test_sin_area_declarada(self):
         self.assertIsNone(cola.area_de("Qué se espera: algo"))
@@ -157,7 +165,8 @@ class Texto(unittest.TestCase):
         t = cola.reducir(cruda(1, "Pagar", descripcion="Área: Pagos\nPrimera\nSegunda", notas="Nota larga"))
         completo = cola.texto([t], completo=True)
         breve = cola.texto([t], completo=False)
-        self.assertIn("área Pagos", completo)
+        self.assertIn("área utils", completo)
+        self.assertNotIn("#utils", completo)   # el área no se repite como etiqueta
         self.assertIn("Segunda", completo)
         self.assertIn("Nota larga", completo)
         self.assertIn("Primera", breve)

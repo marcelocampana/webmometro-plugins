@@ -15,7 +15,7 @@ ese orden basta. Cada tarea lleva su área (la sección) en la primera línea de
 
 Uso:
     migrar_a_toggl.py armar tareas/ --proyecto ID --usuario UID
-                      [--estados '{"todo":ID,"in_progress":ID,"blocked":ID}'] [--bandeja ID_ETIQUETA]
+                      [--estados '{"todo":ID,"in_progress":ID,"blocked":ID}'] [--bandeja ID_ETIQUETA] [--areas '{"Área":ID_ETIQUETA}']
                       [--hoy AAAA-MM-DD]
     migrar_a_toggl.py toggl-md tareas/ --proyecto ID --nombre NOMBRE --cliente ID --cliente-nombre NOMBRE
                       [--forzar]
@@ -108,7 +108,7 @@ def abierta(fila):
     return fila.get("Estado", "").replace("✅", "").strip() != "Completada"
 
 
-def armar(carpeta, proyecto, usuario, estados=None, bandeja=None, hoy=None):
+def armar(carpeta, proyecto, usuario, estados=None, bandeja=None, hoy=None, areas_ids=None):
     carpeta = Path(carpeta)
     hoy = hoy or date.today().isoformat()
     tablas, marcador = leer_tablas(carpeta / "tareas.md")
@@ -163,7 +163,7 @@ def armar(carpeta, proyecto, usuario, estados=None, bandeja=None, hoy=None):
                            "estimado_min": None, "vence": None, "bandeja": True})
 
     for t in tareas:
-        t["payload"] = payload(t, proyecto, usuario, estados, bandeja, hoy)
+        t["payload"] = payload(t, proyecto, usuario, estados, bandeja, hoy, areas_ids)
 
     catalogo = leer_secciones(carpeta / "secciones.md")
     nombres = [n for n, _ in catalogo]
@@ -183,14 +183,16 @@ def armar(carpeta, proyecto, usuario, estados=None, bandeja=None, hoy=None):
     }
 
 
-def payload(t, proyecto, usuario, estados, bandeja, hoy):
-    """Lo que va a Toggl, tal cual. `status_id` y la etiqueta solo si se dieron sus ids."""
+def payload(t, proyecto, usuario, estados, bandeja, hoy, areas_ids=None):
+    """Lo que va a Toggl, tal cual. `status_id` y las etiquetas solo si se dieron sus ids: la del
+    área, si está en `areas_ids`, y la de la bandeja."""
     p = {"name": t["nombre"], "project_id": proyecto, "description": t["descripcion"]}
     if t["toggl_id"]:
         p = {"id": t["toggl_id"], "name": t["nombre"], "description": t["descripcion"]}
+    etiquetas = [i for i in ((areas_ids or {}).get(t["area"]), bandeja if t["bandeja"] else None) if i]
+    if etiquetas:
+        p["tag_ids"] = etiquetas
     if t["bandeja"]:
-        if bandeja:
-            p["tag_ids"] = [bandeja]
         return p
     if usuario:
         p["assignee_user_ids"] = [usuario]
@@ -208,7 +210,8 @@ def toggl_md(proyecto, nombre, cliente, cliente_nombre, areas):
     return ("<!-- tarea: toggl · proyecto %s «%s» · cliente %s «%s» -->\n\n# Toggl · %s\n\n"
             "Configuración de este repo en Toggl. Los pendientes viven allí; aquí, cómo se ordenan. Lo común a\n"
             "todos los repos está en la configuración global de Toggl.\n\n## Áreas\n\n"
-            "La primera línea de la descripción de cada tarea es `Área: <nombre>`, con uno de estos nombres.\n\n"
+            "Cada tarea lleva la etiqueta de su área, con uno de estos nombres, y la repite en la primera línea\n"
+            "de la descripción (`Área: <nombre>`).\n\n"
             "| Área | Qué abarca |\n| --- | --- |\n%s\n\n## Reglas\n\n<!-- Opcional: lo propio de este repo en Toggl. -->\n\n"
             "## Comentarios\n\n<!-- Opcional. -->\n") % (proyecto, nombre, cliente, cliente_nombre, nombre, filas)
 
@@ -222,6 +225,7 @@ def main(argv=None):
     a.add_argument("--usuario", type=int)
     a.add_argument("--estados", type=json.loads, help='{"todo":ID,"in_progress":ID,"blocked":ID}')
     a.add_argument("--bandeja", type=int, help="id de la etiqueta por-revisar")
+    a.add_argument("--areas", type=json.loads, help='{"Área": id de su etiqueta}')
     a.add_argument("--hoy")
     t = sub.add_parser("toggl-md")
     t.add_argument("carpeta")
@@ -236,7 +240,7 @@ def main(argv=None):
         print("No hay %s: no hay nada que migrar." % (carpeta / "tareas.md"), file=sys.stderr)
         return 2
     if args.orden == "armar":
-        r = armar(carpeta, args.proyecto, args.usuario, args.estados, args.bandeja, args.hoy)
+        r = armar(carpeta, args.proyecto, args.usuario, args.estados, args.bandeja, args.hoy, args.areas)
         print(json.dumps(r, ensure_ascii=False, indent=1))
         return 1 if r["dudosos"] else 0
     destino = carpeta / "toggl.md"

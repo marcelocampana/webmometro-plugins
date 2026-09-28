@@ -7,7 +7,8 @@ todos los repos está en la configuración global de Toggl.
 
 ## Áreas
 
-La primera línea de la descripción de cada tarea es `Área: <nombre>`, con uno de estos nombres.
+Cada tarea lleva la etiqueta de su área, con uno de estos nombres, y la repite en la primera línea
+de la descripción (`Área: <nombre>`).
 
 | Área | Qué abarca |
 | --- | --- |

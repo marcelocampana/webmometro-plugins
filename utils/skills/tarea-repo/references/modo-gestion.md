@@ -10,8 +10,9 @@ ancla en algo verificable** —un archivo, una deuda declarada, un hallazgo de l
 ancla, no se propone. Se propone y se espera, también para lo que dicta el usuario.
 
 - **Enunciado:** verbo + objeto concreto + ámbito, en una línea (`redaccion-tareas.md`).
-- **Área:** una de las que lista `tareas/toggl.md`, por el ámbito del cambio; va en la primera línea
-  de la descripción (`Área: Informes`). Un área nueva se propone y, con el sí, se añade al `toggl.md`.
+- **Área:** una de las que lista `tareas/toggl.md`, por el ámbito del cambio; va como etiqueta y en la
+  primera línea de la descripción (`Área: Informes`). Un área nueva se propone y, con el sí, se añade
+  al `toggl.md`.
 - **Coste:** lo propone el skill desde el historial (`estimacion.md`) y lo confirma el usuario. Sin
   base, se dice y va sin estimación.
 - **Vence:** solo si hay un compromiso externo real.

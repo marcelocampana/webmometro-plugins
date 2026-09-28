@@ -8,7 +8,8 @@ global de Toggl.
 
 ## Áreas
 
-La primera línea de la descripción de cada tarea es `Área: <nombre>`, con uno de estos nombres. Un
+Cada tarea lleva la etiqueta de su área, con uno de estos nombres, y la repite en la primera línea
+de la descripción (`Área: <nombre>`). Un
 área se gana su sitio: si solo tendría una tarea, va en `General`.
 
 | Área | Qué abarca |
