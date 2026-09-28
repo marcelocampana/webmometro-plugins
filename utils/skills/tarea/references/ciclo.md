@@ -33,7 +33,9 @@ el tiempo de proyecto cuenta las dos; el del usuario, una vez (`balance`).
 ## Qué va a Toggl
 
 **Toggl guarda lo que costó cada proyecto, por cliente: el trabajo de Claude.** Tu tiempo frente al
-computador se queda en local (`presencia.py`, avisos, `balance`) y no se mezcla con Toggl. El
+computador va aparte, a su propio proyecto sin cliente (`proyecto_mi_tiempo` de la configuración
+global): un registro por tramo continuo, con sus aplicaciones principales en la descripción. Nunca se
+suman. El
 proyecto de cada tramo de Claude es el del repo cuyos archivos toca, no el de la carpeta donde se
 abrió la sesión. En una tarea sin repo, o si Claude no trabajó en ella (una reunión, algo que hiciste
 tú), va tu tiempo: es lo que costó.

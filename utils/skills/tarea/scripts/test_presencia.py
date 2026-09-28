@@ -311,6 +311,27 @@ class SinTareaTrasDiasSinEnviar(Atribucion):
         self.assertEqual([p["total"] for p in r["repos"]], ["3m"])
 
 
+class MiTiempo(Base):
+    def test_un_registro_por_tramo_con_sus_aplicaciones(self):
+        self.mac("10:00", "10:20", app="Claude")
+        self.mac("10:20", "10:30", app="Safari")
+        self.mac("11:00", "11:05", app="WhatsApp")      # tras 30 min sin nada: otro tramo
+        r = correr("mi-tiempo", "--hasta", t("12:00").isoformat())
+        self.assertEqual([x["description"] for x in r["registros"]], ["Claude 20m · Safari 10m", "WhatsApp 5m"])
+        self.assertEqual(r["total"], "35m")
+
+    def test_la_pantalla_de_inicio_de_sesion_no_cuenta(self):
+        self.mac("00:17", "00:18", app="loginwindow")
+        self.assertEqual(correr("mi-tiempo", "--hasta", t("12:00").isoformat())["registros"], [])
+
+    def test_retoma_desde_el_ultimo_envio(self):
+        self.mac("10:00", "10:10")
+        correr("mi-tiempo", "--hasta", t("10:10").isoformat(), "--enviado")
+        self.mac("10:10", "10:20")
+        r = correr("mi-tiempo", "--hasta", t("10:20").isoformat())
+        self.assertEqual(r["total"], "10m")
+
+
 class Aviso(Base):
     def test_avisa_una_vez_pasado_el_umbral(self):
         ajustes = presencia.leer_ajustes()

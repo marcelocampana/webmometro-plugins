@@ -50,8 +50,9 @@ fuera ni bloquea el mensaje: en el peor caso no anota nada.
 
 Una rutina programada de Claude (no un agente de launchd: Toggl 2.0 solo acepta la sesión OAuth del
 conector, y un script no puede renovarla sin dejar al conector sin sesión) corre cada día a las
-22:00: `presencia.py sin-tarea`, un `time-entries bulk-create` sin `task_id` y, si salió bien,
-`sin-tarea --enviado`. Con la app cerrada a esa hora, corre al abrirla; lo pendiente se acumula desde
+22:00: `presencia.py sin-tarea` y `presencia.py mi-tiempo` (tu tiempo, al proyecto
+`proyecto_mi_tiempo` de la configuración global), un `time-entries bulk-create` sin `task_id` y, si
+salió bien, `--enviado` en los dos. Con la app cerrada a esa hora, corre al abrirla; lo pendiente se acumula desde
 el último envío, hasta 30 días (lo que Claude Code guarda sus sesiones).
 
 **Crear:** tarea programada `enviar-claude-sin-tarea`, `0 22 * * *`, con esos pasos en el prompt.

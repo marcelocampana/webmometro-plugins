@@ -14,7 +14,7 @@ description: >
   cerrar o crear tareas (eso es `tarea`).
 argument-hint: "[--semana | --mes | --desde AAAA-MM-DD --hasta AAAA-MM-DD]"
 metadata:
-  version: 1.4.0
+  version: 1.4.1
 ---
 
 # Balance del trabajo (balance)
@@ -35,14 +35,16 @@ una rutina: lo peor que puede pasar es un informe incompleto. Si de la revisión
 | Medida | Qué es | De dónde |
 | --- | --- | --- |
 | **Tiempo de proyecto** | Lo que costó cada tarea, proyecto y cliente: el trabajo de Claude (tu tiempo solo en tareas sin Claude) | Toggl: registros de tiempo |
-| **Tu tiempo** | Cuánto estuvo trabajando el usuario, y en qué | `presencia.py resumen` |
+| **Tu tiempo** | Cuánto estuvo trabajando el usuario, y en qué | `presencia.py resumen` (también en Toggl, en su proyecto propio) |
 | **Tiempo de Claude** | Cuánto trabajó Claude, contigo y solo | `presencia.py claude` y la columna Claude del historial |
 
 Con dos sesiones en paralelo, Claude trabaja en dos proyectos a la vez y tú lo viviste una vez.
 **Sumar tiempo de proyecto para obtener tus horas es el error que este skill existe para no
 cometer.** La relación se dice como rendimiento: «30h de proyecto con 18h tuyas: 1,7×». Hasta el
 28-09-2026 por la tarde, Toggl guardaba tu presencia con tarea abierta, no el trabajo de Claude: al
-comparar con períodos anteriores, se dice.
+comparar con períodos anteriores, se dice. **El proyecto de tu tiempo en Toggl**
+(`proyecto_mi_tiempo` de la configuración global) **no es tiempo de proyecto**: se deja fuera de la
+sección 1 y de toda suma por cliente.
 
 ## Paso 0 · Qué hay
 
