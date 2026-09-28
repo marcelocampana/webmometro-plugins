@@ -61,23 +61,32 @@ a plantilla o a un skill. Una línea por candidata, con su tiempo y cuántas vec
 `claude` muestra que Claude ya las hace solo casi enteras, se dice: ya están automatizadas en la
 práctica.
 
-Se ofrece llevarlas a `revisar.md` («¿las anoto en revisar.md de plugins?»); con el sí, se remite a
-`tarea` en ese repo. Este skill no escribe.
+Se ofrece llevarlas a la bandeja (etiqueta `por-revisar` en Toggl); con el sí, se remite a `tarea`.
+Este skill no escribe.
 
 ## 7. Salud
 
 De `resumen`: horas frente al computador por día (máximo y promedio), **sesión continua más larga**
-(`sesion_max_min`), número de pausas y días trabajados. Trabajo fuera de horario: minutos antes de
+(`sesion_max_min`), número de pausas, días trabajados y sesiones que pasaron de `sesion_min` (el
+umbral del aviso de pausa). Trabajo fuera de horario: minutos antes de
 las 8:00 o después de las 20:00, si los hay. Con un día de más de 9h o una sesión de más de 3h, una
 línea sin sermones: «el miércoles: 4h 10m seguidas».
 
 **Aplicaciones**: horas por aplicación (`apps`), las 5 primeras, y cuánto de eso cayó dentro de un
 tramo con tarea abierta. «Slack 3h, casi todo fuera de tareas» dice más que el total.
 
-## 8. Claude solo
+## 8. Claude
 
-De `claude`: horas que Claude trabajó sin el usuario presente, por proyecto (`solo`). Es trabajo que
-no costó atención: sirve para ver qué ya delega bien. **No se suma a nada.**
+Tres números por proyecto y por tarea: **total** (Claude trabajando), **contigo** (tú presente) y
+**solo** (sin ti: trabajo que no costó atención). **Nunca se suman a tu tiempo ni al de proyecto.**
+
+- **Por proyecto**, de `claude`: total y cuánto fue solo. «Webmómetro 5h, 3h solo».
+- **Por tarea**, de la columna **Claude** del historial (`1h 10m · 40m solo`) en las filas cerradas
+  del período: las dos o tres que más le tomaron, con cuánto de eso fue solo.
+- **Por familia** (verbo + objeto, ≥ 3 filas con dato): la mediana de Claude y la parte solo.
+  Solo ≥ 70 %: «Claude ya las resuelve solo»; ≤ 30 %: «necesitan que estés»; es lo que dice qué
+  delegar entero.
+- Filas con `—` o de antes de la columna: no cuentan. Sin base, se dice.
 
 ## Plantilla
 
@@ -92,7 +101,7 @@ Estimación  estimas bien las de «Corregir»; subestimas las de «Alinear con e
 Optimizar   «Aplicar correcciones médicas»: 3h 10m en 6 veces → candidata a plantilla
 Salud       máx. 6h 40m el jueves · sesión más larga 2h 50m · 3 pausas por día
 Apps        Claude 5h · Chrome 2h · Slack 1h, casi todo fuera de tareas
-Claude solo 4h 30m mientras no estabas (Webmómetro 3h)
+Claude      7h, 4h 30m solo (Webmómetro 3h) · «Corregir» las resuelve solo; «Alinear» necesita que estés
 
 ⚠ sin datos de Toggl para ODC antes del miércoles
 ```

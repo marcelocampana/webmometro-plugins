@@ -75,7 +75,8 @@ pasos como subtareas** (`parent_task_id`), no una tarea por paso.
 - **Se confirma solo la principal.** Los pasos se encadenan sin pedir visto bueno entre uno y otro:
   cada uno se abre, se cierra y envía su tiempo solo. Pedir confirmación por paso obliga al usuario a
   estar frente a la pantalla. Solo se para por un freno real (conflicto, `main` sucia, cambios ajenos
-  o una decisión que es del usuario).
+  o una decisión que es del usuario). **Nunca se termina un paso con «¿sigo con el siguiente?»**, y
+  «empieza con el paso 1» arranca la cadena entera, no solo ese paso.
 - **La principal va sin asignar y sin estimación**, así no cuenta dos veces en la capacidad; los
   pasos sí llevan las suyas.
 - **Su fecha es la del último paso**, para que en la vista por fecha se vean como árbol. Quien mueva

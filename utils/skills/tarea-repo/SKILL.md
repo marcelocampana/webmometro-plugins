@@ -91,7 +91,7 @@ están en Toggl; se leen con `tarea/scripts/cola.py leer --proyecto <ID del marc
 
 1. **Ninguna tarea se crea sin visto bueno**; la IA no reordena la cola del usuario.
 2. **Se completa una tarea y se para**; sugerir la siguiente sí, empezarla no. Los pasos de una tarea
-   principal no son tareas: se encadenan.
+   principal no son tareas: se encadenan hasta el cierre **sin preguntar por el siguiente paso**.
 3. **El historial se escribe en el mismo cierre**, dentro de la cadena, nunca como paso aparte.
 4. **Del historial se lee la sección del ancla, nunca el archivo entero** (`historial-lectura.md`).
 5. **Las áreas salen de `toggl.md`**: un área nueva se añade ahí con visto bueno, no se inventa.
