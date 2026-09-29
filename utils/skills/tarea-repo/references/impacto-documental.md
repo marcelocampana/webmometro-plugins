@@ -3,7 +3,7 @@
 Se lee **con la cadena de cierre ya terminada**, nunca antes: nada queda a medias si el usuario no
 contesta. Dos tiempos — detectar barato, y solo entonces leer.
 
-1. **Detectar.** Del diff de la rama (`git diff --name-only main@{1}...`), busca señales de que la
+1. **Detectar.** Del diff de la rama (`git diff --name-only <destino>@{1}...`, con la rama destino de `toggl.md`), busca señales de que la
    documentación pudo quedar corta: cambió la estructura de directorios; se añadió, renombró o
    eliminó un archivo que el README enumera, un comando, un script, una dependencia o una variable de
    entorno; o se tocó algo que `CLAUDE.md` describe como convención, layout o invariante. **Sin señal,

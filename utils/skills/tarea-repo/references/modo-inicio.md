@@ -19,7 +19,7 @@ una petición de tareas**). Si lo que hay es un `tareas.md` con `## Ahora`, no e
    proyecto y de lo que el usuario ya nombró. **Un área se gana su sitio**: si solo tendría una tarea,
    va en `General`. Pocas y estables.
 4. **Crear**, con el visto bueno:
-   - `tareas/toggl.md` desde `assets/toggl.esqueleto.md`, con el marcador y las áreas acordadas.
+   - `tareas/toggl.md` desde `assets/toggl.esqueleto.md`, con el marcador, las áreas acordadas y la rama destino (`main` salvo que el usuario diga otra, como `preview`).
    - `tareas/auditoria.md` desde `assets/auditoria.esqueleto.md`.
    - `tareas/historial/` vacío.
 5. **Ofrecer, en una línea cada uno:** el bloque para `CLAUDE.md` (`assets/claude-md-puntero.md`) y

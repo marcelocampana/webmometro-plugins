@@ -54,7 +54,7 @@
       "id": 7,
       "name": "cierre-delegado",
       "prompt": "Hazte cargo de la de precios completa y ciérrala al terminar; no me pidas confirmación.",
-      "expected_output": "Trabaja la tarea y, al terminar, ejecuta la cadena de cierre (Toggl, historial, commit, merge) sin pedir la confirmación: el encargo ya es el visto bueno. Solo se detendría por main sucia, conflicto o cambios ajenos.",
+      "expected_output": "Trabaja la tarea con commits en su rama sin preguntar, pero NO mergea: al terminar informa en 2-3 líneas dónde ver el resultado (rama, preview, commits) y pide la aprobación del merge a la rama destino. Explica en una línea que el merge siempre la lleva, aunque se haya encargado cerrar sin confirmación. Sin ese sí, el trabajo queda commiteado en la rama.",
       "files": []
     },
     {

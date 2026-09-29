@@ -14,7 +14,7 @@ description: >
   efímeros de la sesión.
 argument-hint: "[lo que el usuario quiere hacer]"
 metadata:
-  version: 4.5.0
+  version: 4.8.0
 ---
 
 # Tareas (tarea)
@@ -83,7 +83,8 @@ y se ofrece `tarea-repo --migrar`.
   paso: en un repo, `tareas/planes/<id>-<slug>.md` (`tarea-repo`); sin repo, en la descripción. El
   plan se aprueba una vez.
 - **Se ejecuta de corrido.** Aprobado el plan, los pasos se encadenan sin pedir visto bueno; solo se
-  para por un freno real (conflicto, `main` sucia, cambios ajenos, algo que es del usuario). **Nunca
+  para por un freno real (conflicto, la rama destino sucia, cambios ajenos, algo que es del usuario)
+  y, en un repo, **siempre antes del merge**, que lleva la aprobación del usuario tras ver el resultado. **Nunca
   se termina un paso con «¿sigo con el siguiente?»**, y «empieza con el paso 1» arranca la cadena.
 - **Al retomar**, el usuario no relee el plan: Claude lo lee y da el estado en 2–3 líneas (cuántos
   pasos van, cuál sigue, qué le toca al usuario).

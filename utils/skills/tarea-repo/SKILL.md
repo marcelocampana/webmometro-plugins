@@ -15,7 +15,7 @@ description: >
   usuario no pidió nada de tareas, no lo actives.
 argument-hint: "[--init | --migrar | --auditoria | --ingerir | --revisar | --toggl]"
 metadata:
-  version: 4.4.0
+  version: 4.8.0
 ---
 
 # Tareas de repositorio (tarea-repo)
@@ -74,14 +74,17 @@ están en Toggl; se leen con `tarea/scripts/cola.py leer --proyecto <ID del marc
 - **Planificar:** con el usuario, qué hace falta para lograr la tarea. Los pasos de Claude, con su
   skill y su contexto, van al plan (`tareas/planes/`); lo que le toca al usuario, como subtareas en
   Toggl, que cronometra él. **Se aprueba una vez** y eso cubre la ejecución y el cierre.
-- **Abrir:** `main` limpia y actualizada, y una rama nueva que describa la tarea. **Nunca se trabaja
-  sobre `main`.** En Toggl, lo de `tarea`.
-- **Cerrar:** **una sola confirmación**, y con ella corre la cadena entera sin pausas: tiempo y estado
-  de Claude en Toggl, entrada en el historial, commit, merge y push. Solo la paran `main` sucia o desactualizada, un
-  conflicto de merge o cambios ajenos a la tarea. Si el usuario encargó la tarea completa, ese encargo
-  ya es el visto bueno.
-- **Los pasos del plan** se encadenan sin preguntar; cada uno puede llevar su commit y se marca hecho
-  en el plan, con evidencia. Al retomar, el estado en 2–3 líneas: el usuario no relee el plan.
+- **Abrir:** la **rama destino** (`toggl.md` § Rama destino; `main` si no la declara) limpia y
+  actualizada, y una rama nueva que salga de ella y describa la tarea. **Nunca se trabaja sobre la
+  destino ni sobre `main`.** En Toggl, lo de `tarea`.
+- **Los pasos del plan** se encadenan sin preguntar; cada uno puede llevar su commit —un punto de
+  guardado en la rama de la tarea, que no pide nada— y se marca hecho en el plan, con evidencia. Al
+  retomar, el estado en 2–3 líneas: el usuario no relee el plan.
+- **Cerrar:** **una sola confirmación, después de que el usuario vea el resultado**, y con ella corre
+  la cadena entera sin pausas: tiempo y estado de Claude en Toggl, entrada en el historial, commit,
+  merge a la destino y push. Solo la paran la destino sucia o desactualizada, un conflicto de merge o
+  cambios ajenos a la tarea. Si la destino no es `main`, pasar a `main` es otro acto, con su propia
+  aprobación.
 
 ## Comunicación ejecutiva
 
@@ -99,6 +102,9 @@ están en Toggl; se leen con `tarea/scripts/cola.py leer --proyecto <ID del marc
 3. **El historial se escribe en el mismo cierre**, dentro de la cadena, nunca como paso aparte.
 4. **Del historial se lee la sección del ancla, nunca el archivo entero** (`historial-lectura.md`).
 5. **Las áreas salen de `toggl.md`**: un área nueva se añade ahí con visto bueno, no se inventa.
+6. **Ningún merge a la rama destino ni a `main` sin la aprobación del usuario, dada después de ver
+   el resultado.** Ni un encargo previo («complétala», «no me pidas confirmación») ni el plan aprobado
+   la sustituyen. Sin ella, el trabajo se queda commiteado en su rama. Es fija: no se configura.
 
 ## Idioma
 

@@ -32,7 +32,7 @@ en el repo solo la memoria. **En una pasada y con un solo visto bueno.**
    antes con `dry_run: true`.
 5. **Limpiar el repo**, en una rama y un commit:
    - `git rm` de `tareas/tareas.md`, `tareas/revisar.md` y `tareas/secciones.md`;
-   - escribir `tareas/toggl.md` (`python3 $M toggl-md …` lo genera);
+   - escribir `tareas/toggl.md` (`python3 $M toggl-md … [--rama preview]` lo genera; la rama destino es `main` salvo que el usuario diga otra);
    - **el historial no se toca**; `auditoria.md` se queda;
    - actualizar el bloque de tareas del `CLAUDE.md` del repo con `assets/claude-md-puntero.md`.
 6. `cola.py invalidar`, y una línea de cierre: «Migrado: 18 tareas a Toggl, 6 a la bandeja».

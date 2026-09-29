@@ -152,9 +152,16 @@ class Migracion(unittest.TestCase):
         texto = (self.c / "toggl.md").read_text(encoding="utf-8")
         self.assertIn("proyecto 42 «Sitio» · cliente 9 «Cliente»", texto)
         self.assertIn("| Pagos | Cobro y checkout. |", texto)
+        self.assertIn("## Rama destino\n\n`main`", texto)
         with redirect_stdout(io.StringIO()):
             self.assertEqual(m.main(["toggl-md", str(self.c), "--proyecto", "42", "--nombre", "Sitio",
                                      "--cliente", "9", "--cliente-nombre", "Cliente"]), 2)
+
+    def test_toggl_md_con_rama_destino(self):
+        with redirect_stdout(io.StringIO()):
+            m.main(["toggl-md", str(self.c), "--proyecto", "42", "--nombre", "Sitio",
+                    "--cliente", "9", "--cliente-nombre", "Cliente", "--rama", "preview"])
+        self.assertIn("## Rama destino\n\n`preview`", (self.c / "toggl.md").read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":
