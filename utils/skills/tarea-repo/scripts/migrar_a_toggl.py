@@ -17,7 +17,7 @@ Uso:
     migrar_a_toggl.py armar tareas/ --proyecto ID --usuario UID
                       [--estados '{"todo":ID,"in_progress":ID,"blocked":ID}'] [--bandeja ID_ETIQUETA] [--areas '{"Área":ID_ETIQUETA}']
                       [--hoy AAAA-MM-DD]
-    migrar_a_toggl.py toggl-md tareas/ --proyecto ID --nombre NOMBRE --cliente ID --cliente-nombre NOMBRE
+    migrar_a_toggl.py toggl-md tareas/ --proyecto ID --nombre NOMBRE --cliente ID --cliente-nombre NOMBRE [--rama preview]
                       [--forzar]
 
 Códigos de salida: 0 bien · 1 hay pares dudosos que confirmar · 2 error.
@@ -205,15 +205,17 @@ def payload(t, proyecto, usuario, estados, bandeja, hoy, areas_ids=None):
     return p
 
 
-def toggl_md(proyecto, nombre, cliente, cliente_nombre, areas):
+def toggl_md(proyecto, nombre, cliente, cliente_nombre, areas, rama="main"):
     filas = "\n".join("| %s | %s |" % (a["nombre"], a["ambito"] or "—") for a in areas) or "| General | — |"
     return ("<!-- tarea: toggl · proyecto %s «%s» · cliente %s «%s» -->\n\n# Toggl · %s\n\n"
             "Configuración de este repo en Toggl. Los pendientes viven allí; aquí, cómo se ordenan. Lo común a\n"
-            "todos los repos está en la configuración global de Toggl.\n\n## Áreas\n\n"
+            "todos los repos está en la configuración global de Toggl.\n\n## Rama destino\n\n`%s`\n\n"
+            "La rama desde la que sale cada tarea y a la que vuelve al cerrarse, siempre con la aprobación del\n"
+            "usuario después de ver el resultado. Si no es `main`, pasar de ella a `main` es un acto aparte.\n\n## Áreas\n\n"
             "Cada tarea lleva la etiqueta de su área, con uno de estos nombres, y la repite en la primera línea\n"
             "de la descripción (`Área: <nombre>`).\n\n"
             "| Área | Qué abarca |\n| --- | --- |\n%s\n\n## Reglas\n\n<!-- Opcional: lo propio de este repo en Toggl. -->\n\n"
-            "## Comentarios\n\n<!-- Opcional. -->\n") % (proyecto, nombre, cliente, cliente_nombre, nombre, filas)
+            "## Comentarios\n\n<!-- Opcional. -->\n") % (proyecto, nombre, cliente, cliente_nombre, nombre, rama, filas)
 
 
 def main(argv=None):
@@ -233,6 +235,7 @@ def main(argv=None):
     t.add_argument("--nombre", required=True)
     t.add_argument("--cliente", type=int, required=True)
     t.add_argument("--cliente-nombre", required=True)
+    t.add_argument("--rama", default="main", help="rama destino de las tareas (main por defecto)")
     t.add_argument("--forzar", action="store_true")
     args = p.parse_args(argv)
     carpeta = Path(args.carpeta)
@@ -248,7 +251,7 @@ def main(argv=None):
         print("%s ya existe; --forzar para reescribirlo." % destino, file=sys.stderr)
         return 2
     areas = armar(carpeta, args.proyecto, None)["areas"]
-    destino.write_text(toggl_md(args.proyecto, args.nombre, args.cliente, args.cliente_nombre, areas), encoding="utf-8")
+    destino.write_text(toggl_md(args.proyecto, args.nombre, args.cliente, args.cliente_nombre, areas, args.rama), encoding="utf-8")
     print(json.dumps({"ok": True, "escrito": str(destino), "areas": len(areas)}, ensure_ascii=False))
     return 0
 

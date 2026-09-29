@@ -88,13 +88,16 @@ Utilidades transversales de organización del trabajo.
   aplicación en primer plano y mensajes a Claude), con avisos de pausa. La tarea es tu
   objetivo; como subtareas van solo las cosas que te tocan a ti. Los pasos de
   Claude, con su skill y su contexto, viven en el plan de la tarea
-  (`tareas/planes/`), se encadenan sin preguntar y se confirma solo el cierre. Lee
+  (`tareas/planes/`), se encadenan sin preguntar —cada commit en la rama es un punto de
+  guardado— y se confirma solo el merge, después de ver el resultado. Lee
   la cola por una copia local reducida (`cola.py`), no por la respuesta
   cruda de Toggl. Las tareas sin repo (facturar, reuniones) son las de un
   proyecto que ningún repo enlaza.
 - **tarea-repo** — La parte de repositorio: para las tareas de un proyecto
-  enlazado a un repo (`tareas/toggl.md`), rama por tarea, cierre en cadena
-  con commit, merge y push, e historial de lo hecho y por qué como memoria del
+  enlazado a un repo (`tareas/toggl.md`), rama por tarea desde la rama
+  destino de `toggl.md` (`main` por defecto, o una de pruebas como `preview`),
+  cierre en cadena con commit, merge y push —el merge, siempre con tu
+  aprobación tras ver el resultado—, e historial de lo hecho y por qué como memoria del
   repo (`tareas/historial/`). Estima el coste desde ese historial, audita el
   proyecto por áreas, ingiere tareas de una conversación o un archivo a la
   bandeja (`por-revisar` en Toggl) y migra a Toggl los repos con el formato

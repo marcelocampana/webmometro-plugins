@@ -40,17 +40,27 @@ pasos van, cuál sigue, qué le toca a él. No se le pide releer el plan.
 
 ## Abrir
 
-1. `git status` y `git fetch`; con `main` limpia y actualizada, `git switch -c <rama>` con un nombre
-   que describa la tarea. **Nunca se trabaja sobre `main`**, y si un merge quedó pendiente, **avisa
-   de que `main` está desactualizada y decide antes de empezar**.
+1. `git status` y `git fetch`; con la **rama destino** (la de `tareas/toggl.md` § Rama destino; `main`
+   si no la declara) limpia y actualizada, `git switch -c <rama> <destino>` con un nombre que describa
+   la tarea. La rama sale **de la destino**, no de `main`: si fueran distintas y saliera de `main`, le
+   faltaría lo que ya está en prueba. **Nunca se trabaja sobre la destino ni sobre `main`**, y si un
+   merge quedó pendiente, **avisa de que la destino está desactualizada y decide antes de empezar**.
 2. En Toggl y en el registro local, lo de `tarea` (estado In Progress, `P marca --evento abrir`).
 
 Si hay otra tarea de repo en curso, se dice en una línea antes de abrir.
 
 ## Cerrar
 
-**Una sola confirmación.** Informa de lo hecho en 2-3 líneas y pide el visto bueno; con él, anuncia
-la cadena en una línea («Cierro, commiteo, mergeo a `main` y subo») y ejecútala sin pausas:
+**Los commits en la rama de la tarea son puntos de guardado**: se hacen durante los pasos sin pedir
+nada, porque no tocan la rama destino. **El merge a la rama destino, en cambio, siempre lleva la
+aprobación del usuario, dada después de ver el resultado.** Ni un encargo previo («complétala», «no
+me pidas confirmación») ni el plan aprobado la sustituyen: una autorización dada antes de que el
+trabajo exista no certifica que esté bien. Es regla fija, no una opción de `toggl.md`.
+
+**Una sola confirmación.** Informa de lo hecho en 2-3 líneas con **dónde verlo** —la rama, el
+preview si lo hay, capturas si es visual, los commits por paso— y pide el visto bueno. Sin él, el
+trabajo se queda commiteado en su rama y se espera. Con él, anuncia la cadena en una línea («Cierro,
+commiteo, mergeo a `<destino>` y subo») y ejecútala sin pausas:
 
 0. **Plan:** todos los pasos con «Hecho» y ninguna subtarea del usuario abierta; si no, se dice qué
    falta y la tarea no se cierra.
@@ -58,15 +68,19 @@ la cadena en una línea («Cierro, commiteo, mergeo a `main` y subo») y ejecút
 2. **Historial:** la entrada en `tareas/historial/AAAA-MM.md`, con los datos de `tramos`
    (`archivado.md`); el comentario enlaza el plan.
 3. **Commit** en la rama de la tarea: lo resuelto y la entrada del historial, juntos.
-4. **Merge a `main`** y **push** a `origin`, sin pedir otro visto bueno. Si el push falla, se dice y
-   `main` queda mergeada en local.
+4. **Merge a la rama destino** y **push** a `origin`, sin pedir otro visto bueno. Si el push falla,
+   se dice y la destino queda mergeada en local.
 
-**Tres frenos, y solo esos, detienen la cadena:** `main` sucia o desactualizada al mergear; un
+**Si la destino no es `main`** (una rama de pruebas como `preview`), el cierre de la tarea termina
+ahí. **Pasar de la destino a `main` es otro acto**, con su propia aprobación y fuera de toda tarea,
+porque puede llevar varias: se pide cuando el usuario lo dice, nunca como coletilla de un cierre.
+
+**Tres frenos, y solo esos, detienen la cadena:** la destino sucia o desactualizada al mergear; un
 conflicto de merge (muestra qué archivos chocan y espera, no lo resuelvas solo); cambios sin relación
 con la tarea al commitear (pregunta si van o se quedan fuera).
 
 **Impacto documental:** con el merge hecho, busca en el diff de la rama (`git diff --name-only
-main@{1}...`) señales de documentación corta —estructura, un archivo que el README enumera, un
+<destino>@{1}...`) señales de documentación corta —estructura, un archivo que el README enumera, un
 comando, una dependencia, una convención de `CLAUDE.md`—. **Sin señal, silencio total.** Con señal:
 `impacto-documental.md`.
 

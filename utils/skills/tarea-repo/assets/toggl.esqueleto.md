@@ -6,6 +6,14 @@ Configuración de este repo en Toggl. Los pendientes viven allí; aquí, cómo s
 todos los repos (espacio de trabajo, umbrales, etiquetas transversales) está en la configuración
 global de Toggl.
 
+## Rama destino
+
+`main`
+
+La rama desde la que sale cada tarea y a la que vuelve al cerrarse, siempre con la aprobación del
+usuario después de ver el resultado. `main` por defecto; en un repo con rama de pruebas (por ejemplo
+`preview`), esa. Si no es `main`, pasar de ella a `main` es un acto aparte, con su propia aprobación.
+
 ## Áreas
 
 Cada tarea lleva la etiqueta de su área, con uno de estos nombres, y la repite en la primera línea
