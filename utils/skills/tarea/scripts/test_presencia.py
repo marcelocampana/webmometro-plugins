@@ -11,7 +11,7 @@ import sys
 import tempfile
 import unittest
 from contextlib import redirect_stdout
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -78,7 +78,7 @@ class Tramos(Base):
         r = self.tramos("1", "11:00")
         self.assertEqual(r["duracion"], "35m")
         self.assertEqual(r["descontado"], "25m")
-        self.assertEqual(len(r["registros"]), 2)
+        self.assertEqual(r["registros"], [])             # tu tiempo no va a Toggl: lo cronometras tú
         self.assertEqual(r["coste"], "45m")
 
     def test_completo_no_recorta_una_reunion_fuera_del_mac(self):
@@ -94,7 +94,6 @@ class Tramos(Base):
         self.mac("10:15", "10:30")
         self.marca("1", "cerrar", "10:30")
         r = self.tramos("1", "10:30")
-        self.assertEqual(len(r["registros"]), 1)
         self.assertEqual(r["duracion"], "30m")
 
     def test_mensajes_desde_el_ipad_cuentan(self):
@@ -113,20 +112,14 @@ class Tramos(Base):
         r = self.tramos("1", "2026-09-27T09:30")
         self.assertEqual(r["duracion"], "1h 0m")
 
-    def test_pausa_y_envio_parcial(self):
+    def test_pausa_suma_solo_lo_abierto(self):
         self.marca("1", "abrir", "10:00")
         self.mac("10:00", "10:20")
         self.marca("1", "pausar", "10:20")
-        self.assertEqual(len(self.tramos("1", "10:20")["registros"]), 1)
-        self.marca("1", "enviado", "10:20")
         self.marca("1", "retomar", "11:00")
         self.mac("11:00", "11:10")
         self.marca("1", "cerrar", "11:10")
-        r = self.tramos("1", "11:10")
-        self.assertEqual(len(r["registros"]), 1)
-        self.assertEqual(r["registros"][0]["duration"], 600)
-        self.assertEqual(r["duracion"], "30m")
-        self.assertEqual(len(self.tramos("1", "11:10", "--todo")["registros"]), 2)
+        self.assertEqual(self.tramos("1", "11:10")["duracion"], "30m")
 
     def test_determinista(self):
         self.marca("1", "abrir", "10:00")
@@ -272,16 +265,41 @@ class ClaudeEnToggl(Atribucion):
         self.assertEqual(r["fuente"], "claude")
         self.assertEqual(sum(x["duration"] for x in r["registros"]), 9 * 60)
         self.assertEqual(r["duracion"], "5m")            # tu tiempo, para el historial
+        self.assertNotIn("tag_ids", r["registros"][0])   # sin etiqueta configurada
 
-    def test_sin_trabajo_de_claude_va_tu_tiempo(self):
+    def test_los_registros_de_claude_llevan_su_etiqueta(self):
+        with open(os.environ["TOGGL_CONFIG"], "w", encoding="utf-8") as f:
+            f.write("| `etiqueta_claude` | 555 | la de Claude |\n")
+        presencia.anotar(t("10:00"), "tarea", "sitio", "1", "abrir")
+        self.sesion("s1", [("10:00", "a", "sitio"), ("10:02", "a")])
+        presencia.anotar(t("10:30"), "tarea", "sitio", "1", "cerrar")
+        r = correr("tramos", "--repo", "sitio", "--tarea", "1", "--hasta", t("10:30").isoformat())
+        self.assertEqual(r["registros"][0]["tag_ids"], [555])
+
+    def test_sin_trabajo_de_claude_no_se_envia_nada(self):
         self.marca("R", "abrir", "10:00")
         self.mac("10:00", "10:20")
         self.marca("R", "cerrar", "10:20")
         r = correr("tramos", "--repo", "sin-repo", "--tarea", "R", "--hasta", t("10:20").isoformat())
         self.assertIn("error", r)                        # otra tarea: marcas de repo "repo"
         r = self.tramos("R", "10:20")
-        self.assertEqual(r["fuente"], "usuario")
-        self.assertEqual(r["duracion"], "20m")
+        self.assertEqual(r["fuente"], "ninguno")         # tu tiempo lo cronometras tú en Toggl
+        self.assertEqual(r["registros"], [])
+        self.assertEqual(r["duracion"], "20m")           # para el historial
+
+    def test_pausa_y_envio_parcial_de_claude(self):
+        presencia.anotar(t("10:00"), "tarea", "sitio", "1", "abrir")
+        self.sesion("s1", [("10:00", "a", "sitio"), ("10:02", "a"), ("10:04", "a"), ("10:06", "a"),
+                           ("10:08", "a")])              # Claude, de 10:00 a 10:09
+        presencia.anotar(t("10:20"), "tarea", "sitio", "1", "pausar")
+        presencia.anotar(t("10:20"), "tarea", "sitio", "1", "enviado")
+        presencia.anotar(t("11:00"), "tarea", "sitio", "1", "retomar")
+        self.sesion("s2", [("11:00", "a", "sitio"), ("11:02", "a"), ("11:04", "a")])  # 11:00-11:05
+        presencia.anotar(t("11:10"), "tarea", "sitio", "1", "cerrar")
+        r = correr("tramos", "--repo", "sitio", "--tarea", "1", "--hasta", t("11:10").isoformat())
+        self.assertEqual([x["duration"] for x in r["registros"]], [5 * 60])
+        todo = correr("tramos", "--repo", "sitio", "--tarea", "1", "--hasta", t("11:10").isoformat(), "--todo")
+        self.assertEqual(len(todo["registros"]), 2)
 
     def test_sin_tarea_excluye_lo_que_tuvo_tarea_y_avanza_al_enviar(self):
         (self.repos["plugins"] / "tareas").mkdir()
@@ -454,6 +472,37 @@ class Abiertas(Base):
         r = correr("abiertas", "--hasta", t("11:00").isoformat())
         self.assertEqual([(x["tarea"], x["estado"]) for x in r], [("A", "abierta"), ("B", "pausada")])
         self.assertEqual(correr("abiertas", "--repo", "otro", "--hasta", t("11:00").isoformat()), [])
+
+
+class Verificar(Base):
+    def verificar(self, *entradas):
+        ruta = os.path.join(self.tmp.name, "entradas.json")
+        with open(ruta, "w", encoding="utf-8") as f:
+            json.dump({"data": list(entradas)}, f)
+        return correr("verificar", "--entradas", ruta)["registros"]
+
+    def test_detecta_inicio_tarde_cronometro_olvidado_y_pausa(self):
+        self.mac("09:40", "10:20", app="Safari")          # venías activo desde las 09:40
+        self.mac("10:45", "11:00", app="Miro")            # pausa de 25 min
+        [r] = self.verificar({"id": 1, "description": "Revisar el copy",
+                              "start": t("10:00").isoformat(), "duration": 90 * 60})
+        self.assertEqual(r["registrado"], "1h 30m")
+        self.assertEqual(r["activo"], "35m")
+        self.assertEqual(r["antes_min"], 20)
+        self.assertEqual(r["despues_min"], 30)              # siguió hasta las 11:30
+        self.assertEqual([p["min"] for p in r["pausas"]], [25])
+        self.assertTrue(r["apps"].startswith("Safari 20m"))
+        self.assertEqual(len(r["avisos"]), 3)
+
+    def test_registro_justo_no_avisa(self):
+        self.mac("10:00", "10:30")
+        [r] = self.verificar({"start": t("10:00").astimezone(timezone.utc).isoformat().replace("+00:00", "Z"),
+                              "stop": t("10:30").isoformat()})
+        self.assertEqual(r["activo"], "30m")
+        self.assertEqual(r["avisos"], [])
+
+    def test_cronometro_en_marcha_se_omite(self):
+        self.assertEqual(self.verificar({"start": t("10:00").isoformat(), "duration": -1}), [])
 
 
 if __name__ == "__main__":

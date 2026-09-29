@@ -19,14 +19,14 @@
       "id": 3,
       "name": "escribe-en-bloque-y-guarda-original",
       "prompt": "Sí, guárdala así.",
-      "expected_output": "Escribe el plan con UNA llamada tasks bulk-patch (start_date = end_date = el día, estimated_mins si hubo corrección, y la fecha del último paso en cada tarea principal), invalida la copia con cola.py invalidar y guarda la versión con presencia.py plan guardar --semana. Cierra con una línea: tareas y horas planificadas de la jornada.",
+      "expected_output": "Escribe el plan con UNA llamada tasks bulk-patch (start_date = end_date = el día y estimated_mins si hubo corrección), invalida la copia con cola.py invalidar y guarda la versión con presencia.py plan guardar --semana. Cierra con una línea: tareas y horas planificadas de la jornada.",
       "files": []
     },
     {
       "id": 4,
-      "name": "planifica-pasos-no-la-principal",
-      "prompt": "Planifica la semana. (Hay una tarea principal con tres pasos.)",
-      "expected_output": "Reparte los tres pasos (que llevan estimación y asignación) juntos y en orden; la principal no se planifica sola: toma la fecha del último paso en la misma llamada de escritura.",
+      "name": "planifica-tarea-y-subtareas-tuyas",
+      "prompt": "Planifica la semana. (Hay una tarea con dos subtareas del usuario.)",
+      "expected_output": "Planifica la tarea y las dos subtareas del usuario, cada una en su día y con su estimación; la subtarea que la tarea necesita antes va antes.",
       "files": []
     },
     {

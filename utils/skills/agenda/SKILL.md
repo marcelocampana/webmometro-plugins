@@ -11,7 +11,7 @@ description: >
   para planificar la semana (`plan-semanal`).
 argument-hint: "[--hoy | --dia AAAA-MM-DD | --config]"
 metadata:
-  version: 2.0.0
+  version: 2.0.1
 ---
 
 # Agenda diaria (agenda)

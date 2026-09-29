@@ -5,7 +5,7 @@ Una pantalla que responde **qué toca hoy y si cabe**. Todo lo que no sirva a es
 ## Qué entra, en tres tramos
 
 **Tramo 1 · Lo que ya está abierto.** Toda tarea en In Progress. Siempre aparece, aunque no quepa:
-ya está consumiendo el día. Una tarea principal (con pasos) no se lista: se listan sus pasos.
+ya está consumiendo el día. Una tarea y sus subtareas (lo que le toca al usuario) se listan las dos.
 
 **Tramo 2 · Lo que tiene la fecha encima.** Lo vencido (fin anterior a hoy, sin hacer) y lo que es
 de hoy (su día o su vence es hoy): es lo que `plan-semanal` o el usuario ya pusieron en este día.

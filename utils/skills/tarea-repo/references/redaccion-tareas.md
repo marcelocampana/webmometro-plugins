@@ -42,7 +42,8 @@ Si el enunciado no cabe en una línea, casi siempre es porque:
 **Las tareas ordenan al usuario; el plan ordena a Claude.** Una tarea se parte solo si entre los
 trozos hay algo del usuario: tiene que **decidir, validar o hacer** algo antes de que siga el otro;
 tienen **distinta prioridad** o se harán en **momentos distintos**; o podría querer **quedarse con
-uno** y dejar el otro. Si no, es una sola tarea y sus pasos viven en el plan: siete filas para un
+uno** y dejar el otro. Lo que le toca al usuario va como subtarea. Si no, es una sola tarea y sus
+pasos viven en el plan (`tareas/planes/`): siete filas para un
 trabajo que Claude hace de corrido son siete cierres que nadie supervisa y, en un repo conectado, siete
 veces más llamadas a Toggl.
 

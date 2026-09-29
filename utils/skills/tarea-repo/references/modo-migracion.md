@@ -19,16 +19,16 @@ en el repo solo la memoria. **En una pasada y con un solo visto bueno.**
      crearse de nuevo;
    - el contenido de `tareas/toggl.md` (marcador y áreas con su ámbito, desde `secciones.md`).
 3. **Agrupar por objetivo.** Las tareas que persiguen un mismo objetivo —una cadena de «necesita…»,
-   un plan del repo, lo que falta para publicar— van como **una tarea principal con sus pasos**, no
-   como tareas sueltas (`tarea`, «Tareas con pasos»). Se propone la agrupación (principal y sus
-   pasos, en su orden) y lo que queda suelto; una tarea sin relación con otras se queda sola.
+   un plan del repo, lo que falta para publicar— van como **una tarea con su plan**: los pasos de
+   Claude, a `tareas/planes/`; lo que le toca al usuario, como subtareas (`tarea`, «La tarea, tus
+   subtareas y el plan de Claude»). Se propone la agrupación y lo que queda suelto; una tarea sin relación con otras se queda sola.
 4. **Mostrarla** en una tabla corta (cuántas crear, cuántas actualizar, cuántas a la bandeja, las
-   áreas y las principales con sus pasos) y **pedir el visto bueno una vez**. Los pares dudosos de
+   áreas y cada tarea con su plan y sus subtareas) y **pedir el visto bueno una vez**. Los pares dudosos de
    `## Ahora` con su sección los resuelve el script con `emparejar_ahora.py`; los `dudoso` se
    muestran en la misma tabla. Las dependencias por número de fila («necesita la 3») se reescriben
    con el nombre de la tarea: en Toggl no hay números.
 5. **Enviar**, con el sí: `tasks bulk-create` para las nuevas y las principales, `tasks bulk-patch`
-   para las que ya existían y para colgar cada paso de su principal (`parent_task_id`). Validar
+   para las que ya existían y para colgar cada subtarea de su tarea (`parent_task_id`). Validar
    antes con `dry_run: true`.
 5. **Limpiar el repo**, en una rama y un commit:
    - `git rm` de `tareas/tareas.md`, `tareas/revisar.md` y `tareas/secciones.md`;

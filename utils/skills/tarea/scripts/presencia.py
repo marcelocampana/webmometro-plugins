@@ -60,6 +60,7 @@ AJUSTES = {
     "claude_herramienta_max_min": 30,  # un comando de Claude cuenta entero hasta esto
     "notificar_mac": 1,      # 1: el aviso de pausa también sale como notificación de macOS
     "proyecto_mi_tiempo": 0,  # id del proyecto de Toggl donde va tu tiempo frente al computador
+    "etiqueta_claude": 0,    # id de la etiqueta `claude` de Toggl: la llevan los registros de Claude
 }
 
 
@@ -234,6 +235,15 @@ def fmt_duracion(segundos):
     return ("%dh %dm" % (h, m)) if h else ("%dm" % m)
 
 
+def registro_claude(a, b, ajustes):
+    """Un registro de Claude listo para `time-entries bulk-create`, con la etiqueta `claude` si está
+    configurada: así en Toggl se distingue del tiempo que cronometras tú."""
+    r = {"start": a.replace(microsecond=0).isoformat(), "duration": int((b - a).total_seconds()), "type": "activity"}
+    if ajustes.get("etiqueta_claude"):
+        r["tag_ids"] = [ajustes["etiqueta_claude"]]
+    return r
+
+
 def calcular_tramos(repo, tarea, hasta, todo, ajustes, completo=False):
     # Una tarea abierta hace más de 120 días no se mide aquí: su tiempo sale de git, con `~`.
     desde = hasta.date() - timedelta(days=120)
@@ -249,21 +259,20 @@ def calcular_tramos(repo, tarea, hasta, todo, ajustes, completo=False):
     abierto_s = sum((b - a).total_seconds() for a, b in abiertos)
     trabajado_s = sum((b - a).total_seconds() for a, b in trabajados)
     creacion = datos_creacion(eventos)
-    # A Toggl va lo que costó la tarea: el trabajo de Claude en su repo mientras estuvo abierta. Si
-    # Claude no trabajó en ella (una tarea sin repo, una reunión, algo que hiciste tú), tu tiempo.
+    # A Toggl va solo el trabajo de Claude en su repo mientras la tarea estuvo abierta. Tu tiempo lo
+    # cronometras tú con la app de Toggl; aquí queda en `duracion`, para el historial.
     claude = []
     if abiertos and repo != "sin-repo":
         claude = cortar(tramos_claude(abiertos[0][0], hasta, ajustes, repo).get(repo, []), abiertos)
-    fuente = "claude" if claude else "usuario"
-    enviables = claude or trabajados
+    fuente = "claude" if claude else "ninguno"
+    enviables = claude
     envio = ultimo_envio(eventos)
     pendientes = enviables if (todo or envio is None) else cortar(enviables, [(envio, hasta)])
     return {
         "repo": repo,
         "tarea": tarea,
         "fuente": fuente,
-        "registros": [{"start": a.replace(microsecond=0).isoformat(), "duration": int((b - a).total_seconds()), "type": "activity"}
-                      for a, b in pendientes],
+        "registros": [registro_claude(a, b, ajustes) for a, b in pendientes],
         "inicio": trabajados[0][0].isoformat() if trabajados else None,
         "fin": trabajados[-1][1].isoformat() if trabajados else None,
         "duracion_s": int(trabajado_s),
@@ -635,8 +644,7 @@ def claude_sin_tarea(hasta, ajustes, dias=31):
             total = sum((b - a).total_seconds() for a, b in libres)
             repos.append({"repo": nombre, "proyecto_toggl": proyecto_toggl(raices.get(nombre)),
                           "total": fmt_duracion(total), "total_s": int(total),
-                          "registros": [{"start": a.replace(microsecond=0).isoformat(), "duration": int((b - a).total_seconds()),
-                                         "type": "activity"} for a, b in libres]})
+                          "registros": [registro_claude(a, b, ajustes) for a, b in libres]})
     return {"desde": desde.isoformat(), "hasta": hasta.isoformat(), "repos": repos}
 
 
@@ -668,6 +676,76 @@ def mi_tiempo(hasta, ajustes, dias=31, desde=None):
     return {"desde": desde.isoformat(), "hasta": hasta.isoformat(),
             "proyecto_toggl": ajustes["proyecto_mi_tiempo"] or None,
             "total": fmt_duracion(total), "total_s": int(total), "registros": registros}
+
+
+def instante(s):
+    """Una fecha de Toggl (RFC3339, con `Z` o con desfase) en hora local."""
+    return datetime.fromisoformat(str(s).replace("Z", "+00:00")).astimezone()
+
+
+def verificar(entradas, ajustes, tolerancia_min=5):
+    """Compara los registros que cronometraste en Toggl con tu actividad en el Mac. Solo lee: dice
+    cuánto de cada registro tuvo actividad, si el cronómetro partió tarde o siguió tras tu última
+    actividad, las pausas de dentro y las aplicaciones principales. No sabe qué hacías fuera del
+    computador ni separa dos trabajos hechos en las mismas aplicaciones."""
+    rangos = []
+    for e in entradas:
+        a = instante(e["start"])
+        if e.get("duration") not in (None, "") and int(e["duration"]) >= 0:
+            b = a + timedelta(seconds=int(e["duration"]))
+        elif e.get("stop"):
+            b = instante(e["stop"])
+        else:
+            continue   # un cronómetro en marcha: se verifica cuando pare
+        rangos.append((e, a, b))
+    if not rangos:
+        return {"registros": []}
+    desde = min(a for _, a, _ in rangos).date() - timedelta(days=1)
+    hasta = max(b for _, _, b in rangos).date()
+    activos = minutos_activos(leer_lineas(desde, hasta))
+    presentes = tramos_presentes(activos, ajustes["ausencia_min"])
+    hueco = timedelta(minutes=ajustes["ausencia_min"])
+    salida = []
+    for e, a, b in rangos:
+        dentro = cortar([(a, b)], presentes)
+        activo_s = sum((y - x).total_seconds() for x, y in dentro)
+        # Partió tarde: venías trabajando sin corte hasta el inicio del registro.
+        antes = [x for x, y in presentes if x < a < y]
+        antes_min = int((a - antes[0]).total_seconds() // 60) if antes else 0
+        # Siguió corriendo: desde tu última actividad dentro del registro hasta que lo paraste.
+        ultimo = dentro[-1][1] if dentro else a
+        despues_min = int((b - ultimo).total_seconds() // 60)
+        primero = dentro[0][0] if dentro else b
+        sin_actividad_al_inicio_min = int((primero - a).total_seconds() // 60)
+        pausas = [{"desde": x.isoformat(), "min": int((y - x).total_seconds() // 60)}
+                  for (_, x), (y, _) in zip(dentro, dentro[1:]) if y - x >= hueco]
+        apps, m = {}, minuto(a)
+        while m < b:
+            app = (activos.get(m, {}).get("app") or "").replace("\u200e", "").strip()
+            if app and app not in ("-", "loginwindow"):
+                apps[app] = apps.get(app, 0) + 1
+            m += timedelta(minutes=1)
+        avisos = []
+        if antes_min >= tolerancia_min:
+            avisos.append("venías activo %s antes de iniciarlo" % fmt_duracion(antes_min * 60))
+        if sin_actividad_al_inicio_min >= tolerancia_min:
+            avisos.append("%s sin actividad al empezar" % fmt_duracion(sin_actividad_al_inicio_min * 60))
+        if despues_min >= tolerancia_min:
+            avisos.append("siguió %s tras tu última actividad" % fmt_duracion(despues_min * 60))
+        for pz in pausas:
+            avisos.append("pausa de %s a las %s" % (fmt_duracion(pz["min"] * 60), pz["desde"][11:16]))
+        salida.append({
+            "id": e.get("id"), "descripcion": e.get("description") or e.get("descripcion") or "",
+            "inicio": a.isoformat(), "fin": b.isoformat(),
+            "registrado": fmt_duracion((b - a).total_seconds()), "registrado_s": int((b - a).total_seconds()),
+            "activo": fmt_duracion(activo_s), "activo_s": int(activo_s),
+            "antes_min": antes_min, "sin_actividad_al_inicio_min": sin_actividad_al_inicio_min,
+            "despues_min": despues_min, "pausas": pausas,
+            "apps": " · ".join("%s %s" % (n, fmt_duracion(v * 60))
+                               for n, v in sorted(apps.items(), key=lambda x: -x[1])[:3]),
+            "avisos": avisos,
+        })
+    return {"registros": salida}
 
 
 def tareas_abiertas(hasta, repo=None, dias=30):
@@ -807,6 +885,8 @@ def main(argv=None):
     mt.add_argument("--hasta")
     mt.add_argument("--desde", help="ISO; por defecto, el último envío o el inicio del día")
     mt.add_argument("--enviado", action="store_true", help="marca como enviado hasta --hasta")
+    vf = sub.add_parser("verificar", help="compara tus registros de Toggl con tu actividad en el Mac")
+    vf.add_argument("--entradas", required=True, help="JSON con los registros (lista, o {data: [...]}); `-` lee de stdin")
     ab = sub.add_parser("abiertas")
     ab.add_argument("--repo", help="solo este repo; `sin-repo` para las de un proyecto sin repositorio")
     ab.add_argument("--hasta")
@@ -888,6 +968,14 @@ def main(argv=None):
             print(json.dumps({"ok": True, "hasta": t.isoformat()}))
         else:
             print(json.dumps(mi_tiempo(t, ajustes, desde=momento(a.desde) if a.desde else None), ensure_ascii=False))
+        return 0
+
+    if a.orden == "verificar":
+        texto = sys.stdin.read() if a.entradas == "-" else Path(a.entradas).read_text(encoding="utf-8")
+        datos = json.loads(texto)
+        if isinstance(datos, dict):
+            datos = datos.get("data") or datos.get("time_entries") or []
+        print(json.dumps(verificar(datos, ajustes), ensure_ascii=False))
         return 0
 
     if a.orden == "abiertas":

@@ -81,18 +81,20 @@ Utilidades transversales de organización del trabajo.
 
 - **tarea** — El sistema de tareas, con **Toggl 2.0 como única lista** para
   todos los proyectos. Crea, abre, pausa y cierra tareas en Toggl y envía en
-  bloque al cerrar **el trabajo de Claude** en cada proyecto, atribuido al
-  repo cuyos archivos toca, con tarea o sin ella. **Tu tiempo** frente al
+  bloque al cerrar **solo el tiempo de Claude** (etiqueta `claude`) en cada
+  proyecto, atribuido al repo cuyos archivos toca, con tarea o sin ella. Lo
+  tuyo lo cronometras tú con la app, y Claude lo verifica contra tu actividad. **Tu tiempo** frente al
   computador se mide aparte y se queda en local (`presencia.py`: teclado,
-  aplicación en primer plano y mensajes a Claude), con avisos de pausa. Un plan de
-  varios pasos es una tarea principal con sus pasos como subtareas: se
-  encadenan sin preguntar y se confirma solo el cierre de la principal. Lee
+  aplicación en primer plano y mensajes a Claude), con avisos de pausa. La tarea es tu
+  objetivo; como subtareas van solo las cosas que te tocan a ti. Los pasos de
+  Claude, con su skill y su contexto, viven en el plan de la tarea
+  (`tareas/planes/`), se encadenan sin preguntar y se confirma solo el cierre. Lee
   la cola por una copia local reducida (`cola.py`), no por la respuesta
   cruda de Toggl. Las tareas sin repo (facturar, reuniones) son las de un
   proyecto que ningún repo enlaza.
 - **tarea-repo** — La parte de repositorio: para las tareas de un proyecto
   enlazado a un repo (`tareas/toggl.md`), rama por tarea, cierre en cadena
-  con commit y merge, e historial de lo hecho y por qué como memoria del
+  con commit, merge y push, e historial de lo hecho y por qué como memoria del
   repo (`tareas/historial/`). Estima el coste desde ese historial, audita el
   proyecto por áreas, ingiere tareas de una conversación o un archivo a la
   bandeja (`por-revisar` en Toggl) y migra a Toggl los repos con el formato

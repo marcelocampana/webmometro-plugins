@@ -112,6 +112,8 @@ class Reducir(unittest.TestCase):
         cr = cruda(1, descripcion="Área: Informes\nAlgo")
         cr["tags"] = [{"id": 9, "name": "por-revisar"}]
         self.assertEqual(cola.reducir(cr)["area"], "Informes")
+        cr["tags"] = [{"id": 8, "name": "claude"}]         # la etiqueta del tiempo de Claude no es un área
+        self.assertEqual(cola.reducir(cr)["area"], "Informes")
         cr["tags"] = []
         self.assertEqual(cola.reducir(cr)["area"], "Informes")
 
@@ -148,12 +150,12 @@ class Vistas(unittest.TestCase):
         self.assertNotIn(6, self.ids("pendientes"))
         self.assertEqual(len(self.ids("pendientes")), 7)
 
-    def test_la_principal_no_sale_en_el_dia_pero_si_en_pendientes(self):
-        principal = cola.reducir(cruda(20, "Principal", inicio="2026-09-28", fin="2026-09-28",
-                                       sub_task_total_count=2, assignee_user_ids=[]))
-        paso = cola.reducir(cruda(21, "Paso", inicio="2026-09-28", fin="2026-09-28", parent_task_id=20))
-        tareas = [principal, paso]
-        self.assertEqual([t["id"] for t in cola.filtrar(tareas, "hoy", DIA)], [21])
+    def test_la_tarea_y_tu_subtarea_salen_en_el_dia(self):
+        # La tarea es tu objetivo (y lleva el tiempo de Claude); la subtarea, lo que haces tú.
+        tarea = cola.reducir(cruda(20, "Tarea", inicio="2026-09-28", fin="2026-09-28", sub_task_total_count=1))
+        tuya = cola.reducir(cruda(21, "Tuya", inicio="2026-09-28", fin="2026-09-28", parent_task_id=20))
+        tareas = [tarea, tuya]
+        self.assertEqual([t["id"] for t in cola.filtrar(tareas, "hoy", DIA)], [20, 21])
         self.assertEqual([t["id"] for t in cola.filtrar(tareas, "pendientes", DIA)], [20, 21])
 
     def test_filtro_por_proyecto(self):

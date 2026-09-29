@@ -20,8 +20,8 @@ Uso:
     cola.py invalidar                # tras una escritura en Toggl: la próxima lectura va a la red
 
 Vistas:
-    hoy         en curso, vencidas y las del día; con descripción y notas completas. Las tareas
-                principales no salen: salen sus pasos.
+    hoy         en curso, vencidas y las del día; con descripción y notas completas. Una tarea y sus
+                subtareas (lo que te toca a ti) salen las dos.
     semana      en curso, lo vencido y lo que cae de lunes a domingo; primera línea de la descripción.
     pendientes  todo lo que no está hecho; primera línea de la descripción.
 
@@ -110,7 +110,7 @@ def traer_todas(sesion, pedir=pedir_pagina):
         pagina += 1
 
 
-TRANSVERSALES = {"imprevisto", "por-revisar"}
+TRANSVERSALES = {"imprevisto", "por-revisar", "claude"}
 
 
 def area_de(descripcion, etiquetas=()):
@@ -192,10 +192,6 @@ def filtrar(tareas, vista, dia, proyecto=None):
     abiertas = pendientes(tareas)
     if proyecto:
         abiertas = [t for t in abiertas if str(t.get("proyecto_id")) == str(proyecto)]
-    if vista in ("hoy", "semana"):
-        # Una tarea principal es un contenedor (sin asignar ni estimación): en el día y la semana se
-        # listan sus pasos, que son los que llevan fecha y estimación.
-        abiertas = [t for t in abiertas if not t.get("subtareas")]
     if vista == "hoy":
         elegidas = [t for t in abiertas if t.get("tipo_estado") == "in_progress"
                     or vencida(t, dia) or en_rango(t, dia, dia)]
@@ -231,7 +227,7 @@ def linea(t):
     if t.get("area"):
         partes.append("área %s" % t["area"])
     if t.get("madre"):
-        partes.append("paso de %s" % t["madre"])
+        partes.append("subtarea de %s" % t["madre"])
     otras = [e for e in t.get("etiquetas") or [] if e != t.get("area")]
     if otras:
         partes.append("#" + " #".join(otras))

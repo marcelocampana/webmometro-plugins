@@ -2,19 +2,19 @@
 name: tarea
 description: >
   Sistema de tareas del usuario, con Toggl 2.0 como única lista de pendientes para todos sus
-  proyectos. Crea, abre, pausa y cierra tareas en Toggl, envía en bloque al cerrar el trabajo de
-  Claude en cada proyecto (con tarea o sin ella) y mide aparte el tiempo real del usuario frente al
-  computador. Úsalo cada vez que el usuario hable de una tarea o de su
+  proyectos. Crea, abre, pausa y cierra tareas en Toggl, guarda el paso a paso de Claude en el plan
+  de la tarea (no en Toggl), envía a Toggl solo el tiempo de Claude, con la etiqueta `claude`, y
+  verifica los registros que el usuario cronometra contra su actividad en el Mac. Úsalo cada vez que el usuario hable de una tarea o de su
   trabajo pendiente: "qué sigue", "empiezo X", "anota esto", "haz lo siguiente", "listo, ya está",
   "pausa", "qué tengo abierto", "crea una tarea", "tengo que facturar", "estuve en una reunión",
-  "terminé la llamada", o cuando pase un archivo o una conversación de la que extraer tareas. Si la
+  "terminé la llamada", "verifica mis registros", "¿está bien mi tiempo de hoy?", o cuando pase un archivo o una conversación de la que extraer tareas. Si la
   tarea es de un proyecto enlazado a un repo (su `tareas/toggl.md`), el trabajo además lleva rama,
   commit e historial: esa parte la pone `tarea-repo`. NO lo uses para la vista de hoy (eso es
   `agenda`), para planificar la semana (`plan-semanal`) ni para revisarla (`balance`), ni para TODOs
   efímeros de la sesión.
 argument-hint: "[lo que el usuario quiere hacer]"
 metadata:
-  version: 4.4.1
+  version: 4.5.0
 ---
 
 # Tareas (tarea)
@@ -70,22 +70,33 @@ que dijo el usuario. Si ningún repo lo enlaza, no hay git: **cerrar no pide con
 «listo» ya lo es. Un repo que aún tiene `tareas/tareas.md` está **sin migrar**: se dice en una línea
 y se ofrece `tarea-repo --migrar`.
 
-## Tareas con pasos
+## La tarea, tus subtareas y el plan de Claude
 
-Cuando un trabajo tiene varios pasos que Claude ejecuta de corrido, es **una tarea principal con los
-pasos como subtareas** (`parent_task_id`), no una tarea por paso.
+**Toggl organiza al usuario; el plan organiza a Claude.**
 
-- **Se confirma solo la principal.** Los pasos se encadenan sin pedir visto bueno entre uno y otro:
-  cada uno se abre, se cierra y envía su tiempo solo. Pedir confirmación por paso obliga al usuario a
-  estar frente a la pantalla. Solo se para por un freno real (conflicto, `main` sucia, cambios ajenos
-  o una decisión que es del usuario). **Nunca se termina un paso con «¿sigo con el siguiente?»**, y
-  «empieza con el paso 1» arranca la cadena entera, no solo ese paso.
-- **La principal va sin asignar y sin estimación**, así no cuenta dos veces en la capacidad; los
-  pasos sí llevan las suyas.
-- **Su fecha es la del último paso**, para que en la vista por fecha se vean como árbol. Quien mueva
-  un paso de día la recalcula en la misma llamada. Si los pasos cruzan de semana, los que quedan
-  atrás se ven con la ruta «Paso › Principal»: se acepta.
-- **Un solo nivel.** Un paso no tiene subtareas.
+- **La tarea es el objetivo del usuario** («Publicar la landing de láser CO2»): asignada a él, con
+  estimación y día. Se planifica con él antes de empezar.
+- **Subtareas, solo lo que le toca al usuario** para lograrla: decidir, validar con alguien, hacer
+  algo en una consola o fuera del computador. Asignadas a él, con su día. **Las cronometra él** con la
+  app de Toggl; Claude no les registra tiempo. Un solo nivel.
+- **Los pasos de Claude no van a Toggl.** Van al plan de la tarea, con el skill y el contexto de cada
+  paso: en un repo, `tareas/planes/<id>-<slug>.md` (`tarea-repo`); sin repo, en la descripción. El
+  plan se aprueba una vez.
+- **Se ejecuta de corrido.** Aprobado el plan, los pasos se encadenan sin pedir visto bueno; solo se
+  para por un freno real (conflicto, `main` sucia, cambios ajenos, algo que es del usuario). **Nunca
+  se termina un paso con «¿sigo con el siguiente?»**, y «empieza con el paso 1» arranca la cadena.
+- **Al retomar**, el usuario no relee el plan: Claude lo lee y da el estado en 2–3 líneas (cuántos
+  pasos van, cuál sigue, qué le toca al usuario).
+- **A Toggl va solo el tiempo de Claude**, en la tarea, al cerrarla, con la etiqueta `claude`.
+
+## Verificar tu tiempo
+
+«Verifica mis registros de hoy»: se leen por el MCP (`time-entries list`) los registros del período,
+sin los de la etiqueta `claude`, y `P verificar --entradas <json>` los compara con la actividad del
+Mac. Una línea por registro, solo con lo que no cuadra: «Revisar el copy: 1h 30m registrados, 1h 05m
+activo; siguió 20m tras tu última actividad». Se dicen sus límites una vez: lo hecho fuera del
+computador parece inactividad, y dos trabajos en las mismas aplicaciones no se separan. **Solo lee:**
+corregir un registro pide el sí del usuario, registro por registro.
 
 ## Consultar
 

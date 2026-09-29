@@ -22,7 +22,7 @@ Con un rango `sed` hasta el siguiente `###` el último comentario se desborda a 
 
 <!-- Un ### por área (la de la primera línea de la descripción en Toggl, tal cual está en
      tareas/toggl.md) — solo las que tengan alguna fila este mes, de la más reciente en cerrar algo
-     a la más antigua. Una tarea con pasos es una sola fila: la de la principal. -->
+     a la más antigua. Una tarea es una sola fila, aunque tenga subtareas. -->
 
 ### {{Área A}}
 

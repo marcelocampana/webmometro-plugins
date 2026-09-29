@@ -5,8 +5,8 @@ Ocho secciones, en este orden. **Una sección sin datos no sale**, y se nombra a
 
 ## 1. Tiempo de proyecto
 
-De Toggl: lo que costó cada cliente y cada proyecto (el trabajo de Claude, con tarea o sin ella), y
-por área (etiqueta) si aporta. Frente al período anterior, solo si hay datos de los dos: «ODC 6h
+De Toggl: lo que costó cada cliente y cada proyecto, en dos columnas que no se suman: **Claude**
+(etiqueta `claude`, con tarea o sin ella) y **tú** (lo que cronometraste), y por área si aporta. Frente al período anterior, solo si hay datos de los dos: «ODC 6h
 (+2h)». Los registros sin proyecto se cuentan aparte.
 
 ## 2. Tu tiempo

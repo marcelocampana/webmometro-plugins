@@ -33,8 +33,9 @@ de su descripción en Toggl), con nueve columnas:
   rama y lleva `~`, y se dice.
 - La celda Tarea conserva `<!-- toggl:id -->`; la de Comentarios termina en `[detalle](#el-ancla)`,
   ancla del mismo archivo.
-- **Una tarea con pasos es una sola fila**: la de la principal, con la suma de lo medido en sus pasos
-  y el coste que se le estimó; Claude, el `claude` de los `tramos` de la principal. Los pasos no llevan fila propia.
+- **Una tarea es una sola fila**, aunque tenga subtareas del usuario: Duración, lo medido en local
+  para la tarea; Claude, el `claude` de sus `tramos`. El comentario enlaza el plan
+  (`tareas/planes/<archivo>`), donde queda el paso a paso.
 - Una fila cerrada ya no cambia.
 
 ## El formato del mensual

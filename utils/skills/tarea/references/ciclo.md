@@ -17,8 +17,9 @@
   dependencias («necesita X») van aquí o en las notas: deciden el orden.
 - **Asignada al usuario**, con `estimated_mins` si hay base (desde el historial del repo,
   `tarea-repo/references/estimacion.md`); sin base, sin estimación y se dice.
-- Un lote de tareas relacionadas va en **una** llamada (`tasks bulk-create`); una principal con sus
-  pasos, en dos: la principal y después los pasos con su `parent_task_id`.
+- Un lote de tareas relacionadas va en **una** llamada (`tasks bulk-create`); una tarea con las
+  subtareas del usuario, en dos: la tarea y después las subtareas con su `parent_task_id`. Los pasos
+  de Claude no se crean en Toggl: van al plan.
 - Al crear varias, se suma su estimación y se dice («suman ~2h 40m»).
 
 ## Abrir
@@ -32,65 +33,44 @@ el tiempo de proyecto cuenta las dos; el del usuario, una vez (`balance`).
 
 ## Qué va a Toggl
 
-**Toggl guarda lo que costó cada proyecto, por cliente: el trabajo de Claude.** Tu tiempo frente al
-computador va aparte, a su propio proyecto sin cliente (`proyecto_mi_tiempo` de la configuración
-global): un registro por tramo continuo, con sus aplicaciones principales en la descripción. Nunca se
-suman. El
-proyecto de cada tramo de Claude es el del repo cuyos archivos toca, no el de la carpeta donde se
-abrió la sesión. En una tarea sin repo, o si Claude no trabajó en ella (una reunión, algo que hiciste
-tú), va tu tiempo: es lo que costó.
+**Solo el trabajo de Claude**, con la etiqueta `claude` (`etiqueta_claude` de la configuración
+global; si falta, se crea una vez con `tags create` y su id se anota ahí). Su proyecto es el del repo
+cuyos archivos toca, no el de la carpeta donde se abrió la sesión. **El tiempo del usuario lo
+cronometra él** con la app de Toggl —sus subtareas, reuniones, llamadas—; `P tramos` lo sigue dando
+como `duracion` para el historial, y «Verificar tu tiempo» (`tarea`) lo contrasta con el Mac.
 
 ## Cerrar
 
 En este orden, dentro de la misma cadena y sin pregunta aparte:
 
+0. **Antes de nada:** una subtarea del usuario abierta o un paso del plan sin hacer frenan el cierre;
+   se dice cuál y la tarea sigue abierta.
 1. `P marca --repo R --tarea ID --evento cerrar`.
 2. `P tramos --repo R --tarea ID`: devuelve `registros` (lo que va a Toggl: el trabajo de Claude en
-   el repo mientras la tarea estuvo abierta, o tu tiempo si `fuente` es `usuario`), `duracion` (tu
-   tiempo, para el historial), `descontado`, `coste`, `vence` y `claude` (total, `con_usuario` y
+   el repo mientras la tarea estuvo abierta, ya con `tag_ids`; vacío si `fuente` es `ninguno`),
+   `duracion` (tu tiempo, para el historial), `descontado`, `coste`, `vence` y `claude` (total, `con_usuario` y
    `solo`).
 3. `time-entries bulk-create` con esos `registros` y `task_id` = ID (fechas RFC3339 con zona). Una
-   llamada.
-4. `tasks bulk-patch` con el estado Done. Una llamada. **En una tarea con pasos**, el último paso y la
-   principal van juntos en esta misma llamada.
+   llamada, **en el mismo cierre**. Si la API no acepta `tag_ids` al crear, se ponen justo después con
+   `bulk-patch` sobre los ids creados. Sin registros, se salta.
+4. `tasks bulk-patch` con el estado Done. Una llamada.
 5. `P marca --evento enviado`.
 6. **Lo que Claude trabajó sin tarea**: `P sin-tarea --hasta <ahora>` da, por repo, los tramos de
    Claude en que no había ninguna tarea de ese repo abierta, con el `proyecto_toggl` de su
    `tareas/toggl.md`. Van en una llamada `time-entries bulk-create` sin `task_id` y con
-   `project_id`; después `P sin-tarea --enviado --hasta <el mismo ahora>`. Un repo sin
-   `proyecto_toggl` no se envía y se dice en una línea. Además, una rutina programada lo envía cada
-   noche (`assets/presencia-instalacion.md`, paso 3), para que Toggl no dependa de cerrar tareas.
+   `project_id` (también con la etiqueta); después `P sin-tarea --enviado --hasta <el mismo ahora>`.
+   Un repo sin `proyecto_toggl` no se envía y se dice en una línea. La rutina nocturna que hacía esto
+   mismo cada noche es opcional y está pausada (`assets/presencia-instalacion.md`, paso 3).
 7. `C invalidar`.
 
-**El cálculo lo hace el script, no el modelo**: las mismas marcas dan siempre los mismos tramos. No
-se usa cronómetro: Toggl admite uno solo por persona y dos sesiones en paralelo se lo quitarían.
-
-**Si hay `descontado`**, se dice en la línea de cierre: «descontados 25 min sin actividad; si
-estabas, lo mantengo».
-
-## Trabajo fuera del computador
-
-Una reunión presencial o una llamada no deja teclado ni mensajes: la presencia la daría por ausencia.
-Por eso, **al cerrar, si `tramos` descuenta más de 10 min en una tarea sin repo**, se pregunta una
-sola vez:
-
-> Descontaría 45 min sin actividad en el Mac. ¿Estuviste en la reunión fuera del computador?
-
-- **Sí** → `P tramos … --completo`: se envía el tramo abierto entero.
-- **No** → se envía lo medido.
-
-## Registrar después
-
-«Estuve 40 min en una llamada con X» (ya pasó): se crea la tarea si no existe y un registro con esa
-duración terminando ahora, o a la hora que diga el usuario. Es tiempo **declarado, no medido**: la
-descripción del registro lo dice («declarado») y `balance` no lo usa para calibrar estimaciones.
+**El cálculo lo hace el script, no el modelo**: las mismas marcas dan siempre los mismos tramos. Claude no
+usa cronómetro: Toggl admite uno solo por persona, y es el del usuario.
 
 ## Imprevistos
 
-Si `P resumen` del día muestra atención en un repo sin tarea abierta, se dice: «llevas 40 min en
-este proyecto sin tarea abierta». Menos de `imprevisto_min` (30) y sin commit: un registro suelto en
-Toggl (`create-taskless`), en el proyecto del repo, etiqueta `imprevisto`. Con commit o si pasa del
-tope: es una tarea normal con esa etiqueta, y su `abrir` lleva `--hora` de cuando empezó de verdad.
+Si `P resumen` del día muestra a Claude trabajando en un repo sin tarea abierta más de
+`imprevisto_min` (30), se dice en una línea y se ofrece crear la tarea (etiqueta `imprevisto`, y su
+`abrir` con `--hora` de cuando empezó de verdad). Su tiempo no se pierde: va con `sin-tarea`.
 
 ## Si Toggl falla
 
