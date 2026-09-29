@@ -46,17 +46,18 @@ fuera ni bloquea el mensaje: en el peor caso no anota nada.
 
 **Quitar:** borrar esa entrada de `settings.json`.
 
-## 3. Envío nocturno a Toggl
+## 3. Envío nocturno a Toggl (opcional, pausado)
 
-Una rutina programada de Claude (no un agente de launchd: Toggl 2.0 solo acepta la sesión OAuth del
-conector, y un script no puede renovarla sin dejar al conector sin sesión) corre cada día a las
-22:00: `presencia.py sin-tarea` y `presencia.py mi-tiempo` (tu tiempo, al proyecto
-`proyecto_mi_tiempo` de la configuración global), un `time-entries bulk-create` sin `task_id` y, si
-salió bien, `--enviado` en los dos. Con la app cerrada a esa hora, corre al abrirla; lo pendiente se acumula desde
-el último envío, hasta 30 días (lo que Claude Code guarda sus sesiones).
+El trabajo de Claude se envía al cerrar cada tarea, junto con el que hizo sin tarea
+(`tarea/references/ciclo.md`, «Cerrar»). La rutina nocturna solo hace falta si pasan días sin
+cerrar nada. Es una rutina programada de Claude (no un agente de launchd: Toggl 2.0 solo acepta la
+sesión OAuth del conector, y un script no puede renovarla sin dejar al conector sin sesión):
+`presencia.py sin-tarea`, un `time-entries bulk-create` sin `task_id` con la etiqueta `claude` y, si
+salió bien, `sin-tarea --enviado`. **Tu tiempo frente al computador ya no se envía a Toggl**: lo
+cronometras tú, y `mi-tiempo` queda como consulta local.
 
-**Crear:** tarea programada `enviar-claude-sin-tarea`, `0 22 * * *`, con esos pasos en el prompt.
-Conviene lanzarla una vez a mano («Run now») para aprobar sus herramientas.
+**Tarea programada:** `enviar-claude-sin-tarea`, `0 22 * * *`, pausada. Se reactiva desde la lista de
+tareas programadas.
 
 ## Qué no hace
 

@@ -17,9 +17,9 @@
     },
     {
       "id": 3,
-      "name": "pasos-sin-confirmar-cada-uno",
+      "name": "plan-de-claude-fuera-de-toggl",
       "prompt": "Implementa el plan: son cuatro pasos, hazlos todos.",
-      "expected_output": "Crea UNA tarea principal (sin asignar, sin estimación) con los cuatro pasos como subtareas; encadena los pasos sin pedir visto bueno entre ellos y pide confirmación solo al cerrar la principal.",
+      "expected_output": "Crea UNA tarea (el objetivo, asignada y con estimación); los cuatro pasos de Claude no van a Toggl sino al plan (en un repo, tareas/planes/); solo lo que le toca al usuario va como subtarea. Encadena los pasos sin pedir visto bueno entre ellos; al cerrar envía solo el tiempo de Claude, con la etiqueta claude, y pide confirmación solo al cerrar.",
       "files": []
     },
     {
@@ -27,6 +27,13 @@
       "name": "abiertas-por-la-copia",
       "prompt": "¿Qué tengo abierto?",
       "expected_output": "Lee con cola.py leer --vista hoy y presencia.py abiertas —nunca tasks list del MCP— y responde en una sola lista corta. Para todos los proyectos con la capacidad del día remite a agenda.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "verificar-mis-registros",
+      "prompt": "¿Está bien lo que cronometré hoy en Toggl?",
+      "expected_output": "Lee los registros de hoy por el MCP (time-entries list), deja fuera los de la etiqueta claude, corre presencia.py verificar --entradas y responde una línea por registro con lo que no cuadra (inicio tarde, cronómetro que siguió, pausas), más los límites una vez. No modifica ningún registro sin el sí del usuario.",
       "files": []
     }
   ]

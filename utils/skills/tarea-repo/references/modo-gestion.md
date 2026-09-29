@@ -16,10 +16,27 @@ ancla, no se propone. Se propone y se espera, también para lo que dicta el usua
 - **Coste:** lo propone el skill desde el historial (`estimacion.md`) y lo confirma el usuario. Sin
   base, se dice y va sin estimación.
 - **Vence:** solo si hay un compromiso externo real.
-- **Un plan de varios pasos que Claude ejecuta de corrido es una tarea principal con los pasos como
-  subtareas**, no una tarea por paso (`tarea`, «Tareas con pasos»).
-
 La posición en la cola la decide el usuario: se recomienda con motivo, no se reordena solo.
+
+## Planificar
+
+La tarea es el objetivo del usuario; antes de ejecutarla se acuerda qué hace falta. Se propone en
+una tabla corta y se espera **un** visto bueno, que cubre la ejecución entera y el cierre:
+
+- **Pasos de Claude** → el plan, `tareas/planes/<id>-<slug>.md` desde `assets/plan.esqueleto.md`.
+  Cada paso: verbo + resultado revisable, el **skill** y el **contexto** que se leerán antes. Lo
+  mecánico (instalar, cargar, desplegar) va dentro del paso al que sirve, no como paso propio.
+- **Lo que le toca al usuario** (decidir, validar con alguien, hacer algo en una consola) → subtareas
+  en Toggl, con su día; las cronometra él (`tarea/references/ciclo.md`, «Crear»).
+- La descripción de la tarea en Toggl añade la línea `Plan: tareas/planes/<archivo>`.
+
+El plan se crea en la rama de la tarea y se commitea con el primer paso. **Al empezar cada paso**,
+Claude relee su fila y usa ese skill y ese contexto; **al terminarlo**, marca «Hecho» con dónde se ve
+(`✓ commit a1b2c3`, `✓ web/contenido/laser-co2.md`) y pone al día «Estado». Si se aparta del plan,
+lo anota en «Notas» en una línea.
+
+**Al retomar** la tarea otro día, se lee el plan y se le da al usuario el estado en 2–3 líneas: cuántos
+pasos van, cuál sigue, qué le toca a él. No se le pide releer el plan.
 
 ## Abrir
 
@@ -33,16 +50,16 @@ Si hay otra tarea de repo en curso, se dice en una línea antes de abrir.
 ## Cerrar
 
 **Una sola confirmación.** Informa de lo hecho en 2-3 líneas y pide el visto bueno; con él, anuncia
-la cadena en una línea («Cierro, commiteo y mergeo a `main`») y ejecútala sin pausas:
+la cadena en una línea («Cierro, commiteo, mergeo a `main` y subo») y ejecútala sin pausas:
 
+0. **Plan:** todos los pasos con «Hecho» y ninguna subtarea del usuario abierta; si no, se dice qué
+   falta y la tarea no se cierra.
 1. **Toggl:** los pasos de cierre de `tarea/references/ciclo.md` (tramos, registros, Done, `enviado`).
 2. **Historial:** la entrada en `tareas/historial/AAAA-MM.md`, con los datos de `tramos`
-   (`archivado.md`).
+   (`archivado.md`); el comentario enlaza el plan.
 3. **Commit** en la rama de la tarea: lo resuelto y la entrada del historial, juntos.
-4. **Merge a `main`**, sin pedir otro visto bueno.
-
-**En una tarea con pasos**, cada paso cierra su subtarea (pasos 1 y, si se quiere, 3) sin preguntar;
-el historial, la confirmación y el merge son de la principal.
+4. **Merge a `main`** y **push** a `origin`, sin pedir otro visto bueno. Si el push falla, se dice y
+   `main` queda mergeada en local.
 
 **Tres frenos, y solo esos, detienen la cadena:** `main` sucia o desactualizada al mergear; un
 conflicto de merge (muestra qué archivos chocan y espera, no lo resuelvas solo); cambios sin relación

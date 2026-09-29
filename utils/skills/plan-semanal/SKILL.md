@@ -13,7 +13,7 @@ description: >
   `balance`).
 argument-hint: "[--replanificar]"
 metadata:
-  version: 2.0.2
+  version: 2.0.3
 ---
 
 # Planificar la semana (plan-semanal)
@@ -45,8 +45,8 @@ día aguanta. El orden dentro del día lo da la prioridad de cada tarea.
    Las fechas salen de `date`, nunca de la memoria.
 3. **Candidatas:** `cola.py leer --vista pendientes --json` —todos los proyectos, con o sin repo, en
    una sola lectura—, sin la bandeja (`por-revisar`) ni lo bloqueado. **Nunca `tasks list` del MCP.**
-   Las tareas principales no se planifican: se planifican sus pasos, y la principal toma la fecha del
-   último.
+   Una tarea y las subtareas del usuario se planifican cada una en su día; la subtarea que la tarea
+   necesita antes, antes.
 4. **Capacidad:** `capacities get-computations` de la semana (una llamada): la jornada de cada día y
    lo ya estimado en él. Si la configuración de `agenda` trae `## Capacidad`, esa manda.
 5. **Arrastre:** tareas con día de la semana pasada que no están hechas. Van primero.
@@ -67,8 +67,7 @@ avisos y la plantilla. **Una pantalla**, una tabla por semana, y una sola pregun
 Con el sí, y con las correcciones que el usuario haya dicho:
 
 1. **Toggl, una llamada:** `tasks bulk-patch` con `start_date` y `end_date` = el día, y
-   `estimated_mins` si el usuario dio o corrigió una estimación; **en la misma llamada**, cada tarea
-   principal toma la fecha del último de sus pasos. Las tareas que salen del plan pierden su fecha
+   `estimated_mins` si el usuario dio o corrigió una estimación. Las tareas que salen del plan pierden su fecha
    (`null`). Después, `cola.py invalidar`.
 2. **Plan original, local:** `presencia.py plan guardar --semana AAAA-Www` con la lista
    `{repo, tarea, nombre, dia, estimado_min}`. La primera versión de la semana es la que

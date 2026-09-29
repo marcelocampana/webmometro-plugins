@@ -16,7 +16,7 @@ Se recorren los días de la semana con la jornada que da `capacities` (o la de l
    configuración y, dentro de cada uno, por su posición en Toggl. **Se reparten los proyectos entre
    los días**: no se llena el lunes entero con uno solo si hay otros esperando, salvo que el usuario
    lo pida. Una tarea que no cabe entera en lo que queda de un día pasa al siguiente; no se parte.
-   Los pasos de una tarea principal van juntos y en su orden, salvo que no quepan en un día.
+   Una subtarea del usuario va antes que la parte de su tarea que la necesita.
 
 **Se deja un 20% libre cada día** para imprevistos. Un plan al 100% se rompe el lunes a las diez;
 `balance` dirá después si el 20% alcanzó y se ajusta.

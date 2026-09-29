@@ -23,8 +23,9 @@ Vive en `~/Github/AI-kit/config/context/toggl.md` (o donde diga `TOGGL_CONFIG`).
 | `pausa_min` | 10 | Hueco que cuenta como pausa y corta la sesión |
 | `repetir_aviso_min` | 30 | El aviso no se repite antes de esto |
 | `notificar_mac` | 1 | 1: el aviso también sale como notificación de macOS, aunque no le escribas a Claude; 0: solo en la conversación |
-| `proyecto_mi_tiempo` | 0 | Id del proyecto de Toggl donde va tu tiempo frente al computador (sin cliente); 0: no se envía |
-| `imprevisto_min` | 30 | Hasta aquí, un trabajo no planificado sin commit va solo a Toggl |
+| `etiqueta_claude` | 0 | Id de la etiqueta `claude` de Toggl: la llevan los registros de Claude; 0: se crea al primer envío |
+| `proyecto_mi_tiempo` | 0 | Id del proyecto de Toggl donde iba tu tiempo frente al computador; ya no se envía (lo cronometras tú) |
+| `imprevisto_min` | 30 | Claude trabajando más que esto en un repo sin tarea abierta: se ofrece crear la tarea |
 
 ## Registro de presencia
 

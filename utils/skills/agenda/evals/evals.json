@@ -24,9 +24,9 @@
     },
     {
       "id": 4,
-      "name": "pasos-no-la-principal",
+      "name": "tarea-y-subtareas-tuyas",
       "prompt": "¿Qué tengo para hoy?",
-      "expected_output": "De una tarea con pasos lista los pasos de hoy (con el nombre de la principal si cabe), no la principal, que va sin asignar ni estimación.",
+      "expected_output": "Lista la tarea (el objetivo) y, aparte, la subtarea del usuario que cae hoy; ninguna se oculta.",
       "files": []
     }
   ]

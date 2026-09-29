@@ -13,21 +13,28 @@
       "name": "crear-con-area-y-coste",
       "prompt": "Anota una tarea: arreglar el menú.",
       "expected_output": "Lee tareas/toggl.md, propone un enunciado afinado (verbo + objeto + ámbito), el área Componentes desde toggl.md y un coste desde el historial, y espera el visto bueno. Con el sí, crea la tarea en Toggl con 'Área: Componentes' en la primera línea de la descripción. No escribe nada en markdown.",
-      "files": ["evals/fixtures/enlazado/tareas/toggl.md", "evals/fixtures/enlazado/tareas/historial/2026-07.md"]
+      "files": [
+        "evals/fixtures/enlazado/tareas/toggl.md",
+        "evals/fixtures/enlazado/tareas/historial/2026-07.md"
+      ]
     },
     {
       "id": 3,
       "name": "abrir-rama-desde-main-limpia",
       "prompt": "Abre la del menú.",
       "expected_output": "git status y git fetch; con main limpia y al día crea una rama que describe la tarea. En Toggl pasa la tarea a In Progress y marca 'abrir' en presencia.py. Nunca trabaja sobre main.",
-      "files": ["evals/fixtures/enlazado/tareas/toggl.md"]
+      "files": [
+        "evals/fixtures/enlazado/tareas/toggl.md"
+      ]
     },
     {
       "id": 4,
       "name": "cierre-una-confirmacion-cadena-completa",
       "prompt": "Sí, quedó terminada.",
       "expected_output": "Con esa única confirmación ejecuta sin pausas: tramos, registros y Done en Toggl, entrada en tareas/historial/AAAA-MM.md (comentario bajo ## Comentarios con ancla, fila de ocho columnas bajo ### <Área>), commit y merge. No hace una segunda pregunta.",
-      "files": ["evals/fixtures/enlazado/tareas/historial/2026-07.md"]
+      "files": [
+        "evals/fixtures/enlazado/tareas/historial/2026-07.md"
+      ]
     },
     {
       "id": 5,
@@ -38,9 +45,9 @@
     },
     {
       "id": 6,
-      "name": "pasos-de-un-plan-sin-confirmar-cada-uno",
+      "name": "plan-de-siete-pasos-en-el-archivo-del-plan",
       "prompt": "Registra el plan que acabamos de aprobar: son siete pasos que vas a hacer tú de corrido, sin que yo tenga que validar nada entre medio.",
-      "expected_output": "Propone UNA tarea principal (sin asignar, sin estimación) con los siete pasos como subtareas en Toggl, una sola rama; encadena los pasos sin pedir visto bueno y pide confirmación solo al cerrar la principal. El historial lleva una fila, la de la principal.",
+      "expected_output": "Crea UNA tarea en Toggl y escribe los siete pasos en tareas/planes/<id>-<slug>.md (con skill y contexto por paso), una sola rama; ninguna subtarea, porque no hay nada que haga el usuario. Encadena los pasos marcando «Hecho» con evidencia, sin pedir visto bueno; pide confirmación solo al cerrar, y la cadena termina con merge y push. El historial lleva una fila que enlaza el plan.",
       "files": []
     },
     {
@@ -62,35 +69,46 @@
       "name": "lectura-acotada-del-historial",
       "prompt": "¿Qué decía el detalle de la tarea del índice móvil desplegable?",
       "expected_output": "Lee SOLO la sección de su ancla con un corte en la siguiente cabecera (awk con index($0,a)==1 … f&&/^#/{exit}), nunca el mensual entero.",
-      "files": ["evals/fixtures/enlazado/tareas/historial/2026-07.md"]
+      "files": [
+        "evals/fixtures/enlazado/tareas/historial/2026-07.md"
+      ]
     },
     {
       "id": 10,
       "name": "que-sigue-por-la-copia",
       "prompt": "¿Qué sigue?",
       "expected_output": "Lee con cola.py leer (vista hoy, o pendientes --proyecto con el ID del marcador de toggl.md) y responde; nunca tasks list del MCP y no abre el historial. Avisa si la primera depende de otra que va después.",
-      "files": ["evals/fixtures/enlazado/tareas/toggl.md"]
+      "files": [
+        "evals/fixtures/enlazado/tareas/toggl.md"
+      ]
     },
     {
       "id": 11,
       "name": "detecta-formato-anterior-y-ofrece-migrar",
       "prompt": "¿Qué sigue?",
       "expected_output": "En el Paso 0 ve tareas/tareas.md con ## Ahora: lo dice en una línea (formato anterior, sin migrar) y ofrece --migrar. No escribe pendientes en ese archivo.",
-      "files": ["evals/fixtures/proyecto-en-curso/tareas/tareas.md"]
+      "files": [
+        "evals/fixtures/proyecto-en-curso/tareas/tareas.md"
+      ]
     },
     {
       "id": 12,
       "name": "migrar-muestra-la-carga-y-pide-un-visto-bueno",
       "prompt": "Migra este repo a Toggl (--migrar).",
       "expected_output": "Corre migrar_a_toggl.py armar, muestra una tabla corta (cuántas crear, cuántas actualizar por tener ya toggl:id, cuántas a la bandeja, las áreas y los pares dudosos) y pide el visto bueno una vez. Con el sí: bulk-create y bulk-patch (validados con dry_run), git rm de tareas.md, revisar.md y secciones.md, escribe toggl.md, deja historial y auditoría intactos.",
-      "files": ["evals/fixtures/conectado-toggl/tareas/tareas.md", "evals/fixtures/conectado-toggl/tareas/secciones.md"]
+      "files": [
+        "evals/fixtures/conectado-toggl/tareas/tareas.md",
+        "evals/fixtures/conectado-toggl/tareas/secciones.md"
+      ]
     },
     {
       "id": 13,
       "name": "auditoria-no-duplica",
       "prompt": "/tarea-repo --auditoria",
       "expected_output": "Recorre el proyecto por áreas y propone para auditoria.md solo lo que no está pendiente en Toggl (bandeja incluida) ni cerrado en el historial, cada fila con evidencia concreta. No crea tareas en Toggl sin visto bueno.",
-      "files": ["evals/fixtures/enlazado/tareas/auditoria.md"]
+      "files": [
+        "evals/fixtures/enlazado/tareas/auditoria.md"
+      ]
     },
     {
       "id": 14,

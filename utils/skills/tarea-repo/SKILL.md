@@ -2,9 +2,9 @@
 name: tarea-repo
 description: >
   La parte de repositorio del sistema de tareas: para las tareas de un proyecto de Toggl enlazado a
-  un repo (su `tareas/toggl.md`), pone la ceremonia de git —rama por tarea, commit, merge— y guarda la
-  memoria del repo: el historial de lo cerrado y por qué (`tareas/historial/`), la revisión por áreas
-  (`auditoria.md`) y la configuración del repo en Toggl (`toggl.md`: enlace, áreas, reglas). La lista
+  un repo (su `tareas/toggl.md`), pone la ceremonia de git —rama por tarea, commit, merge, push—,
+  lleva el plan de Claude de cada tarea (`tareas/planes/`) y guarda la memoria del repo: el
+  historial de lo cerrado y por qué (`tareas/historial/`), la revisión por áreas (`auditoria.md`) y la configuración del repo en Toggl (`toggl.md`: enlace, áreas, reglas). La lista
   de pendientes vive en Toggl y la gobierna `tarea`; este skill entra al abrir y al cerrar una tarea
   de repo, y para: montar `tareas/` en un repo nuevo (`--init`), migrar un repo con el formato
   anterior de `tareas.md` a Toggl (`--migrar`), revisar el proyecto completo (`--auditoria`), extraer
@@ -15,7 +15,7 @@ description: >
   usuario no pidió nada de tareas, no lo actives.
 argument-hint: "[--init | --migrar | --auditoria | --ingerir | --revisar | --toggl]"
 metadata:
-  version: 4.3.0
+  version: 4.4.0
 ---
 
 # Tareas de repositorio (tarea-repo)
@@ -62,6 +62,7 @@ RAIZ=$(git rev-parse --show-toplevel) && ls "$RAIZ"/tareas/ 2>/dev/null
 tareas/
 ├── toggl.md       Configuración del repo en Toggl: enlace, áreas, reglas y comentarios
 ├── auditoria.md   Hallazgos de una revisión por áreas, bajo petición
+├── planes/        <id>-<slug>.md · el plan de Claude para cada tarea: pasos, skill y contexto
 └── historial/     AAAA-MM.md · lo cerrado y su porqué, escrito en el mismo cierre
 ```
 
@@ -70,14 +71,17 @@ están en Toggl; se leen con `tarea/scripts/cola.py leer --proyecto <ID del marc
 
 ## La ceremonia, en corto
 
+- **Planificar:** con el usuario, qué hace falta para lograr la tarea. Los pasos de Claude, con su
+  skill y su contexto, van al plan (`tareas/planes/`); lo que le toca al usuario, como subtareas en
+  Toggl, que cronometra él. **Se aprueba una vez** y eso cubre la ejecución y el cierre.
 - **Abrir:** `main` limpia y actualizada, y una rama nueva que describa la tarea. **Nunca se trabaja
   sobre `main`.** En Toggl, lo de `tarea`.
 - **Cerrar:** **una sola confirmación**, y con ella corre la cadena entera sin pausas: tiempo y estado
-  en Toggl, entrada en el historial, commit y merge. Solo la paran `main` sucia o desactualizada, un
+  de Claude en Toggl, entrada en el historial, commit, merge y push. Solo la paran `main` sucia o desactualizada, un
   conflicto de merge o cambios ajenos a la tarea. Si el usuario encargó la tarea completa, ese encargo
   ya es el visto bueno.
-- **Tareas con pasos:** una rama para la principal; cada paso cierra su subtarea en Toggl y puede
-  llevar su commit, **sin preguntar**; la confirmación, el historial y el merge son de la principal.
+- **Los pasos del plan** se encadenan sin preguntar; cada uno puede llevar su commit y se marca hecho
+  en el plan, con evidencia. Al retomar, el estado en 2–3 líneas: el usuario no relee el plan.
 
 ## Comunicación ejecutiva
 
@@ -90,8 +94,8 @@ están en Toggl; se leen con `tarea/scripts/cola.py leer --proyecto <ID del marc
 ## Reglas invariantes
 
 1. **Ninguna tarea se crea sin visto bueno**; la IA no reordena la cola del usuario.
-2. **Se completa una tarea y se para**; sugerir la siguiente sí, empezarla no. Los pasos de una tarea
-   principal no son tareas: se encadenan hasta el cierre **sin preguntar por el siguiente paso**.
+2. **Se completa una tarea y se para**; sugerir la siguiente sí, empezarla no. Los pasos de Claude no
+   son tareas: viven en el plan y se encadenan hasta el cierre **sin preguntar por el siguiente paso**.
 3. **El historial se escribe en el mismo cierre**, dentro de la cadena, nunca como paso aparte.
 4. **Del historial se lee la sección del ancla, nunca el archivo entero** (`historial-lectura.md`).
 5. **Las áreas salen de `toggl.md`**: un área nueva se añade ahí con visto bueno, no se inventa.

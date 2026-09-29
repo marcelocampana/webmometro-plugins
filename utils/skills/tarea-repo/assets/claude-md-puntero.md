@@ -16,10 +16,12 @@ Reglas irrenunciables:
 
 1. **Una tarea, una rama.** Se comprueba que `main` está limpia y actualizada y se ramifica desde ahí;
    **nunca se trabaja sobre `main`**.
-2. **Un plan de varios pasos es una tarea principal con los pasos como subtareas.** Los pasos se
-   encadenan sin pedir confirmación; se confirma solo el cierre de la principal.
+2. **La tarea es el objetivo del usuario; el plan es de Claude.** Se planifica con el usuario: los pasos
+   de Claude (con su skill y su contexto) van al plan, `tareas/planes/`, y no a Toggl; lo que le toca
+   al usuario va como subtareas, que cronometra él. Aprobado el plan, los pasos se encadenan sin pedir
+   confirmación, y el tiempo de Claude queda en la tarea en Toggl, con la etiqueta `claude`.
 3. **Se completa esa tarea y se para.** Al cerrar se pregunta una sola vez; con el visto bueno se
-   encadenan el tiempo en Toggl, el historial, el commit y el merge a `main` sin pausas —salvo `main`
+   encadenan el tiempo en Toggl, el historial, el commit, el merge a `main` y el push sin pausas —salvo `main`
    sucia o desactualizada, un conflicto o cambios ajenos a la tarea—. Sugerir la siguiente sí,
    empezarla no.
 
