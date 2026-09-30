@@ -4,18 +4,21 @@ description: >
   La parte de repositorio del sistema de tareas: para las tareas de un proyecto de Toggl enlazado a
   un repo (su `tareas/toggl.md`), pone la ceremonia de git —rama por tarea, commit, merge, push—,
   lleva el plan de Claude de cada tarea (`tareas/planes/`) y guarda la memoria del repo: el
-  historial de lo cerrado y por qué (`tareas/historial/`), la revisión por áreas (`auditoria.md`) y la configuración del repo en Toggl (`toggl.md`: enlace, áreas, reglas). La lista
-  de pendientes vive en Toggl y la gobierna `tarea`; este skill entra al abrir y al cerrar una tarea
-  de repo, y para: montar `tareas/` en un repo nuevo (`--init`), migrar un repo con el formato
+  historial de lo cerrado y por qué (`tareas/historial/`), la revisión por áreas (`auditoria.md`), la
+  configuración del repo en Toggl (`toggl.md`: enlace, áreas, reglas), la bandeja de lo anotado sin
+  decidir (`tareas/por-revisar.md`) y lo delegado a Claude (`tareas/para-claude.md`), que nunca van a
+  Toggl. La lista de pendientes del usuario vive en Toggl y la gobierna `tarea`; este skill entra al
+  abrir y al cerrar una tarea de repo, y para: montar `tareas/` en un repo nuevo (`--init`), migrar un repo con el formato
   anterior de `tareas.md` a Toggl (`--migrar`), revisar el proyecto completo (`--auditoria`), extraer
-  tareas de una conversación o un archivo (`--ingerir`), ver o ascender la bandeja `por-revisar`
-  (`--revisar`) y reenviar a Toggl lo que quedó pendiente (`--toggl`). Estima el coste de una tarea
+  tareas de una conversación o un archivo (`--ingerir`), anotar en la bandeja o revisarla y delegar
+  (`--revisar`), ejecutar lo delegado a Claude («haz lo de Claude») y reconciliar estados con Toggl
+  (`--toggl`). Estima el coste de una tarea
   desde el historial del repo. NO lo uses para tareas de un proyecto sin repo (eso es solo `tarea`),
   para TODOs efímeros de la sesión, ni para issues de GitHub/Jira/Linear; si no existe `tareas/` y el
   usuario no pidió nada de tareas, no lo actives.
 argument-hint: "[--init | --migrar | --auditoria | --ingerir | --revisar | --toggl]"
 metadata:
-  version: 4.8.0
+  version: 5.0.0
 ---
 
 # Tareas de repositorio (tarea-repo)
@@ -33,7 +36,8 @@ Así Claude sabe qué se ha venido haciendo sin leer una lista de pendientes en 
 | abre o cierra una tarea de este repo, o crea una | `references/modo-gestion.md` |
 | pide montar `tareas/`, o no existe y pidió algo de tareas (`--init`) | `references/modo-inicio.md` |
 | el repo aún tiene `tareas/tareas.md`, o pide migrar (`--migrar`) | `references/modo-migracion.md` |
-| aparca algo, o asciende de la bandeja (`--revisar`) | `references/modo-revisar.md` |
+| anota o aparca algo, o revisa la bandeja y delega (`--revisar`) | `references/modo-revisar.md` |
+| pide ejecutar lo delegado a Claude («haz lo de Claude») | `references/modo-claude.md` |
 | pide revisar el proyecto completo (`--auditoria`) | `references/modo-auditoria.md` |
 | pasa un archivo de tareas, o pide extraerlas de la conversación (`--ingerir`) | `references/modo-ingesta.md` |
 
@@ -62,12 +66,16 @@ RAIZ=$(git rev-parse --show-toplevel) && ls "$RAIZ"/tareas/ 2>/dev/null
 tareas/
 ├── toggl.md       Configuración del repo en Toggl: enlace, áreas, reglas y comentarios
 ├── auditoria.md   Hallazgos de una revisión por áreas, bajo petición
+├── por-revisar.md La bandeja: lo anotado sin decidir. Solo guarda
+├── para-claude.md Lo que una revisión delegó a Claude. Nunca va a Toggl
 ├── planes/        <id>-<slug>.md · el plan de Claude para cada tarea: pasos, skill y contexto
 └── historial/     AAAA-MM.md · lo cerrado y su porqué, escrito en el mismo cierre
 ```
 
-No hay lista de pendientes en el repo. La cola, la bandeja (etiqueta `por-revisar`) y los estados
-están en Toggl; se leen con `tarea/scripts/cola.py leer --proyecto <ID del marcador>`.
+La cola del usuario y sus estados están en Toggl; se leen con `tarea/scripts/cola.py leer --proyecto
+<ID del marcador>`. En el repo no hay pendientes del usuario: solo lo que aún no se decide
+(`por-revisar.md`) y lo que es de Claude (`para-claude.md`). El tiempo de Claude va a su registro
+local (`presencia.py asentar`), nunca a Toggl.
 
 ## La ceremonia, en corto
 
@@ -81,8 +89,8 @@ están en Toggl; se leen con `tarea/scripts/cola.py leer --proyecto <ID del marc
   guardado en la rama de la tarea, que no pide nada— y se marca hecho en el plan, con evidencia. Al
   retomar, el estado en 2–3 líneas: el usuario no relee el plan.
 - **Cerrar:** **una sola confirmación, después de que el usuario vea el resultado**, y con ella corre
-  la cadena entera sin pausas: tiempo y estado de Claude en Toggl, entrada en el historial, commit,
-  merge a la destino y push. Solo la paran la destino sucia o desactualizada, un conflicto de merge o
+  la cadena entera sin pausas: tiempo de Claude a su registro local, estado en Toggl, entrada en el
+  historial, commit, merge a la destino y push. Solo la paran la destino sucia o desactualizada, un conflicto de merge o
   cambios ajenos a la tarea. Si la destino no es `main`, pasar a `main` es otro acto, con su propia
   aprobación.
 

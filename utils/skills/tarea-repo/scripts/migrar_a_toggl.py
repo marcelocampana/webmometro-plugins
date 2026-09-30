@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 Migra un repo con el formato anterior (`tareas/tareas.md`, `revisar.md`, `secciones.md`) a Toggl
-como única lista: arma la carga de tareas que hay que crear o actualizar, y el `tareas/toggl.md` que
-queda en el repo.
+como única lista: arma la carga de tareas que hay que crear o actualizar, y los archivos que quedan
+en el repo: `tareas/toggl.md` y `tareas/por-revisar.md` (la bandeja **no va a Toggl**).
 
 **Solo lee y propone.** `armar` no escribe nada: devuelve un JSON con las tareas en orden, los pares
 dudosos de `## Ahora` con su sección y el texto de `toggl.md`. El envío a Toggl (MCP `tasks
@@ -15,10 +15,11 @@ ese orden basta. Cada tarea lleva su área (la sección) en la primera línea de
 
 Uso:
     migrar_a_toggl.py armar tareas/ --proyecto ID --usuario UID
-                      [--estados '{"todo":ID,"in_progress":ID,"blocked":ID}'] [--bandeja ID_ETIQUETA] [--areas '{"Área":ID_ETIQUETA}']
+                      [--estados '{"todo":ID,"in_progress":ID,"blocked":ID}'] [--areas '{"Área":ID_ETIQUETA}']
                       [--hoy AAAA-MM-DD]
     migrar_a_toggl.py toggl-md tareas/ --proyecto ID --nombre NOMBRE --cliente ID --cliente-nombre NOMBRE [--rama preview]
                       [--forzar]
+    migrar_a_toggl.py por-revisar tareas/ [--hoy AAAA-MM-DD] [--forzar]
 
 Códigos de salida: 0 bien · 1 hay pares dudosos que confirmar · 2 error.
 """
@@ -108,7 +109,7 @@ def abierta(fila):
     return fila.get("Estado", "").replace("✅", "").strip() != "Completada"
 
 
-def armar(carpeta, proyecto, usuario, estados=None, bandeja=None, hoy=None, areas_ids=None):
+def armar(carpeta, proyecto, usuario, estados=None, hoy=None, areas_ids=None):
     carpeta = Path(carpeta)
     hoy = hoy or date.today().isoformat()
     tablas, marcador = leer_tablas(carpeta / "tareas.md")
@@ -135,7 +136,6 @@ def armar(carpeta, proyecto, usuario, estados=None, bandeja=None, hoy=None, area
             "estado": estado,
             "estimado_min": minutos(fila.get("Coste") or (puntero or {}).get("Coste")),
             "vence": vence,
-            "bandeja": False,
         })
 
     for par, puntero in zip(pares, punteros):
@@ -153,17 +153,10 @@ def armar(carpeta, proyecto, usuario, estados=None, bandeja=None, hoy=None, area
             if (seccion, sin_id(fila["Tarea"])) not in usadas:
                 agregar(fila, seccion)
 
-    revisar = carpeta / "revisar.md"
-    if revisar.exists():
-        filas, _ = leer_tablas(revisar)
-        for fila in (f for filas_s in filas.values() for f in filas_s if f.get("Tarea")):
-            partes = ["%s: %s" % (k, limpio(fila.get(k))) for k in ("Origen", "Motivo", "Notas") if limpio(fila.get(k))]
-            tareas.append({"toggl_id": None, "nombre": limpio(fila["Tarea"]), "area": "General",
-                           "descripcion": "\n".join(["Área: General"] + partes), "estado": "todo",
-                           "estimado_min": None, "vence": None, "bandeja": True})
+    bandeja = leer_bandeja(carpeta)
 
     for t in tareas:
-        t["payload"] = payload(t, proyecto, usuario, estados, bandeja, hoy, areas_ids)
+        t["payload"] = payload(t, proyecto, usuario, estados, hoy, areas_ids)
 
     catalogo = leer_secciones(carpeta / "secciones.md")
     nombres = [n for n, _ in catalogo]
@@ -174,26 +167,46 @@ def armar(carpeta, proyecto, usuario, estados=None, bandeja=None, hoy=None, area
         "marcador_en_tareas_md": {"proyecto": int(marcador.group(1)), "nombre": proyecto_nombre} if marcador else None,
         "crear": [t for t in tareas if not t["toggl_id"]],
         "actualizar": [t for t in tareas if t["toggl_id"]],
+        "bandeja": bandeja,
         "dudosos": [p for p in pares if p["tipo"] != "exacto"],
         "areas": [{"nombre": n, "ambito": a} for n, a in areas],
-        "resumen": {"crear": sum(1 for t in tareas if not t["toggl_id"] and not t["bandeja"]),
+        "resumen": {"crear": sum(1 for t in tareas if not t["toggl_id"]),
                     "actualizar": sum(1 for t in tareas if t["toggl_id"]),
-                    "bandeja": sum(1 for t in tareas if t["bandeja"]),
+                    "bandeja": len(bandeja),
                     "areas": len(areas)},
     }
 
 
-def payload(t, proyecto, usuario, estados, bandeja, hoy, areas_ids=None):
-    """Lo que va a Toggl, tal cual. `status_id` y las etiquetas solo si se dieron sus ids: la del
-    área, si está en `areas_ids`, y la de la bandeja."""
+def leer_bandeja(carpeta):
+    """Las entradas de `revisar.md`. No van a Toggl: se quedan en el repo, en `por-revisar.md`."""
+    revisar = Path(carpeta) / "revisar.md"
+    if not revisar.exists():
+        return []
+    filas, _ = leer_tablas(revisar)
+    return [{"nombre": limpio(f["Tarea"]), "area": limpio(f.get("Sección") or f.get("Área") or "") or "General",
+             "origen": limpio(f.get("Origen") or "") or "revisar.md",
+             "motivo": " ".join(x for x in (limpio(f.get("Motivo") or ""), limpio(f.get("Notas") or "")) if x)}
+            for filas_s in filas.values() for f in filas_s if f.get("Tarea")]
+
+
+def por_revisar_md(bandeja, hoy):
+    """`tareas/por-revisar.md`: el esqueleto del skill y una línea por entrada."""
+    esqueleto = Path(__file__).resolve().parent.parent / "assets" / "por-revisar.esqueleto.md"
+    texto = re.sub(r"\n<!-- - \*\*.*?-->\n", "\n", esqueleto.read_text(encoding="utf-8"), flags=re.S).rstrip() + "\n\n"
+    for b in bandeja:
+        texto += "- **%s** · %s · %s · %s%s\n" % (b["nombre"], b["area"], b["origen"], hoy,
+                                                (" — " + b["motivo"]) if b["motivo"] else "")
+    return texto
+
+
+def payload(t, proyecto, usuario, estados, hoy, areas_ids=None):
+    """Lo que va a Toggl, tal cual. `status_id` y la etiqueta del área solo si se dieron sus ids."""
     p = {"name": t["nombre"], "project_id": proyecto, "description": t["descripcion"]}
     if t["toggl_id"]:
         p = {"id": t["toggl_id"], "name": t["nombre"], "description": t["descripcion"]}
-    etiquetas = [i for i in ((areas_ids or {}).get(t["area"]), bandeja if t["bandeja"] else None) if i]
+    etiquetas = [i for i in ((areas_ids or {}).get(t["area"]),) if i]
     if etiquetas:
         p["tag_ids"] = etiquetas
-    if t["bandeja"]:
-        return p
     if usuario:
         p["assignee_user_ids"] = [usuario]
     if t["estimado_min"]:
@@ -226,7 +239,6 @@ def main(argv=None):
     a.add_argument("--proyecto", type=int, required=True)
     a.add_argument("--usuario", type=int)
     a.add_argument("--estados", type=json.loads, help='{"todo":ID,"in_progress":ID,"blocked":ID}')
-    a.add_argument("--bandeja", type=int, help="id de la etiqueta por-revisar")
     a.add_argument("--areas", type=json.loads, help='{"Área": id de su etiqueta}')
     a.add_argument("--hoy")
     t = sub.add_parser("toggl-md")
@@ -237,15 +249,28 @@ def main(argv=None):
     t.add_argument("--cliente-nombre", required=True)
     t.add_argument("--rama", default="main", help="rama destino de las tareas (main por defecto)")
     t.add_argument("--forzar", action="store_true")
+    pr = sub.add_parser("por-revisar", help="escribe tareas/por-revisar.md con la bandeja de revisar.md")
+    pr.add_argument("carpeta")
+    pr.add_argument("--hoy")
+    pr.add_argument("--forzar", action="store_true")
     args = p.parse_args(argv)
     carpeta = Path(args.carpeta)
     if not (carpeta / "tareas.md").exists():
         print("No hay %s: no hay nada que migrar." % (carpeta / "tareas.md"), file=sys.stderr)
         return 2
     if args.orden == "armar":
-        r = armar(carpeta, args.proyecto, args.usuario, args.estados, args.bandeja, args.hoy, args.areas)
+        r = armar(carpeta, args.proyecto, args.usuario, args.estados, args.hoy, args.areas)
         print(json.dumps(r, ensure_ascii=False, indent=1))
         return 1 if r["dudosos"] else 0
+    if args.orden == "por-revisar":
+        destino = carpeta / "por-revisar.md"
+        if destino.exists() and not args.forzar:
+            print("%s ya existe; --forzar para reescribirlo." % destino, file=sys.stderr)
+            return 2
+        bandeja = leer_bandeja(carpeta)
+        destino.write_text(por_revisar_md(bandeja, args.hoy or date.today().isoformat()), encoding="utf-8")
+        print(json.dumps({"ok": True, "escrito": str(destino), "entradas": len(bandeja)}, ensure_ascii=False))
+        return 0
     destino = carpeta / "toggl.md"
     if destino.exists() and not args.forzar:
         print("%s ya existe; --forzar para reescribirlo." % destino, file=sys.stderr)

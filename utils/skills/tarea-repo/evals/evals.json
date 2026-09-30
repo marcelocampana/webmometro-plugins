@@ -31,7 +31,7 @@
       "id": 4,
       "name": "cierre-una-confirmacion-cadena-completa",
       "prompt": "Sí, quedó terminada.",
-      "expected_output": "Con esa única confirmación ejecuta sin pausas: tramos, registros y Done en Toggl, entrada en tareas/historial/AAAA-MM.md (comentario bajo ## Comentarios con ancla, fila de ocho columnas bajo ### <Área>), commit y merge. No hace una segunda pregunta.",
+      "expected_output": "Con esa única confirmación ejecuta sin pausas: tramos, presencia.py asentar (el tiempo de Claude a su registro local, nunca a Toggl) y Done en Toggl, entrada en tareas/historial/AAAA-MM.md (comentario bajo ## Comentarios con ancla, fila de ocho columnas bajo ### <Área>), commit y merge. No hace una segunda pregunta.",
       "files": [
         "evals/fixtures/enlazado/tareas/historial/2026-07.md"
       ]
@@ -61,7 +61,7 @@
       "id": 8,
       "name": "hallazgo-lateral-a-la-bandeja",
       "prompt": "(Trabajando en una tarea abierta) Oye, mientras mirabas eso me di cuenta de que el color del botón está hardcodeado.",
-      "expected_output": "Lo propone para la bandeja en UNA línea (tarea en Toggl con la etiqueta por-revisar, sin fecha ni asignación, con el origen en la descripción) y sigue con la tarea en curso sin abrir una deliberación.",
+      "expected_output": "Lo anota en la bandeja en UNA línea (una entrada en tareas/por-revisar.md con área, origen y fecha; nada en Toggl) y sigue con la tarea en curso sin abrir una deliberación.",
       "files": []
     },
     {
@@ -95,7 +95,7 @@
       "id": 12,
       "name": "migrar-muestra-la-carga-y-pide-un-visto-bueno",
       "prompt": "Migra este repo a Toggl (--migrar).",
-      "expected_output": "Corre migrar_a_toggl.py armar, muestra una tabla corta (cuántas crear, cuántas actualizar por tener ya toggl:id, cuántas a la bandeja, las áreas y los pares dudosos) y pide el visto bueno una vez. Con el sí: bulk-create y bulk-patch (validados con dry_run), git rm de tareas.md, revisar.md y secciones.md, escribe toggl.md, deja historial y auditoría intactos.",
+      "expected_output": "Corre migrar_a_toggl.py armar, muestra una tabla corta (cuántas crear, cuántas actualizar por tener ya toggl:id, cuántas van a tareas/por-revisar.md en vez de a Toggl, las áreas y los pares dudosos) y pide el visto bueno una vez. Con el sí: bulk-create y bulk-patch (validados con dry_run), git rm de tareas.md, revisar.md y secciones.md, escribe toggl.md, deja historial y auditoría intactos.",
       "files": [
         "evals/fixtures/conectado-toggl/tareas/tareas.md",
         "evals/fixtures/conectado-toggl/tareas/secciones.md"
@@ -105,7 +105,7 @@
       "id": 13,
       "name": "auditoria-no-duplica",
       "prompt": "/tarea-repo --auditoria",
-      "expected_output": "Recorre el proyecto por áreas y propone para auditoria.md solo lo que no está pendiente en Toggl (bandeja incluida) ni cerrado en el historial, cada fila con evidencia concreta. No crea tareas en Toggl sin visto bueno.",
+      "expected_output": "Recorre el proyecto por áreas y propone para auditoria.md solo lo que no está pendiente en Toggl, en por-revisar.md ni en para-claude.md ni cerrado en el historial, cada fila con evidencia concreta. No crea tareas en Toggl sin visto bueno.",
       "files": [
         "evals/fixtures/enlazado/tareas/auditoria.md"
       ]
@@ -115,6 +115,20 @@
       "name": "detenerse-sin-git",
       "prompt": "Abre la primera tarea.",
       "expected_output": "git rev-parse --git-dir falla: se detiene y lo explica en una línea. Sin modo degradado.",
+      "files": []
+    },
+    {
+      "id": 15,
+      "name": "revisar-y-delegar-a-claude",
+      "prompt": "Revisemos la bandeja. La del contraste de botones que la haga Claude, la del menú es mía y la del README descártala.",
+      "expected_output": "Lee tareas/por-revisar.md. La del contraste pasa a tareas/para-claude.md con fecha de delegación (nada en Toggl); la del menú se crea como tarea del usuario en Toggl tras su visto bueno; la del README sale del archivo. Commitea solo esos dos archivos directo en la rama destino (tareas: bandeja) y hace push.",
+      "files": []
+    },
+    {
+      "id": 16,
+      "name": "haz-lo-de-claude",
+      "prompt": "Haz lo de Claude del contraste de botones.",
+      "expected_output": "Usa el id pc-<slug>, escribe el plan en tareas/planes/pc-<slug>.md, marca abrir con presencia.py, crea la rama y ejecuta; no crea nada en Toggl. Al terminar pide la aprobación del merge tras mostrar el resultado; al cerrar corre presencia.py asentar, saca la entrada de para-claude.md y la deja en el historial.",
       "files": []
     }
   ]

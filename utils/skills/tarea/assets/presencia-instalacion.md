@@ -46,20 +46,22 @@ fuera ni bloquea el mensaje: en el peor caso no anota nada.
 
 **Quitar:** borrar esa entrada de `settings.json`.
 
-## 3. Envío nocturno a Toggl (opcional, pausado)
+## 3. El registro de tiempo de Claude
 
-El trabajo de Claude se envía al cerrar cada tarea, junto con el que hizo sin tarea
-(`tarea/references/ciclo.md`, «Cerrar»). La rutina nocturna solo hace falta si pasan días sin
-cerrar nada. Es una rutina programada de Claude (no un agente de launchd: Toggl 2.0 solo acepta la
-sesión OAuth del conector, y un script no puede renovarla sin dejar al conector sin sesión):
-`presencia.py sin-tarea`, un `time-entries bulk-create` sin `task_id` con la etiqueta `claude` y, si
-salió bien, `sin-tarea --enviado`. **Tu tiempo frente al computador ya no se envía a Toggl**: lo
-cronometras tú, y `mi-tiempo` queda como consulta local.
+**El tiempo de Claude no va a Toggl** (Toggl es solo del usuario). `presencia.py asentar` lo escribe
+en `~/Obsidian/Global/claude/registro-tiempo/<nombre>-AAAA-MM.md` (o `CLAUDE_TIEMPO_DIR`): un
+archivo por mes con el nombre del repo o, sin repo, del proyecto de Toggl; una fila por tramo, con la
+tarea que estaba abierta o `—`. Corre al cerrar cada tarea y, además, **el mismo agente de launchd lo lanza una vez al día**: así
+nada se pierde aunque pasen semanas sin cerrar nada, antes de que Claude Code borre sus sesiones (30
+días). Es idempotente: solo añade lo nuevo desde el último asiento.
 
-**Tarea programada:** `enviar-claude-sin-tarea`, `0 22 * * *`, pausada. Se reactiva desde la lista de
-tareas programadas.
+**Comprobar:** `presencia.py asentar` y abrir el archivo del proyecto del mes.
+
+La rutina nocturna que enviaba este tiempo a Toggl (`enviar-claude-sin-tarea`) ya no hace falta.
+**Tu tiempo frente al computador tampoco se envía**: lo cronometras tú, y `mi-tiempo` queda como
+consulta local.
 
 ## Qué no hace
 
 No lee títulos de ventana, contenido de mensajes ni la pantalla. No habla con Toggl: a Toggl solo
-escribe el skill `tarea`, desde una sesión, al cerrar.
+escribe el skill `tarea` (tus tareas y sus estados), desde una sesión.

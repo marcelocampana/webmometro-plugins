@@ -1,6 +1,6 @@
-<!-- tarea: toggl · proyecto 3968609 «Plugins de IA» · cliente 741361 «Webmómetro» -->
+<!-- tarea: toggl · proyecto 3968609 «Plugins IA» · cliente 762706 «Interno» -->
 
-# Toggl · Plugins de IA
+# Toggl · Plugins IA
 
 Configuración de este repo en Toggl. Los pendientes viven allí; aquí, cómo se ordenan. Lo común a
 todos los repos está en la configuración global de Toggl.

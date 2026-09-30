@@ -12,8 +12,8 @@ de hoy (su día o su vence es hoy): es lo que `plan-semanal` o el usuario ya pus
 Siempre aparece, marcado. Lo planificado para días anteriores y no hecho se marca `arrastre`, y si
 son varias, un aviso: «3 del plan de ayer quedaron pendientes: `plan-semanal --replanificar`».
 
-**Tramo 3 · El relleno, por orden.** Solo si queda capacidad. De las pendientes **sin día**, sin
-`por-revisar` y no bloqueadas: por prioridad, después por el orden de los proyectos en la
+**Tramo 3 · El relleno, por orden.** Solo si queda capacidad. De las pendientes **sin día** y no
+bloqueadas (ni las antiguas con la etiqueta `por-revisar`): por prioridad, después por el orden de los proyectos en la
 configuración, y dentro de cada proyecto por su posición en Toggl. Se para al llegar a:
 
 | Límite | Valor |
@@ -45,6 +45,9 @@ Al pie, **una línea cada uno**, y solo si se cumplen:
 - **La jornada es la de por defecto**: si `working-hours` del usuario está vacío, una vez: «la
   jornada de Toggl no está configurada: uso sus 8h por defecto».
 - **El empujón a planificar**, por umbral: ≥5 pendientes sin estimación o ≥2 vencidas.
+- **Lo de Claude**, si hay: las entradas de `tareas/para-claude.md` de los repos de la configuración
+  (y del global, `~/Obsidian/Global/para-claude.md`), contadas: «Claude tiene 3 pendientes en 2
+  repos». No se listan ni suman a tu capacidad: no están en Toggl y las hace Claude cuando lo pidas.
 
 ## La plantilla
 
@@ -65,7 +68,7 @@ Hoy · martes 29 · jornada 8h · llevas 1h 10m trabajadas · copia de hace 3 mi
 
 ## Qué NO entra
 
-- **La bandeja (`por-revisar`), la auditoría y el historial.** Son de la revisión semanal
+- **La bandeja (`por-revisar.md`), la auditoría y el historial.** Son de la revisión semanal
   (`balance`), no de la mañana.
 - **Nada calculado sobre el historial.** Calibrar es de `balance`.
 - **Lo que no cabe en la capacidad.** No se lista «por si acaso»: se cuenta y se calla.

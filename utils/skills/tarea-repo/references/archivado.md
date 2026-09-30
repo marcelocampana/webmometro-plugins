@@ -28,8 +28,8 @@ de su descripción en Toggl), con nueve columnas:
   `claude`), no de Toggl.
 - **Duración** es el tiempo del usuario; **Claude**, el de Claude en la tarea, como
   `<claude> · <solo> solo` (`1h 10m · 40m solo`), o `—` sin respuestas suyas. Nunca se suman: un
-  minuto con los dos cuenta en ambas. No va a Toggl, así que el historial es su único registro (las
-  sesiones de Claude Code se borran con el tiempo). Sin registro de presencia (se trabajó fuera del Mac), la Duración sale del intervalo de la
+  minuto con los dos cuenta en ambas. No va a Toggl: el detalle tramo a tramo está en el registro
+  local de Claude (`presencia.py asentar`), y aquí queda el total de la tarea. Sin registro de presencia (se trabajó fuera del Mac), la Duración sale del intervalo de la
   rama y lleva `~`, y se dice.
 - La celda Tarea conserva `<!-- toggl:id -->`; la de Comentarios termina en `[detalle](#el-ancla)`,
   ancla del mismo archivo.

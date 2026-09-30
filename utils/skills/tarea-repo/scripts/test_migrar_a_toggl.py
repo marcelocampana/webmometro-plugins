@@ -89,7 +89,7 @@ class Migracion(unittest.TestCase):
         (c / "revisar.md").write_text(REVISAR, encoding="utf-8")
         (c / "secciones.md").write_text(SECCIONES, encoding="utf-8")
         self.c = c
-        self.r = m.armar(c, 42, 7, {"todo": 1, "in_progress": 2, "blocked": 3}, 99, "2026-09-28",
+        self.r = m.armar(c, 42, 7, {"todo": 1, "in_progress": 2, "blocked": 3}, "2026-09-28",
                          {"Componentes": 11, "General": 10})
 
     def tearDown(self):
@@ -99,7 +99,7 @@ class Migracion(unittest.TestCase):
         return self.r["crear"] + self.r["actualizar"]
 
     def test_orden_ahora_primero_y_sin_las_cerradas(self):
-        nombres = [t["nombre"] for t in self.r["crear"] if not t["bandeja"]]
+        nombres = [t["nombre"] for t in self.r["crear"]]
         self.assertEqual(nombres, ["Corregir el menú móvil", "Limpiar datos de prueba"])
         self.assertNotIn("Algo ya hecho", [t["nombre"] for t in self.todas()])
 
@@ -124,11 +124,14 @@ class Migracion(unittest.TestCase):
         self.assertEqual((pago["start_date"], pago["end_date"], pago["status_id"]), ("2026-09-28", "2026-10-10", 3))
         self.assertEqual(pago["estimated_mins"], 150)
 
-    def test_bandeja_con_etiqueta_sin_asignar_ni_fecha(self):
-        [b] = [t for t in self.r["crear"] if t["bandeja"]]
-        self.assertEqual(b["payload"]["tag_ids"], [10, 99])
-        self.assertNotIn("assignee_user_ids", b["payload"])
-        self.assertIn("Origen: auditoría del 20-09", b["descripcion"])
+    def test_la_bandeja_no_va_a_toggl_sino_a_por_revisar_md(self):
+        self.assertNotIn("Revisar el contraste de los botones", [t["nombre"] for t in self.todas()])
+        [b] = self.r["bandeja"]
+        self.assertEqual((b["nombre"], b["area"], b["origen"]), ("Revisar el contraste de los botones", "General", "auditoría del 20-09"))
+        self.assertEqual(m.main(["por-revisar", str(self.c), "--hoy", "2026-09-29"]), 0)
+        texto = (self.c / "por-revisar.md").read_text()
+        self.assertIn("- **Revisar el contraste de los botones** · General · auditoría del 20-09 · 2026-09-29 — Falla AA", texto)
+        self.assertNotIn("AppHeader.vue:88", texto)   # el ejemplo del esqueleto no se copia
 
     def test_areas_desde_el_catalogo(self):
         self.assertEqual([a["nombre"] for a in self.r["areas"]], ["General", "Componentes", "Pagos"])

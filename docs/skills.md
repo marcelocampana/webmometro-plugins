@@ -80,10 +80,14 @@ seguimiento de cambios.
 Utilidades transversales de organización del trabajo.
 
 - **tarea** — El sistema de tareas, con **Toggl 2.0 como única lista** para
-  todos los proyectos. Crea, abre, pausa y cierra tareas en Toggl y envía en
-  bloque al cerrar **solo el tiempo de Claude** (etiqueta `claude`) en cada
-  proyecto, atribuido al repo cuyos archivos toca, con tarea o sin ella. Lo
-  tuyo lo cronometras tú con la app, y Claude lo verifica contra tu actividad. **Tu tiempo** frente al
+  todos los proyectos, y **solo tuya**. Crea, abre, pausa y cierra tareas en
+  Toggl. **Nada de Claude va a Toggl**: su tiempo se asienta en un registro
+  local por repo —sin repo, por proyecto de Toggl— y mes
+  (`~/Obsidian/Global/claude/registro-tiempo/`),
+  atribuido al repo cuyos archivos toca, con tarea o sin ella. Lo tuyo lo
+  cronometras tú con la app, y Claude lo verifica contra tu actividad. Lo
+  anotado sin decidir va a la bandeja (`por-revisar.md`) y lo que una
+  revisión delega a Claude, a `para-claude.md`; ninguno de los dos va a Toggl. **Tu tiempo** frente al
   computador se mide aparte y se queda en local (`presencia.py`: teclado,
   aplicación en primer plano y mensajes a Claude), con avisos de pausa. La tarea es tu
   objetivo; como subtareas van solo las cosas que te tocan a ti. Los pasos de
@@ -100,8 +104,10 @@ Utilidades transversales de organización del trabajo.
   aprobación tras ver el resultado—, e historial de lo hecho y por qué como memoria del
   repo (`tareas/historial/`). Estima el coste desde ese historial, audita el
   proyecto por áreas, ingiere tareas de una conversación o un archivo a la
-  bandeja (`por-revisar` en Toggl) y migra a Toggl los repos con el formato
-  anterior (`--migrar`, con `migrar_a_toggl.py`).
+  bandeja (`tareas/por-revisar.md`), la revisa contigo (tarea tuya en Toggl,
+  delegada a Claude en `tareas/para-claude.md` o descartada), ejecuta lo de
+  Claude cuando lo pides y migra a Toggl los repos con el formato anterior
+  (`--migrar`, con `migrar_a_toggl.py`).
 - **agenda** — Compone la vista diaria con todos los proyectos: lee la cola
   de Toggl por la copia local y la jornada de Toggl, y responde qué toca hoy
   y si cabe. Avisa de lo vencido, de varias tareas abiertas a la vez y de las

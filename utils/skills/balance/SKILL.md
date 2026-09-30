@@ -1,8 +1,9 @@
 ---
 name: balance
 description: >
-  Revisión del trabajo para mejorar: cruza Toggl (tiempo de proyecto: el trabajo de Claude por proyecto y cliente), el registro de presencia
-  (tiempo real del usuario, pausas y aplicaciones) y los historiales de `tareas/` para responder a
+  Revisión del trabajo para mejorar: cruza Toggl (tu tiempo cronometrado por proyecto y cliente), el
+  registro de tiempo de Claude (local, por proyecto), el registro de presencia (tiempo real del
+  usuario, pausas y aplicaciones) y los historiales de `tareas/` para responder a
   dónde se fue el tiempo, cuánto se desvían las estimaciones, qué se repite y se podría automatizar,
   y cómo va la salud (horas frente al computador, sesiones sin pausa). Úsalo cuando el usuario pida
   "mi balance", "revisión semanal", "cómo me fue esta semana", "en qué se me va el tiempo", "cuánto le
@@ -10,11 +11,11 @@ description: >
   computador", "qué aplicaciones uso más", "qué podría automatizar", "cuánto trabajó Claude solo", "cuánto tarda Claude en una tarea",
   "estimo bien?", "¿cumplí el plan?", "cuánto de lo que hice estaba planificado", o cuando una rutina programada pida el resumen de la semana. **Solo lee: nunca
   escribe en Toggl ni en ninguna lista de tareas**; lo que haya que cambiar lo propone para
-  la bandeja (`por-revisar`) y lo deja a `tarea`. NO lo uses para la vista de hoy (eso es `agenda`), ni para abrir,
+  la bandeja (`por-revisar.md` del repo) y lo deja a `tarea-repo`. NO lo uses para la vista de hoy (eso es `agenda`), ni para abrir,
   cerrar o crear tareas (eso es `tarea`).
 argument-hint: "[--semana | --mes | --desde AAAA-MM-DD --hasta AAAA-MM-DD]"
 metadata:
-  version: 1.5.1
+  version: 1.6.0
 ---
 
 # Balance del trabajo (balance)
@@ -27,23 +28,25 @@ cuerpo**. Por defecto, la semana pasada de lunes a domingo; `--mes` o un rango, 
 
 No escribe en Toggl ni en ningún repo (tampoco en el historial). Así puede correr desatendido desde
 una rutina: lo peor que puede pasar es un informe incompleto. Si de la revisión sale algo que hacer
-—automatizar una familia de tareas, partir mejor—, **lo propone para la bandeja** (etiqueta
-`por-revisar` en Toggl) en una línea y lo deja a `tarea`.
+—automatizar una familia de tareas, partir mejor—, **lo propone para la bandeja** (el
+`por-revisar.md` del repo que corresponda; sin repo, el de `~/Obsidian/Global/`) en una línea y lo
+deja a `tarea-repo`, que lo anota con el sí.
 
 ## Tres medidas que nunca se suman
 
 | Medida | Qué es | De dónde |
 | --- | --- | --- |
-| **Tiempo de proyecto** | Lo que costó cada tarea, proyecto y cliente: el trabajo de Claude (etiqueta `claude`) más lo que tú cronometraste en tus tareas y subtareas, cada uno por su lado | Toggl: registros de tiempo |
-| **Tu tiempo** | Cuánto estuvo trabajando el usuario, y en qué | `presencia.py resumen` |
-| **Tiempo de Claude** | Cuánto trabajó Claude, contigo y solo | `presencia.py claude` y la columna Claude del historial |
+| **Tu tiempo en Toggl** | Lo que cronometraste en tus tareas y subtareas, por tarea, proyecto y cliente | Toggl: registros de tiempo, sin los de la etiqueta `claude` |
+| **Tu tiempo frente al computador** | Cuánto estuvo trabajando el usuario, y en qué | `presencia.py resumen` |
+| **Tiempo de Claude** | Cuánto trabajó Claude por proyecto y cliente, contigo y solo | `presencia.py claude` (su registro local) y la columna Claude del historial |
 
 Con dos sesiones en paralelo, Claude trabaja en dos proyectos a la vez y tú lo viviste una vez.
 **Sumar tiempo de proyecto para obtener tus horas es el error que este skill existe para no
-cometer.** La relación se dice como rendimiento: «30h de proyecto con 18h tuyas: 1,7×». Hasta el
-28-09-2026 por la tarde, Toggl guardaba tu presencia con tarea abierta, no el trabajo de Claude: al
-comparar con períodos anteriores, se dice. Desde el 29-09-2026, en Toggl **lo de la etiqueta
-`claude` es de Claude y el resto lo cronometraste tú**: se muestran por separado y nunca se suman.
+cometer.** La relación se dice como rendimiento: «30h de Claude con 18h tuyas: 1,7×». **Toggl es
+solo tuyo; el tiempo de Claude sale siempre de su registro local.** Hasta el 28-09-2026 por la tarde,
+Toggl guardaba tu presencia con tarea abierta; el 29-09-2026 recibió además registros de Claude con la
+etiqueta `claude`, que desde utils 5.0.0 (30-09-2026) ya no llegan: esos registros **se ignoran** —su
+tiempo ya está en el registro de Claude— y, al comparar con períodos anteriores, se dice.
 El proyecto «Mi tiempo frente al computador» (`proyecto_mi_tiempo`) quedó sin envíos nuevos y se deja
 fuera de toda suma por cliente.
 

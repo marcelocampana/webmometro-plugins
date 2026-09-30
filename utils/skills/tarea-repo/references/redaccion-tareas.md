@@ -71,7 +71,7 @@ Cuando dudes entre dos secciones, la pregunta útil es: **¿dónde lo buscaría 
 
 En una línea, y solo si aporta:
 
-- «Ya está en la bandeja (`por-revisar`)» — evita el duplicado.
+- «Ya está en la bandeja (`por-revisar.md`)» o «ya se delegó a Claude» — evita el duplicado.
 - «Toca `AppHeader.vue`, afecta a todo el sitio → área General» — corrige el área.
 - «Depende de la tarea 2, que está `Bloqueada`» — evita abrir algo que no avanzará.
 - «El historial dice que se intentó y se descartó por X» — evita repetir.

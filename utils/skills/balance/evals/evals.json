@@ -26,7 +26,7 @@
       "id": 4,
       "name": "propone-no-escribe",
       "prompt": "¿Qué podría automatizar?",
-      "expected_output": "Lista las familias con más tiempo y al menos 3 apariciones, y OFRECE llevarlas a la bandeja (`por-revisar` en Toggl) remitiendo a `tarea`. No escribe en ninguna lista ni en Toggl.",
+      "expected_output": "Lista las familias con más tiempo y al menos 3 apariciones, y OFRECE llevarlas a la bandeja (el `por-revisar.md` del repo) remitiendo a `tarea-repo`. No escribe en ninguna lista ni en Toggl.",
       "files": []
     },
     {

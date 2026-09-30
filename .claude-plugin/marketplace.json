@@ -68,8 +68,8 @@
       "name": "utils",
       "displayName": "Utils",
       "source": "./utils",
-      "description": "Skills personales de utilidad general: sistema de tareas con Toggl 2.0 como única lista para todos los proyectos, con el trabajo de Claude por proyecto y cliente en Toggl y el tiempo real del usuario medido aparte y leído por una copia local reducida (Tarea), ceremonia de repositorio con rama por tarea, cierre en cadena e historial de lo hecho como memoria del repo, más la migración de repos con el formato anterior (Tarea Repo), planificación de la semana por día en Toggl (Plan Semanal), revisión semanal de tiempo, plan contra realidad, estimación, salud, uso de aplicaciones y tiempo de Claude por tarea, de solo lectura (Balance) y vista diaria con todos los proyectos y la jornada de Toggl, de solo lectura (Agenda)",
-      "version": "4.8.0",
+      "description": "Skills personales de utilidad general: sistema de tareas con Toggl 2.0 como única lista de tus pendientes para todos los proyectos, solo tuya: el tiempo de Claude va a un registro local por repo y mes, la bandeja de lo anotado sin decidir y lo delegado a Claude viven en archivos del repo, y el tiempo real del usuario se mide aparte y se lee por una copia local reducida (Tarea), ceremonia de repositorio con rama por tarea, cierre en cadena, bandeja por revisar, lo delegado a Claude e historial de lo hecho como memoria del repo, más la migración de repos con el formato anterior (Tarea Repo), planificación de la semana por día en Toggl (Plan Semanal), revisión semanal de tu tiempo y el de Claude por separado, plan contra realidad, estimación, salud y uso de aplicaciones, de solo lectura (Balance) y vista diaria con todos los proyectos y la jornada de Toggl, de solo lectura (Agenda)",
+      "version": "5.0.0",
       "keywords": [
         "utils",
         "productividad",

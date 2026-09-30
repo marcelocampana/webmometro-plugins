@@ -1,8 +1,8 @@
 # Migrar un repo al modelo de Toggl (`--migrar`)
 
 Un repo con el formato anterior tiene su cola en `tareas/tareas.md` (`## Ahora` y secciones), la
-bandeja en `revisar.md` y el catálogo en `secciones.md`. Migrar es pasar lo pendiente a Toggl y dejar
-en el repo solo la memoria. **En una pasada y con un solo visto bueno.**
+bandeja en `revisar.md` y el catálogo en `secciones.md`. Migrar es pasar lo pendiente a Toggl, la
+bandeja a `tareas/por-revisar.md` (se queda en el repo) y dejar en el repo solo la memoria. **En una pasada y con un solo visto bueno.**
 
 `M=utils/skills/tarea-repo/scripts/migrar_a_toggl.py`.
 
@@ -14,7 +14,8 @@ en el repo solo la memoria. **En una pasada y con un solo visto bueno.**
      con `Área: <sección>` y el comentario en la descripción, la etiqueta del área (si se pasan sus
      ids con `--areas '{"Informes":ID}'`; las que falten se crean antes con `tags create`), la
      estimación desde `Coste`, el vence desde `Vence` y el estado;
-   - la bandeja con la etiqueta `por-revisar`, sin fecha ni asignación;
+   - la bandeja (`bandeja`), aparte: **no va a Toggl**; se escribe como entradas de
+     `tareas/por-revisar.md` (`python3 $M por-revisar tareas/` lo escribe);
    - las que **ya tienen `<!-- toggl:id -->`**, aparte: se actualizan (descripción, área) en vez de
      crearse de nuevo;
    - el contenido de `tareas/toggl.md` (marcador y áreas con su ámbito, desde `secciones.md`).
@@ -31,25 +32,30 @@ en el repo solo la memoria. **En una pasada y con un solo visto bueno.**
    para las que ya existían y para colgar cada subtarea de su tarea (`parent_task_id`). Validar
    antes con `dry_run: true`.
 5. **Limpiar el repo**, en una rama y un commit:
-   - `git rm` de `tareas/tareas.md`, `tareas/revisar.md` y `tareas/secciones.md`;
+   - `git rm` de `tareas/tareas.md`, `tareas/revisar.md` y `tareas/secciones.md`, y escribir
+     `tareas/por-revisar.md` con la bandeja;
    - escribir `tareas/toggl.md` (`python3 $M toggl-md … [--rama preview]` lo genera; la rama destino es `main` salvo que el usuario diga otra);
    - **el historial no se toca**; `auditoria.md` se queda;
    - actualizar el bloque de tareas del `CLAUDE.md` del repo con `assets/claude-md-puntero.md`.
-6. `cola.py invalidar`, y una línea de cierre: «Migrado: 18 tareas a Toggl, 6 a la bandeja».
+6. `cola.py invalidar`, y una línea de cierre: «Migrado: 18 tareas a Toggl, 6 a `por-revisar.md`».
+
+**Un repo ya migrado con la bandeja en Toggl** (etiqueta `por-revisar`, antes de utils 5.0.0): se leen
+esas tareas con `cola.py`, se muestran, y con el sí se escriben en `tareas/por-revisar.md` (o en el
+global, sin repo) y se archivan en Toggl (`tasks bulk-archive`).
 
 ## Reconciliar (`--toggl`)
 
-Si Toggl no respondía en un cierre, o una sesión se cortó, `presencia.py tramos` sigue teniendo lo
-pendiente: `--toggl` **envía lo que falte** (registros sin marca `enviado`, el trabajo de Claude
-sin tarea de `presencia.py sin-tarea`, estados que no coinciden) y lo dice en una línea. No
-reescribe lo ya enviado.
+Si Toggl no respondía en un cierre, o una sesión se cortó, `--toggl` **pone al día los estados** que
+no coinciden con las marcas locales (una tarea cerrada aquí que sigue abierta allá) y lo dice en una
+línea. El tiempo de Claude no entra: nunca va a Toggl, y `presencia.py asentar` lo lleva a su
+registro local.
 
 ## Hallazgos de la API (26 y 28-09-2026)
 
 | Hecho | Consecuencia |
 | --- | --- |
 | Un solo cronómetro por persona | No se usan cronómetros en vivo |
-| Registros superpuestos de la misma persona: se aceptan | Dos tareas en paralelo cuentan las dos |
+| Registros superpuestos de la misma persona: se aceptan | Dos registros tuyos en paralelo cuentan los dos |
 | Cada escritura pide un código de confirmación | Lo resuelve el skill: el visto bueno ya lo cubre |
 | Límite: ~30 consultas por hora | Todo va en bloque |
 | `start_date` sin `end_date` (o al revés) se rechaza | Van siempre juntas |

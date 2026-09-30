@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pruebas de presencia.py: ausencias, noches, trabajo desde el iPad, paralelo y envíos parciales.
+"""Pruebas de presencia.py: ausencias, noches, trabajo desde el iPad, paralelo y el registro de Claude.
 
     python3 -m unittest test_presencia.py      (desde esta carpeta)
 """
@@ -42,6 +42,7 @@ class Base(unittest.TestCase):
         os.environ["TAREA_PRESENCIA_DIR"] = self.tmp.name
         os.environ["TOGGL_CONFIG"] = os.path.join(self.tmp.name, "no-existe.md")
         os.environ["CLAUDE_PROYECTOS_DIR"] = os.path.join(self.tmp.name, "claude")
+        os.environ["CLAUDE_TIEMPO_DIR"] = os.path.join(self.tmp.name, "registro-tiempo")
 
     def tearDown(self):
         self.tmp.cleanup()
@@ -78,7 +79,7 @@ class Tramos(Base):
         r = self.tramos("1", "11:00")
         self.assertEqual(r["duracion"], "35m")
         self.assertEqual(r["descontado"], "25m")
-        self.assertEqual(r["registros"], [])             # tu tiempo no va a Toggl: lo cronometras tú
+        self.assertNotIn("registros", r)                 # nada va a Toggl: tu tiempo lo cronometras tú
         self.assertEqual(r["coste"], "45m")
 
     def test_completo_no_recorta_una_reunion_fuera_del_mac(self):
@@ -200,7 +201,8 @@ class TiempoDeClaude(Base):
     def test_resumen_por_proyecto(self):
         self.mac("10:00", "10:10")
         self.sesion("s1", self.cada("10:00", "10:30"))
-        r = correr("claude", "--desde", "2026-09-26", "--hasta", "2026-09-26")["proyectos"]["repo"]
+        # La carpeta no es un repo y no había tarea sin repo abierta: va a `sin-proyecto`.
+        r = correr("claude", "--desde", "2026-09-26", "--hasta", "2026-09-26")["proyectos"]["sin-proyecto"]
         self.assertEqual((r["claude"], r["con_usuario"], r["solo"]), ("29m", "10m", "19m"))
 
 
@@ -234,7 +236,7 @@ class Atribucion(Base):
     def test_una_sesion_abierta_en_un_repo_trabaja_en_otro(self):
         self.sesion("s1", [("10:00", "u"), ("10:01", "a", "plugins"), ("10:03", "a"), ("10:05", "a"),
                            ("10:20", "a", "sitio"), ("10:22", "a")])
-        r = correr("claude", "--desde", "2026-09-26", "--hasta", "2026-09-26")["proyectos"]
+        r = correr("claude", "--desde", "2026-09-26", "--hasta", "2026-09-26")["repos"]
         self.assertEqual(r["plugins"]["claude"], "5m")    # 10:01-10:06: lo que no toca archivos, sigue ahí
         self.assertEqual(r["sitio"]["claude"], "3m")      # 10:20-10:23
 
@@ -254,79 +256,106 @@ class Atribucion(Base):
         self.assertEqual(at.get("plugins"), 9)
 
 
-class ClaudeEnToggl(Atribucion):
-    def test_la_tarea_de_repo_envia_el_tiempo_de_claude(self):
+class RegistroDeTiempo(Atribucion):
+    """El tiempo de Claude no va a Toggl: se asienta en un archivo local por repo (sin repo, por proyecto de Toggl) y mes."""
+
+    def enlazar(self, repo, proyecto="Plugins IA", cliente="Interno"):
+        (self.repos[repo] / "tareas").mkdir(exist_ok=True)
+        (self.repos[repo] / "tareas" / "toggl.md").write_text(
+            "<!-- tarea: toggl · proyecto 42 «%s» · cliente 7 «%s» -->\n" % (proyecto, cliente))
+
+    def filas(self, nombre):
+        ruta = Path(os.environ["CLAUDE_TIEMPO_DIR"]) / nombre
+        return [[c.strip() for c in l.strip("|").split("|")] for l in ruta.read_text().splitlines()
+                if l.startswith("| 2026")]
+
+    def test_tramos_no_prepara_nada_para_toggl(self):
         presencia.anotar(t("10:00"), "tarea", "sitio", "1", "abrir")
-        self.mac("10:00", "10:05")                      # tú, 5 minutos
-        self.sesion("s1", [("10:00", "a", "sitio"), ("10:02", "a"), ("10:04", "a"), ("10:06", "a"),
-                           ("10:08", "a")])              # Claude, de 10:00 a 10:09
+        self.mac("10:00", "10:05")
+        self.sesion("s1", [("10:00", "a", "sitio"), ("10:02", "a"), ("10:04", "a"), ("10:06", "a"), ("10:08", "a")])
         presencia.anotar(t("10:30"), "tarea", "sitio", "1", "cerrar")
         r = correr("tramos", "--repo", "sitio", "--tarea", "1", "--hasta", t("10:30").isoformat())
-        self.assertEqual(r["fuente"], "claude")
-        self.assertEqual(sum(x["duration"] for x in r["registros"]), 9 * 60)
+        self.assertNotIn("registros", r)
         self.assertEqual(r["duracion"], "5m")            # tu tiempo, para el historial
-        self.assertNotIn("tag_ids", r["registros"][0])   # sin etiqueta configurada
+        self.assertEqual(r["claude"]["claude"], "9m")    # el de Claude, también para el historial
 
-    def test_los_registros_de_claude_llevan_su_etiqueta(self):
-        with open(os.environ["TOGGL_CONFIG"], "w", encoding="utf-8") as f:
-            f.write("| `etiqueta_claude` | 555 | la de Claude |\n")
-        presencia.anotar(t("10:00"), "tarea", "sitio", "1", "abrir")
-        self.sesion("s1", [("10:00", "a", "sitio"), ("10:02", "a")])
-        presencia.anotar(t("10:30"), "tarea", "sitio", "1", "cerrar")
-        r = correr("tramos", "--repo", "sitio", "--tarea", "1", "--hasta", t("10:30").isoformat())
-        self.assertEqual(r["registros"][0]["tag_ids"], [555])
-
-    def test_sin_trabajo_de_claude_no_se_envia_nada(self):
-        self.marca("R", "abrir", "10:00")
-        self.mac("10:00", "10:20")
-        self.marca("R", "cerrar", "10:20")
-        r = correr("tramos", "--repo", "sin-repo", "--tarea", "R", "--hasta", t("10:20").isoformat())
-        self.assertIn("error", r)                        # otra tarea: marcas de repo "repo"
-        r = self.tramos("R", "10:20")
-        self.assertEqual(r["fuente"], "ninguno")         # tu tiempo lo cronometras tú en Toggl
-        self.assertEqual(r["registros"], [])
-        self.assertEqual(r["duracion"], "20m")           # para el historial
-
-    def test_pausa_y_envio_parcial_de_claude(self):
-        presencia.anotar(t("10:00"), "tarea", "sitio", "1", "abrir")
-        self.sesion("s1", [("10:00", "a", "sitio"), ("10:02", "a"), ("10:04", "a"), ("10:06", "a"),
-                           ("10:08", "a")])              # Claude, de 10:00 a 10:09
-        presencia.anotar(t("10:20"), "tarea", "sitio", "1", "pausar")
-        presencia.anotar(t("10:20"), "tarea", "sitio", "1", "enviado")
-        presencia.anotar(t("11:00"), "tarea", "sitio", "1", "retomar")
-        self.sesion("s2", [("11:00", "a", "sitio"), ("11:02", "a"), ("11:04", "a")])  # 11:00-11:05
-        presencia.anotar(t("11:10"), "tarea", "sitio", "1", "cerrar")
-        r = correr("tramos", "--repo", "sitio", "--tarea", "1", "--hasta", t("11:10").isoformat())
-        self.assertEqual([x["duration"] for x in r["registros"]], [5 * 60])
-        todo = correr("tramos", "--repo", "sitio", "--tarea", "1", "--hasta", t("11:10").isoformat(), "--todo")
-        self.assertEqual(len(todo["registros"]), 2)
-
-    def test_sin_tarea_excluye_lo_que_tuvo_tarea_y_avanza_al_enviar(self):
-        (self.repos["plugins"] / "tareas").mkdir()
-        (self.repos["plugins"] / "tareas" / "toggl.md").write_text("<!-- tarea: toggl · proyecto 42 «P» · cliente 1 «C» -->\n")
+    def test_asentar_reparte_por_tarea_y_sin_tarea(self):
+        self.enlazar("plugins")
         presencia.anotar(t("10:20"), "tarea", "plugins", "7", "abrir")
         presencia.anotar(t("10:40"), "tarea", "plugins", "7", "cerrar")
         self.sesion("s1", [(h, "a", "plugins") for h in ("10:00", "10:02", "10:04", "10:21", "10:23", "10:50", "10:52")])
-        r = correr("sin-tarea", "--hasta", t("11:00").isoformat())
-        [p] = r["repos"]
-        self.assertEqual(p["proyecto_toggl"], 42)
-        self.assertEqual(p["total"], "8m")               # 10:00-10:05 y 10:50-10:53, no lo de la tarea
-        correr("sin-tarea", "--hasta", t("11:00").isoformat(), "--enviado")
-        self.assertEqual(correr("sin-tarea", "--hasta", t("11:30").isoformat())["repos"], [])
+        r = correr("asentar", "--hasta", t("11:00").isoformat())
+        self.assertEqual(r["filas"], 3)
+        filas = self.filas("plugins-2026-09.md")
+        self.assertEqual([(f[1][:5], f[2][:5], f[3], f[6]) for f in filas],
+                         [("10:00", "10:05", "5", "—"), ("10:21", "10:24", "3", "7"), ("10:50", "10:53", "3", "—")])
+        texto = (Path(os.environ["CLAUDE_TIEMPO_DIR"]) / "plugins-2026-09.md").read_text()
+        self.assertIn("proyecto 42 «Plugins IA» · cliente 7 «Interno»", texto)
 
+    def test_asentar_es_idempotente(self):
+        self.enlazar("plugins")
+        self.sesion("s1", [(h, "a", "plugins") for h in ("10:00", "10:02")])
+        correr("asentar", "--hasta", t("11:00").isoformat())
+        self.assertEqual(correr("asentar", "--hasta", t("11:00").isoformat())["filas"], 0)
+        self.assertEqual(correr("asentar", "--hasta", t("11:30").isoformat())["filas"], 0)
+        self.assertEqual(len(self.filas("plugins-2026-09.md")), 1)
 
-class SinTareaTrasDiasSinEnviar(Atribucion):
-    def test_retoma_desde_un_envio_de_hace_tres_semanas(self):
-        presencia.anotar(t("2026-09-05T22:00"), "sin-tarea", "enviado", t("2026-09-05T22:00").isoformat())
-        ruta = Path(os.environ["CLAUDE_PROYECTOS_DIR"]) / "-x-" / "s9.jsonl"
+    def test_repo_sin_enlace_tambien_usa_su_nombre(self):
+        self.sesion("s1", [(h, "a", "sitio") for h in ("10:00", "10:02")])
+        correr("asentar", "--hasta", t("11:00").isoformat())
+        self.assertEqual(len(self.filas("sitio-2026-09.md")), 1)
+
+    def test_sin_repo_hereda_el_nombre_de_toggl(self):
+        fuera = Path(self.tmp.name) / "notas"
+        fuera.mkdir()
+        presencia.anotar(t("09:55"), "tarea", "sin-repo", "88", "crear", "proyecto=Webmómetro › Administración")
+        presencia.anotar(t("10:00"), "tarea", "sin-repo", "88", "abrir")
+        ruta = Path(os.environ["CLAUDE_PROYECTOS_DIR"]) / "-x-" / "s7.jsonl"
         ruta.parent.mkdir(parents=True, exist_ok=True)
         with open(ruta, "w", encoding="utf-8") as f:
-            for h in ("10:00", "10:02"):
-                f.write(json.dumps({"timestamp": t("2026-09-10T" + h).isoformat(), "cwd": str(self.repos["plugins"]),
-                                    "type": "assistant", "message": {"content": []}}) + "\n")
-        r = correr("sin-tarea", "--hasta", t("2026-09-26T22:00").isoformat())
-        self.assertEqual(r["desde"][:10], "2026-09-05")
-        self.assertEqual([p["total"] for p in r["repos"]], ["3m"])
+            for h in ("10:00", "10:02", "11:30"):
+                f.write(json.dumps({"timestamp": t(h).isoformat(), "cwd": str(fuera), "type": "assistant",
+                                    "message": {"content": []}}) + "\n")
+        presencia.anotar(t("10:30"), "tarea", "sin-repo", "88", "cerrar")
+        correr("asentar", "--hasta", t("12:00").isoformat())
+        self.assertEqual([(f[3], f[5], f[6]) for f in self.filas("webmometro-administracion-2026-09.md")], [("3", "—", "88")])
+        self.assertEqual([(f[3], f[6]) for f in self.filas("sin-proyecto-2026-09.md")], [("1", "—")])
+
+    def test_dos_tareas_abiertas_no_cuentan_dos_veces(self):
+        presencia.anotar(t("10:00"), "tarea", "sitio", "1", "abrir")
+        presencia.anotar(t("10:05"), "tarea", "sitio", "2", "abrir")
+        self.sesion("s1", [(h, "a", "sitio") for h in ("10:00", "10:02", "10:04", "10:06", "10:08")])
+        correr("asentar", "--hasta", t("11:00").isoformat())
+        self.assertEqual([(f[3], f[6]) for f in self.filas("sitio-2026-09.md")], [("5", "1"), ("4", "2")])
+
+    def test_solo_es_sin_ti_delante(self):
+        self.mac("10:00", "10:05")
+        self.sesion("s1", [(h, "a", "sitio") for h in ("10:00", "10:02", "10:04", "10:06", "10:08")])
+        correr("asentar", "--hasta", t("11:00").isoformat())
+        [f] = self.filas("sitio-2026-09.md")
+        self.assertEqual((f[3], f[4]), ("9", "4"))
+
+    def test_sin_presencia_ese_dia_solo_queda_en_blanco(self):
+        self.sesion("s1", [(h, "a", "sitio") for h in ("10:00", "10:02")])
+        correr("asentar", "--hasta", t("11:00").isoformat())
+        [f] = self.filas("sitio-2026-09.md")
+        self.assertEqual(f[4], "—")
+        r = correr("claude", "--desde", "2026-09-26", "--hasta", "2026-09-26")["repos"]["sitio"]
+        self.assertEqual((r["claude"], r["solo"], r["sin_presencia"]), ("3m", "0m", "3m"))
+
+    def test_claude_suma_lo_asentado_y_lo_que_falta_sin_escribir(self):
+        self.enlazar("sitio", proyecto="Sitio web")
+        self.sesion("s1", [(h, "a", "sitio") for h in ("10:00", "10:02", "10:04", "10:06", "10:08")])   # 9m
+        correr("asentar", "--hasta", t("10:30").isoformat())
+        self.sesion("s2", [(h, "a", "sitio") for h in ("11:00", "11:02", "11:04")])                     # 5m
+        r = correr("claude", "--desde", "2026-09-26", "--hasta", "2026-09-26")
+        self.assertEqual(r["repos"]["sitio"]["claude"], "14m")
+        self.assertEqual(r["proyectos"]["Sitio web"]["claude"], "14m")
+        self.assertEqual(len(self.filas("sitio-2026-09.md")), 1)   # la cola no se escribió
+
+    def test_slug_del_proyecto(self):
+        self.assertEqual(presencia.slug("Plugins de IA"), "plugins-de-ia")
+        self.assertEqual(presencia.slug("Webmómetro › Administración"), "webmometro-administracion")
 
 
 class Desempeno(Atribucion):

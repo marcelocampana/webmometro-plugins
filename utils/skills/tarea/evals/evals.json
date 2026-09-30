@@ -33,7 +33,7 @@
       "id": 5,
       "name": "verificar-mis-registros",
       "prompt": "¿Está bien lo que cronometré hoy en Toggl?",
-      "expected_output": "Lee los registros de hoy por el MCP (time-entries list), deja fuera los de la etiqueta claude, corre presencia.py verificar --entradas y responde una línea por registro con lo que no cuadra (inicio tarde, cronómetro que siguió, pausas), más los límites una vez. No modifica ningún registro sin el sí del usuario.",
+      "expected_output": "Lee los registros de hoy por el MCP (time-entries list), deja fuera los antiguos de la etiqueta claude, corre presencia.py verificar --entradas y responde una línea por registro con lo que no cuadra (inicio tarde, cronómetro que siguió, pausas), más los límites una vez. No modifica ningún registro sin el sí del usuario.",
       "files": []
     }
   ]

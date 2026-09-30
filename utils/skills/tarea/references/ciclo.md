@@ -29,15 +29,19 @@ existe, se crea antes (una llamada más). Con `P sesion`, si la sesión continua
 (90), una línea: «Llevas 2h 10m seguidas; toca una pausa». No bloquea nada.
 
 **Varias abiertas a la vez** se permite (una llamada mientras se factura), y se avisa en una línea:
-el tiempo de proyecto cuenta las dos; el del usuario, una vez (`balance`).
+el tiempo de Claude va a la que se abrió después, y el tuyo cuenta una vez (`balance`).
 
 ## Qué va a Toggl
 
-**Solo el trabajo de Claude**, con la etiqueta `claude` (`etiqueta_claude` de la configuración
-global; si falta, se crea una vez con `tags create` y su id se anota ahí). Su proyecto es el del repo
-cuyos archivos toca, no el de la carpeta donde se abrió la sesión. **El tiempo del usuario lo
-cronometra él** con la app de Toggl —sus subtareas, reuniones, llamadas—; `P tramos` lo sigue dando
-como `duracion` para el historial, y «Verificar tu tiempo» (`tarea`) lo contrasta con el Mac.
+**Solo lo tuyo**: tus tareas, tus subtareas, sus estados y el tiempo que cronometras tú con la app
+de Toggl —subtareas, reuniones, llamadas—. **Nada de Claude va a Toggl**: ni sus pasos (van al plan)
+ni su tiempo, que `P asentar` escribe en su registro local
+(`~/Obsidian/Global/claude/registro-tiempo/<nombre>-AAAA-MM.md`), un archivo por mes: **con repo,
+lleva el nombre del repo; sin repo, el del proyecto de Toggl**. El repo es el de los archivos que
+toca, no el de la carpeta donde se abrió la sesión. Por eso una tarea sin repo se marca con su
+proyecto: `P marca --repo sin-repo --tarea ID --evento crear --proyecto "<nombre en Toggl>"`. `P tramos`
+sigue dando tu tiempo como `duracion` y el de Claude como `claude`, para el historial; «Verificar tu
+tiempo» (`tarea`) contrasta el tuyo con el Mac.
 
 ## Cerrar
 
@@ -46,22 +50,13 @@ En este orden, dentro de la misma cadena y sin pregunta aparte:
 0. **Antes de nada:** una subtarea del usuario abierta o un paso del plan sin hacer frenan el cierre;
    se dice cuál y la tarea sigue abierta.
 1. `P marca --repo R --tarea ID --evento cerrar`.
-2. `P tramos --repo R --tarea ID`: devuelve `registros` (lo que va a Toggl: el trabajo de Claude en
-   el repo mientras la tarea estuvo abierta, ya con `tag_ids`; vacío si `fuente` es `ninguno`),
-   `duracion` (tu tiempo, para el historial), `descontado`, `coste`, `vence` y `claude` (total, `con_usuario` y
-   `solo`).
-3. `time-entries bulk-create` con esos `registros` y `task_id` = ID (fechas RFC3339 con zona). Una
-   llamada, **en el mismo cierre**. Si la API no acepta `tag_ids` al crear, se ponen justo después con
-   `bulk-patch` sobre los ids creados. Sin registros, se salta.
-4. `tasks bulk-patch` con el estado Done. Una llamada.
-5. `P marca --evento enviado`.
-6. **Lo que Claude trabajó sin tarea**: `P sin-tarea --hasta <ahora>` da, por repo, los tramos de
-   Claude en que no había ninguna tarea de ese repo abierta, con el `proyecto_toggl` de su
-   `tareas/toggl.md`. Van en una llamada `time-entries bulk-create` sin `task_id` y con
-   `project_id` (también con la etiqueta); después `P sin-tarea --enviado --hasta <el mismo ahora>`.
-   Un repo sin `proyecto_toggl` no se envía y se dice en una línea. La rutina nocturna que hacía esto
-   mismo cada noche es opcional y está pausada (`assets/presencia-instalacion.md`, paso 3).
-7. `C invalidar`.
+2. `P tramos --repo R --tarea ID`: devuelve `duracion` (tu tiempo, para el historial), `descontado`,
+   `coste`, `vence` y `claude` (total, `con_usuario` y `solo`, para la columna Claude del historial).
+3. `P asentar`: el tiempo de Claude desde el último asiento —el de esta tarea y el que hizo sin tarea
+   en cualquier repo— al registro local. Idempotente; el agente de launchd también lo corre una vez al
+   día.
+4. `tasks bulk-patch` con el estado Done. Una llamada: **es la única escritura del cierre en Toggl.**
+5. `C invalidar`.
 
 **El cálculo lo hace el script, no el modelo**: las mismas marcas dan siempre los mismos tramos. Claude no
 usa cronómetro: Toggl admite uno solo por persona, y es el del usuario.
@@ -70,11 +65,12 @@ usa cronómetro: Toggl admite uno solo por persona, y es el del usuario.
 
 Si `P resumen` del día muestra a Claude trabajando en un repo sin tarea abierta más de
 `imprevisto_min` (30), se dice en una línea y se ofrece crear la tarea (etiqueta `imprevisto`, y su
-`abrir` con `--hora` de cuando empezó de verdad). Su tiempo no se pierde: va con `sin-tarea`.
+`abrir` con `--hora` de cuando empezó de verdad). Su tiempo no se pierde: `asentar` lo registra igual,
+con tarea `—`.
 
 ## Si Toggl falla
 
-La parte local y la de git se hacen igual, y se dice qué quedó sin enviar. Las marcas siguen en el
-registro: el siguiente cierre, o `tarea-repo --toggl`, envía lo pendiente. **Con 402 por límite**, se
+La parte local y la de git se hacen igual —el tiempo de Claude nunca dependió de Toggl—, y se dice
+qué estado quedó sin cambiar. `tarea-repo --toggl` reconcilia los estados después. **Con 402 por límite**, se
 avisa y no se reintenta en bucle. Cada escritura del MCP pide un código de confirmación: lo resuelve
 el skill, porque lo que dijo el usuario ya lo cubre.

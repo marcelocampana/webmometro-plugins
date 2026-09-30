@@ -12,7 +12,8 @@ que se va a tocar.
    sus trampas conocidas.
 2. **`tareas/toggl.md`**: el proyecto de Toggl, las áreas y las reglas propias del repo.
 3. **Lo pendiente del proyecto:** `cola.py leer --vista pendientes --proyecto <ID>` (nombre, área y
-   primera línea de cada tarea; la bandeja va marcada `#por-revisar`). Nunca `tasks list` crudo.
+   primera línea de cada tarea). Nunca `tasks list` crudo. Y `tareas/por-revisar.md` y
+   `para-claude.md`: lo anotado sin decidir y lo delegado a Claude.
 4. **El historial reciente:** la zona `## Tareas archivadas` del mensual en curso y del anterior, y
    de ahí **solo el comentario** (por su ancla, `historial-lectura.md`) de lo que toque el mismo
    ámbito que la tarea nueva.
@@ -43,7 +44,7 @@ No son ancla: «suele ser buena práctica», «convendría revisar» sin decir q
 
 **El protocolo: propone y espera**, también para lo que dicta el usuario: si el enunciado se puede
 afinar, propónlo afinado y di qué cambió. Excepción de forma: un hallazgo lateral detectado
-**mientras trabajas en otra tarea** se propone para la bandeja **en una línea y sigues**.
+**mientras trabajas en otra tarea** se anota en la bandeja (`por-revisar.md`) **en una línea y sigues**.
 
 ## Cuándo se relee
 

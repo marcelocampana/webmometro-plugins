@@ -22,6 +22,8 @@ una petición de tareas**). Si lo que hay es un `tareas.md` con `## Ahora`, no e
    - `tareas/toggl.md` desde `assets/toggl.esqueleto.md`, con el marcador, las áreas acordadas y la rama destino (`main` salvo que el usuario diga otra, como `preview`).
    - `tareas/auditoria.md` desde `assets/auditoria.esqueleto.md`.
    - `tareas/historial/` vacío.
+   - `tareas/por-revisar.md` y `tareas/para-claude.md` desde sus esqueletos: la bandeja y lo de
+     Claude, que nunca van a Toggl.
 5. **Ofrecer, en una línea cada uno:** el bloque para `CLAUDE.md` (`assets/claude-md-puntero.md`) y
    crear en Toggl las tareas que el usuario ya nombró.
 
