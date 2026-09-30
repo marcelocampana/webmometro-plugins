@@ -6,7 +6,8 @@ Toggl solo sabe lo que alguien le dice. Si el cronómetro corre mientras el usua
 sigue trabajando, cuenta ese tramo como suyo; si hay dos sesiones en paralelo, se lo quitan una a
 otra (Toggl permite un solo cronómetro por persona). Este script resuelve las dos cosas sin hablar
 con Toggl: guarda en local las señales de presencia y calcula, al cerrar una tarea, los tramos
-exactos que el skill `tarea` envía a Toggl en bloque.
+exactos de cada uno. **Toggl es solo del usuario**: el tiempo de Claude no va allí, se asienta en un
+registro local por proyecto y mes (`asentar`), que `balance` lee aparte.
 
 Dos señales, unidas minuto a minuto (un minuto con las dos cuenta una vez):
   - actividad en el Mac: segundos sin teclado ni mouse (HIDIdleTime) y la aplicación en primer
@@ -19,13 +20,13 @@ Todo el cálculo es determinista: las mismas marcas dan siempre los mismos tramo
 Uso:
     presencia.py registrar                         # cada minuto, desde launchd
     presencia.py mensaje < entrada-del-gancho.json  # desde el gancho UserPromptSubmit
-    presencia.py marca --repo R --tarea ID --evento crear|abrir|pausar|retomar|cerrar|enviado
+    presencia.py marca --repo R --tarea ID --evento crear|abrir|pausar|retomar|cerrar
                        [--coste 45m] [--vence AAAA-MM-DD] [--hora ISO]
-    presencia.py tramos --repo R --tarea ID [--hasta ISO] [--todo]
+    presencia.py tramos --repo R --tarea ID [--hasta ISO] [--completo]
     presencia.py sesion [--hasta ISO]
     presencia.py resumen --desde AAAA-MM-DD --hasta AAAA-MM-DD
     presencia.py claude --desde AAAA-MM-DD --hasta AAAA-MM-DD
-    presencia.py sin-tarea [--hasta ISO] [--enviado]    # Claude sin tarea abierta, por repo
+    presencia.py asentar [--hasta ISO]              # tiempo de Claude → registro local, por proyecto
     presencia.py mi-tiempo [--hasta ISO] [--desde ISO] [--enviado]   # tu tiempo, por aplicación
     presencia.py plan guardar|leer|comparar [--semana AAAA-Www] [--vigente]
     presencia.py abiertas [--repo R]               # tareas abiertas o en pausa (sin cerrar)
@@ -43,12 +44,15 @@ import os
 import re
 import subprocess
 import sys
+import unicodedata
 from bisect import bisect_right
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
 DIR_DEFECTO = Path.home() / ".local" / "share" / "tarea" / "presencia"
 CONFIG_DEFECTO = Path.home() / "Github" / "AI-kit" / "config" / "context" / "toggl.md"
+# El tiempo de Claude, fuera de Toggl y fuera de todo repo: un archivo por proyecto y mes.
+TIEMPO_DEFECTO = Path.home() / "Obsidian" / "global" / "claude" / "registro-tiempo"
 
 # Valores por defecto; la configuración global los puede cambiar (tabla `| clave | valor |`).
 AJUSTES = {
@@ -60,7 +64,6 @@ AJUSTES = {
     "claude_herramienta_max_min": 30,  # un comando de Claude cuenta entero hasta esto
     "notificar_mac": 1,      # 1: el aviso de pausa también sale como notificación de macOS
     "proyecto_mi_tiempo": 0,  # id del proyecto de Toggl donde va tu tiempo frente al computador
-    "etiqueta_claude": 0,    # id de la etiqueta `claude` de Toggl: la llevan los registros de Claude
 }
 
 
@@ -214,11 +217,6 @@ def abierta_en(eventos, hasta):
     return intervalos
 
 
-def ultimo_envio(eventos):
-    envios = [m for m, e, _ in eventos if e == "enviado"]
-    return max(envios) if envios else None
-
-
 def datos_creacion(eventos):
     datos = {}
     for _, evento, extra in eventos:
@@ -235,16 +233,7 @@ def fmt_duracion(segundos):
     return ("%dh %dm" % (h, m)) if h else ("%dm" % m)
 
 
-def registro_claude(a, b, ajustes):
-    """Un registro de Claude listo para `time-entries bulk-create`, con la etiqueta `claude` si está
-    configurada: así en Toggl se distingue del tiempo que cronometras tú."""
-    r = {"start": a.replace(microsecond=0).isoformat(), "duration": int((b - a).total_seconds()), "type": "activity"}
-    if ajustes.get("etiqueta_claude"):
-        r["tag_ids"] = [ajustes["etiqueta_claude"]]
-    return r
-
-
-def calcular_tramos(repo, tarea, hasta, todo, ajustes, completo=False):
+def calcular_tramos(repo, tarea, hasta, ajustes, completo=False):
     # Una tarea abierta hace más de 120 días no se mide aquí: su tiempo sale de git, con `~`.
     desde = hasta.date() - timedelta(days=120)
     lineas = leer_lineas(desde, hasta.date())
@@ -259,20 +248,15 @@ def calcular_tramos(repo, tarea, hasta, todo, ajustes, completo=False):
     abierto_s = sum((b - a).total_seconds() for a, b in abiertos)
     trabajado_s = sum((b - a).total_seconds() for a, b in trabajados)
     creacion = datos_creacion(eventos)
-    # A Toggl va solo el trabajo de Claude en su repo mientras la tarea estuvo abierta. Tu tiempo lo
-    # cronometras tú con la app de Toggl; aquí queda en `duracion`, para el historial.
+    # Nada de esto va a Toggl. Tu tiempo lo cronometras tú con la app de Toggl; aquí queda en
+    # `duracion`, para el historial. El de Claude en su repo mientras la tarea estuvo abierta queda en
+    # `claude`, también para el historial; su registro lo lleva `asentar`.
     claude = []
     if abiertos and repo != "sin-repo":
         claude = cortar(tramos_claude(abiertos[0][0], hasta, ajustes, repo).get(repo, []), abiertos)
-    fuente = "claude" if claude else "ninguno"
-    enviables = claude
-    envio = ultimo_envio(eventos)
-    pendientes = enviables if (todo or envio is None) else cortar(enviables, [(envio, hasta)])
     return {
         "repo": repo,
         "tarea": tarea,
-        "fuente": fuente,
-        "registros": [registro_claude(a, b, ajustes) for a, b in pendientes],
         "inicio": trabajados[0][0].isoformat() if trabajados else None,
         "fin": trabajados[-1][1].isoformat() if trabajados else None,
         "duracion_s": int(trabajado_s),
@@ -582,16 +566,6 @@ def reparto_claude(claude, presentes):
             "claude": fmt_duracion(total), "con_usuario": fmt_duracion(con), "solo": fmt_duracion(total - con)}
 
 
-def claude_solo(desde, hasta, ajustes):
-    """Por proyecto: cuánto trabajó Claude en el período, con el usuario presente y solo."""
-    presentes = tramos_presentes(minutos_activos(leer_lineas(desde, hasta)), ajustes["ausencia_min"])
-    limite_a = datetime.combine(desde, datetime.min.time()).astimezone()
-    limite_b = datetime.combine(hasta + timedelta(days=1), datetime.min.time()).astimezone()
-    por_proyecto = {nombre: reparto_claude(tramos, presentes)
-                    for nombre, tramos in tramos_claude(limite_a, limite_b, ajustes).items()}
-    return {"desde": desde.isoformat(), "hasta": hasta.isoformat(), "proyectos": por_proyecto}
-
-
 def restar(intervalos, quitar):
     """Lo de `intervalos` que no cae en ningún intervalo de `quitar`."""
     salida = []
@@ -612,40 +586,180 @@ def restar(intervalos, quitar):
     return salida
 
 
-def proyecto_toggl(raiz):
-    """El proyecto de Toggl de un repo, del marcador de su `tareas/toggl.md`."""
+def enlace_toggl(raiz):
+    """El proyecto y el cliente de Toggl de un repo, del marcador de su `tareas/toggl.md`, o None."""
     try:
         texto = (Path(raiz) / "tareas" / "toggl.md").read_text(encoding="utf-8")
     except (OSError, TypeError):
         return None
-    m = re.search(r"<!--\s*tarea:\s*toggl\s*·\s*proyecto\s+(\d+)", texto)
-    return int(m.group(1)) if m else None
+    m = re.search(r"<!--\s*tarea:\s*toggl\s*·\s*proyecto\s+(\d+)\s*«([^»]*)»"
+                  r"(?:\s*·\s*cliente\s+(\d+)\s*«([^»]*)»)?", texto)
+    if not m:
+        return None
+    return {"proyecto_id": int(m.group(1)), "proyecto": m.group(2).strip(),
+            "cliente_id": int(m.group(3)) if m.group(3) else None, "cliente": (m.group(4) or "").strip() or None}
 
 
-def claude_sin_tarea(hasta, ajustes, dias=31):
-    """El trabajo de Claude en cada repo mientras no había ninguna tarea de ese repo abierta, desde el
-    último envío (o desde el inicio del día). Va a Toggl como registro sin tarea en el proyecto del
-    repo, para que Toggl tenga todo lo que costó cada proyecto y no solo lo que tuvo tarea. El último
-    envío se busca 31 días atrás: Claude Code borra sus sesiones a los 30, y más allá no hay qué
-    recuperar."""
-    lineas = leer_lineas(hasta.date() - timedelta(days=dias), hasta.date())
-    envios = [datetime.fromisoformat(c[1]) for m, t, c in lineas if t == "sin-tarea" and len(c) > 1 and c[0] == "enviado"]
-    desde = max(envios) if envios else datetime.combine(hasta.date(), datetime.min.time()).astimezone()
+def slug(texto):
+    plano = unicodedata.normalize("NFKD", texto).encode("ascii", "ignore").decode("ascii")
+    return re.sub(r"[^a-z0-9]+", "-", plano.lower()).strip("-") or "sin-proyecto"
+
+
+def carpeta_tiempo():
+    return Path(os.environ.get("CLAUDE_TIEMPO_DIR", TIEMPO_DEFECTO)).expanduser()
+
+
+def partir_por_dia(a, b):
+    while a < b:
+        corte = min(b, datetime.combine(a.date() + timedelta(days=1), datetime.min.time()).astimezone())
+        yield a, corte
+        a = corte
+
+
+def ultimo_asiento(lineas):
+    marcas = [datetime.fromisoformat(c[0]) for m, t, c in lineas if t == "claude-asentado" and c]
+    return max(marcas) if marcas else None
+
+
+def calcular_asiento(desde, hasta, lineas, ajustes, sesiones=None):
+    """Los tramos de Claude entre `desde` y `hasta`, uno por fila: repo, tarea abierta en ese repo
+    (o `—`), minutos y cuánto fue solo, sin el usuario presente. Si dos tareas del mismo repo
+    estuvieron abiertas a la vez, el tramo va a la que se abrió después: nunca cuenta dos veces."""
     abiertas = {}
     for repo, tarea in {(c[0], c[1]) for m, t, c in lineas if t == "tarea" and len(c) >= 3}:
-        abiertas.setdefault(repo, []).extend(abierta_en(eventos_tarea(lineas, repo, tarea), hasta))
-    sesiones = leer_sesiones(desde, hasta, ajustes)
+        for a, b in abierta_en(eventos_tarea(lineas, repo, tarea), hasta):
+            abiertas.setdefault(repo, []).append((a, b, tarea))
+    if sesiones is None:
+        sesiones = leer_sesiones(desde, hasta, ajustes)
     raices = {nombre_repo(r): r for s in sesiones.values() for _, _, r in s["marcas"]}
-    repos = []
+    presentes = tramos_presentes(minutos_activos(lineas), ajustes["ausencia_min"])
+    # Un día sin ninguna señal de presencia (antes de instalar el registro, o con el Mac apagado y
+    # sin mensajes) no permite afirmar que Claude trabajó solo: su «Solo» queda en blanco (`—`).
+    con_presencia = {m.date() for m, t, _ in lineas if t in ("mac", "mensaje")}
+    filas = []
     for nombre, tramos in sorted(tramos_claude(desde, hasta, ajustes, sesiones=sesiones).items()):
-        libres = [(a, b) for a, b in restar(tramos, sorted(abiertas.get(nombre, [])))
-                  if (b - a).total_seconds() >= 60]
-        if libres:
-            total = sum((b - a).total_seconds() for a, b in libres)
-            repos.append({"repo": nombre, "proyecto_toggl": proyecto_toggl(raices.get(nombre)),
-                          "total": fmt_duracion(total), "total_s": int(total),
-                          "registros": [registro_claude(a, b, ajustes) for a, b in libres]})
-    return {"desde": desde.isoformat(), "hasta": hasta.isoformat(), "repos": repos}
+        piezas, resto = [], tramos
+        for a, b, tarea in sorted(abiertas.get(nombre, []), key=lambda x: x[0], reverse=True):
+            piezas += [(x, y, tarea) for x, y in cortar(resto, [(a, b)])]
+            resto = restar(resto, [(a, b)])
+        piezas += [(x, y, "—") for x, y in resto]
+        enlace = enlace_toggl(raices.get(nombre))
+        for x, y, tarea in sorted(piezas):
+            for a, b in partir_por_dia(x, y):
+                if (b - a).total_seconds() < 1:   # restos de un corte: nada que contar
+                    continue
+                con = sum((q - p).total_seconds() for p, q in cortar([(a, b)], presentes))
+                filas.append({"inicio": a, "fin": b, "repo": nombre, "tarea": tarea, "enlace": enlace,
+                              "segundos": int((b - a).total_seconds()),
+                              "solo_s": int((b - a).total_seconds() - con) if a.date() in con_presencia else None})
+    return filas
+
+
+def archivo_de(fila):
+    """`<proyecto>-AAAA-MM.md`: el nombre del proyecto de Toggl; sin enlace, el del repo."""
+    nombre = fila["enlace"]["proyecto"] if fila["enlace"] else ("sin-proyecto" if fila["repo"] == "-" else fila["repo"])
+    return carpeta_tiempo() / ("%s-%s.md" % (slug(nombre), fila["inicio"].strftime("%Y-%m")))
+
+
+def encabezado_tiempo(fila):
+    e = fila["enlace"] or {}
+    proyecto = e.get("proyecto") or ("sin proyecto" if fila["repo"] == "-" else fila["repo"])
+    marcador = "<!-- tiempo-claude · proyecto %s «%s» · cliente %s «%s» · lo escribe presencia.py asentar -->" % (
+        e.get("proyecto_id") or "-", proyecto, e.get("cliente_id") or "-", e.get("cliente") or "-")
+    return (marcador + "\n\n# Tiempo de Claude · %s · %s\n\n"
+            "Lo que trabajó Claude en este proyecto, tramo a tramo. No va a Toggl ni se suma con tu tiempo.\n"
+            "«Solo»: minutos sin ti delante (`—` si ese día no hay registro de presencia). «Tarea»: la que\n"
+            "estaba abierta en el repo, o `—`.\n\n"
+            "| Fecha | Inicio | Fin | Min | Solo | Repo | Tarea |\n"
+            "| --- | --- | --- | --- | --- | --- | --- |\n") % (proyecto, fila["inicio"].strftime("%Y-%m"))
+
+
+def asentar(hasta, ajustes, dias=31):
+    """Escribe en el registro local el tiempo de Claude desde el último asiento (o 31 días atrás:
+    Claude Code borra sus sesiones a los 30) y anota hasta dónde llegó. Idempotente: una segunda
+    pasada no repite nada."""
+    lineas = leer_lineas(hasta.date() - timedelta(days=dias), hasta.date())
+    desde = ultimo_asiento(lineas) or datetime.combine(hasta.date() - timedelta(days=dias), datetime.min.time()).astimezone()
+    filas = calcular_asiento(desde, hasta, lineas, ajustes) if desde < hasta else []
+    por_archivo = {}
+    for f in filas:
+        por_archivo.setdefault(archivo_de(f), []).append(f)
+    for ruta, lista in por_archivo.items():
+        ruta.parent.mkdir(parents=True, exist_ok=True)
+        nuevo = not ruta.exists()
+        with open(ruta, "a", encoding="utf-8") as out:
+            if nuevo:
+                out.write(encabezado_tiempo(lista[0]))
+            for f in lista:
+                out.write("| %s | %s | %s | %d | %s | %s | %s |\n" % (
+                    f["inicio"].date().isoformat(), f["inicio"].strftime("%H:%M:%S"), f["fin"].strftime("%H:%M:%S"),
+                    round(f["segundos"] / 60), "—" if f["solo_s"] is None else round(f["solo_s"] / 60),
+                    f["repo"], f["tarea"]))
+    if desde < hasta:
+        anotar(hasta, "claude-asentado", hasta.isoformat())
+    return {"desde": desde.isoformat(), "hasta": hasta.isoformat(), "filas": len(filas),
+            "archivos": {str(r): fmt_duracion(sum(f["segundos"] for f in l)) for r, l in por_archivo.items()}}
+
+
+FILA_TIEMPO = re.compile(r"^\|\s*(\d{4}-\d{2}-\d{2})\s*\|\s*(\d{2}:\d{2}(?::\d{2})?)\s*\|\s*(\d{2}:\d{2}(?::\d{2})?)\s*\|"
+                         r"\s*\d+\s*\|\s*(\d+|—)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|")
+PROYECTO_TIEMPO = re.compile(r"<!--\s*tiempo-claude\s*·\s*proyecto\s+\S+\s*«([^»]*)»")
+
+
+def leer_registro(desde, hasta):
+    """Las filas asentadas entre dos fechas locales, con el proyecto de su archivo."""
+    filas, d = [], carpeta_tiempo()
+    for ruta in sorted(d.glob("*-[0-9][0-9][0-9][0-9]-[0-9][0-9].md")) if d.exists() else []:
+        texto = ruta.read_text(encoding="utf-8")
+        m = PROYECTO_TIEMPO.search(texto)
+        proyecto = m.group(1) if m else ruta.stem[:-8]
+        for linea in texto.splitlines():
+            f = FILA_TIEMPO.match(linea)
+            if not f or not (desde.isoformat() <= f.group(1) <= hasta.isoformat()):
+                continue
+            dia = date.fromisoformat(f.group(1))
+            a, b = (datetime.combine(dia, datetime.strptime(h if len(h) == 8 else h + ":00", "%H:%M:%S").time()).astimezone()
+                    for h in (f.group(2), f.group(3)))
+            if b <= a:   # un tramo que termina a medianoche
+                b += timedelta(days=1)
+            filas.append({"proyecto": proyecto, "repo": f.group(5), "tarea": f.group(6),
+                          "segundos": int((b - a).total_seconds()),
+                          "solo_s": None if f.group(4) == "—" else int(f.group(4)) * 60})
+    return filas
+
+
+def claude_solo(desde, hasta, ajustes):
+    """Cuánto trabajó Claude en el período, por repo y por proyecto de Toggl: lo asentado en el
+    registro local más lo que aún no se asentó, calculado al vuelo **sin escribir nada**."""
+    limite_a = datetime.combine(desde, datetime.min.time()).astimezone()
+    limite_b = datetime.combine(hasta + timedelta(days=1), datetime.min.time()).astimezone()
+    lineas = leer_lineas(desde - timedelta(days=31), max(hasta, ahora().date()))
+    asentado = ultimo_asiento(lineas)
+    filas = leer_registro(desde, hasta) if asentado else []
+    cola_desde = max(limite_a, asentado) if asentado else limite_a
+    if cola_desde < limite_b:
+        for f in calcular_asiento(cola_desde, min(limite_b, ahora()), lineas, ajustes):
+            e = f["enlace"]
+            filas.append({"proyecto": e["proyecto"] if e else ("sin proyecto" if f["repo"] == "-" else f["repo"]),
+                          "repo": f["repo"], "tarea": f["tarea"], "segundos": f["segundos"], "solo_s": f["solo_s"]})
+
+    def reparto(lista):
+        """Contigo y solo, sobre lo que tiene presencia; lo que no, aparte (`sin_presencia`)."""
+        total = sum(f["segundos"] for f in lista)
+        sin = sum(f["segundos"] for f in lista if f["solo_s"] is None)
+        solo = min(total - sin, sum(f["solo_s"] for f in lista if f["solo_s"] is not None))
+        return {"claude_s": total, "con_usuario_s": total - sin - solo, "solo_s": solo, "sin_presencia_s": sin,
+                "claude": fmt_duracion(total), "con_usuario": fmt_duracion(total - sin - solo),
+                "solo": fmt_duracion(solo), "sin_presencia": fmt_duracion(sin)}
+
+    repos, proyectos = {}, {}
+    for f in filas:
+        repos.setdefault(f["repo"], []).append(f)
+        proyectos.setdefault(f["proyecto"], []).append(f)
+    return {"desde": desde.isoformat(), "hasta": hasta.isoformat(),
+            "asentado_hasta": asentado.isoformat() if asentado else None,
+            "repos": {k: reparto(v) for k, v in repos.items()},
+            "proyectos": {k: reparto(v) for k, v in proyectos.items()}}
 
 
 def mi_tiempo(hasta, ajustes, dias=31, desde=None):
@@ -874,13 +988,11 @@ def main(argv=None):
     t.add_argument("--repo", required=True)
     t.add_argument("--tarea", required=True)
     t.add_argument("--hasta")
-    t.add_argument("--todo", action="store_true", help="incluye lo ya enviado")
     t.add_argument("--completo", action="store_true", help="sin recortar por presencia (trabajo fuera del Mac)")
     s = sub.add_parser("sesion")
     s.add_argument("--hasta")
-    st = sub.add_parser("sin-tarea", help="trabajo de Claude sin tarea abierta, por repo, desde el último envío")
+    st = sub.add_parser("asentar", help="el tiempo de Claude, al registro local por proyecto y mes")
     st.add_argument("--hasta")
-    st.add_argument("--enviado", action="store_true", help="marca como enviado hasta --hasta")
     mt = sub.add_parser("mi-tiempo", help="tu tiempo frente al computador, por aplicación, desde el último envío")
     mt.add_argument("--hasta")
     mt.add_argument("--desde", help="ISO; por defecto, el último envío o el inicio del día")
@@ -910,6 +1022,15 @@ def main(argv=None):
                 anotar(t, "mac", inactivo, app_al_frente() if inactivo < 60 else "-")
                 avisar_desde_el_mac(t, inactivo, ajustes)
         except Exception:  # noqa: BLE001 — desde launchd no hay a quién avisar
+            pass
+        try:
+            # Una vez al día, el tiempo de Claude al registro local: aunque no se cierre ninguna
+            # tarea en 30 días, nada se pierde cuando Claude Code borra sus sesiones.
+            sello = carpeta() / "ultimo-asiento"
+            if not sello.exists() or datetime.now().timestamp() - sello.stat().st_mtime > 86400:
+                asentar(ahora(), ajustes)
+                sello.touch()
+        except Exception:  # noqa: BLE001
             pass
         return 0
 
@@ -941,7 +1062,7 @@ def main(argv=None):
         return 0
 
     if a.orden == "tramos":
-        print(json.dumps(calcular_tramos(a.repo, a.tarea, momento(a.hasta), a.todo, ajustes, a.completo), ensure_ascii=False))
+        print(json.dumps(calcular_tramos(a.repo, a.tarea, momento(a.hasta), ajustes, a.completo), ensure_ascii=False))
         return 0
 
     if a.orden == "sesion":
@@ -952,13 +1073,10 @@ def main(argv=None):
         print(json.dumps(resumen(a.desde, a.hasta, ajustes), ensure_ascii=False))
         return 0
 
-    if a.orden == "sin-tarea":
-        t = momento(a.hasta)
-        if a.enviado:
-            anotar(t, "sin-tarea", "enviado", t.isoformat())
-            print(json.dumps({"ok": True, "hasta": t.isoformat()}))
-        else:
-            print(json.dumps(claude_sin_tarea(t, ajustes), ensure_ascii=False))
+    if a.orden == "asentar":
+        resultado = asentar(momento(a.hasta), ajustes)
+        (carpeta() / "ultimo-asiento").touch()
+        print(json.dumps(resultado, ensure_ascii=False))
         return 0
 
     if a.orden == "mi-tiempo":

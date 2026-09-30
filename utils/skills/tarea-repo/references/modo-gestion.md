@@ -1,7 +1,8 @@
 # Gestión: crear, abrir y cerrar una tarea de repo
 
-La tarea vive en Toggl y su ciclo (estados, marcas, registros de tiempo) es de
-`tarea/references/ciclo.md`. Aquí va solo lo que añade el repo.
+La tarea vive en Toggl y su ciclo (estados, marcas, el registro de tiempo de Claude) es de
+`tarea/references/ciclo.md`. Aquí va solo lo que añade el repo. Lo delegado a Claude
+(`para-claude.md`) sigue esta misma ceremonia sin la parte de Toggl: `modo-claude.md`.
 
 ## Crear
 
@@ -64,7 +65,8 @@ commiteo, mergeo a `<destino>` y subo») y ejecútala sin pausas:
 
 0. **Plan:** todos los pasos con «Hecho» y ninguna subtarea del usuario abierta; si no, se dice qué
    falta y la tarea no se cierra.
-1. **Toggl:** los pasos de cierre de `tarea/references/ciclo.md` (tramos, registros, Done, `enviado`).
+1. **Toggl y registro local:** los pasos de cierre de `tarea/references/ciclo.md` (tramos, `asentar`,
+   Done). El tiempo de Claude no va a Toggl.
 2. **Historial:** la entrada en `tareas/historial/AAAA-MM.md`, con los datos de `tramos`
    (`archivado.md`); el comentario enlaza el plan.
 3. **Commit** en la rama de la tarea: lo resuelto y la entrada del historial, juntos.
@@ -84,8 +86,8 @@ con la tarea al commitear (pregunta si van o se quedan fuera).
 comando, una dependencia, una convención de `CLAUDE.md`—. **Sin señal, silencio total.** Con señal:
 `impacto-documental.md`.
 
-Al cerrar, **ofrece** para la bandeja (`por-revisar`) lo que el trabajo dejó pendiente: propone y
-espera. Después **para**: puedes sugerir la siguiente, no empezarla.
+Al cerrar, **ofrece** para la bandeja (`por-revisar.md`) lo que el trabajo dejó pendiente: propone y
+espera; con el sí, va en el mismo commit del cierre. Después **para**: puedes sugerir la siguiente, no empezarla.
 
 ## Consultar
 

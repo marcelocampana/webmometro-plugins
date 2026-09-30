@@ -110,6 +110,8 @@ def traer_todas(sesion, pedir=pedir_pagina):
         pagina += 1
 
 
+# Solo `imprevisto` sigue vigente. `por-revisar` (la bandeja, hoy en `tareas/por-revisar.md`) y `claude`
+# (el tiempo de Claude, hoy en su registro local) quedan por las tareas y registros anteriores a utils 5.0.0.
 TRANSVERSALES = {"imprevisto", "por-revisar", "claude"}
 
 

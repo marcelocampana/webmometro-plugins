@@ -13,7 +13,7 @@ description: >
   `balance`).
 argument-hint: "[--replanificar]"
 metadata:
-  version: 2.0.3
+  version: 2.0.4
 ---
 
 # Planificar la semana (plan-semanal)
@@ -30,7 +30,7 @@ el orden de los proyectos y `balance` dice que no hubo plan. Planificar es una m
 | | Dónde vive | Qué es |
 | --- | --- | --- |
 | **Plan** | Toggl: `start_date` = `end_date` = el día; `estimated_mins` | Una tarea con día y estimación, **sin registros de tiempo** |
-| **Realidad** | El registro de presencia (tu tiempo); Toggl guarda el trabajo de Claude por proyecto | Lo que `tarea` mide al cerrar |
+| **Realidad** | El registro de presencia (tu tiempo) y lo que cronometras en Toggl; el trabajo de Claude va aparte, a su registro local | Lo que `tarea` mide al cerrar |
 | **Plan original** | `presencia.py plan` (local) | La versión del lunes, porque Toggl solo guarda la última |
 
 **Por día, no por hora.** Una hora exacta obliga a replanificar cada vez que la mañana cambia; un
@@ -44,7 +44,8 @@ día aguanta. El orden dentro del día lo da la prioridad de cada tarea.
 2. **Semana:** la que empieza el lunes próximo, o la actual si es lunes o se pide replanificar.
    Las fechas salen de `date`, nunca de la memoria.
 3. **Candidatas:** `cola.py leer --vista pendientes --json` —todos los proyectos, con o sin repo, en
-   una sola lectura—, sin la bandeja (`por-revisar`) ni lo bloqueado. **Nunca `tasks list` del MCP.**
+   una sola lectura—, sin lo bloqueado. La bandeja (`por-revisar.md`) y lo de Claude (`para-claude.md`)
+   no están en Toggl y no se planifican. **Nunca `tasks list` del MCP.**
    Una tarea y las subtareas del usuario se planifican cada una en su día; la subtarea que la tarea
    necesita antes, antes.
 4. **Capacidad:** `capacities get-computations` de la semana (una llamada): la jornada de cada día y

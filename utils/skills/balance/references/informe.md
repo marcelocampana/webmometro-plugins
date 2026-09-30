@@ -5,8 +5,9 @@ Ocho secciones, en este orden. **Una sección sin datos no sale**, y se nombra a
 
 ## 1. Tiempo de proyecto
 
-De Toggl: lo que costó cada cliente y cada proyecto, en dos columnas que no se suman: **Claude**
-(etiqueta `claude`, con tarea o sin ella) y **tú** (lo que cronometraste), y por área si aporta. Frente al período anterior, solo si hay datos de los dos: «ODC 6h
+Lo que costó cada cliente y cada proyecto, en dos columnas que no se suman, cada una de su fuente:
+**tú** (lo que cronometraste en Toggl, sin la etiqueta `claude`) y **Claude** (`presencia.py claude`,
+por proyecto: su registro local, con tarea o sin ella), y por área si aporta. Frente al período anterior, solo si hay datos de los dos: «ODC 6h
 (+2h)». Los registros sin proyecto se cuentan aparte.
 
 ## 2. Tu tiempo
@@ -68,7 +69,7 @@ a plantilla o a un skill. Una línea por candidata, con su tiempo y cuántas vec
 `claude` muestra que Claude ya las hace solo casi enteras, se dice: ya están automatizadas en la
 práctica.
 
-Se ofrece llevarlas a la bandeja (etiqueta `por-revisar` en Toggl); con el sí, se remite a `tarea`.
+Se ofrece llevarlas a la bandeja (`por-revisar.md` del repo); con el sí, se remite a `tarea-repo`.
 Este skill no escribe.
 
 ## 7. Salud
