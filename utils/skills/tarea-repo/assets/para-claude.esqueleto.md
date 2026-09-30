@@ -8,7 +8,7 @@ cualquier tarea (`tarea-repo/references/modo-claude.md`). Al cerrarse sale de aq
 historial. **Nada de esto va a Toggl**: el tiempo de Claude va a su registro local.
 
 Una entrada por línea: `- **Título** · Área · origen · delegada AAAA-MM-DD — qué se espera`.
-Sin repo (`~/Obsidian/global/para-claude.md`), una sección `## <Proyecto>` por proyecto de Toggl y,
+Sin repo (`~/Obsidian/Global/para-claude.md`), una sección `## <Proyecto>` por proyecto de Toggl y,
 al final, `## Hechas`, con la fecha de cierre.
 
 ## Pendientes

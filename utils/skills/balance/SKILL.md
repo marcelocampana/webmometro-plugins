@@ -29,7 +29,7 @@ cuerpo**. Por defecto, la semana pasada de lunes a domingo; `--mes` o un rango, 
 No escribe en Toggl ni en ningún repo (tampoco en el historial). Así puede correr desatendido desde
 una rutina: lo peor que puede pasar es un informe incompleto. Si de la revisión sale algo que hacer
 —automatizar una familia de tareas, partir mejor—, **lo propone para la bandeja** (el
-`por-revisar.md` del repo que corresponda; sin repo, el de `~/Obsidian/global/`) en una línea y lo
+`por-revisar.md` del repo que corresponda; sin repo, el de `~/Obsidian/Global/`) en una línea y lo
 deja a `tarea-repo`, que lo anota con el sí.
 
 ## Tres medidas que nunca se suman

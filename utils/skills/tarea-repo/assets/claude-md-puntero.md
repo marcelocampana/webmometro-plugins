@@ -24,7 +24,7 @@ Reglas irrenunciables:
    de Claude (con su skill y su contexto) van al plan, `tareas/planes/`, y no a Toggl; lo que le toca
    al usuario va como subtareas, que cronometra él. Aprobado el plan, los pasos se encadenan sin pedir
    confirmación. **Toggl es solo del usuario**: el tiempo de Claude va a su registro local
-   (`~/Obsidian/global/claude/registro-tiempo/`), nunca a Toggl.
+   (`~/Obsidian/Global/claude/registro-tiempo/`), nunca a Toggl.
 3. **Se completa esa tarea y se para.** Los commits en la rama de la tarea son puntos de guardado y no
    piden confirmación; **el merge a la rama destino sí, siempre, una vez y después de ver el
    resultado** —ni «complétala» ni el plan aprobado la sustituyen—. Con ese visto bueno se encadenan

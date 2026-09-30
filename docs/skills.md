@@ -83,7 +83,7 @@ Utilidades transversales de organización del trabajo.
   todos los proyectos, y **solo tuya**. Crea, abre, pausa y cierra tareas en
   Toggl. **Nada de Claude va a Toggl**: su tiempo se asienta en un registro
   local por repo —sin repo, por proyecto de Toggl— y mes
-  (`~/Obsidian/global/claude/registro-tiempo/`),
+  (`~/Obsidian/Global/claude/registro-tiempo/`),
   atribuido al repo cuyos archivos toca, con tarea o sin ella. Lo tuyo lo
   cronometras tú con la app, y Claude lo verifica contra tu actividad. Lo
   anotado sin decidir va a la bandeja (`por-revisar.md`) y lo que una

@@ -53,7 +53,7 @@ DIR_DEFECTO = Path.home() / ".local" / "share" / "tarea" / "presencia"
 CONFIG_DEFECTO = Path.home() / "Github" / "AI-kit" / "config" / "context" / "toggl.md"
 # El tiempo de Claude, fuera de Toggl y fuera de todo repo: un archivo por repo (sin repo, por proyecto
 # de Toggl) y mes.
-TIEMPO_DEFECTO = Path.home() / "Obsidian" / "global" / "claude" / "registro-tiempo"
+TIEMPO_DEFECTO = Path.home() / "Obsidian" / "Global" / "claude" / "registro-tiempo"
 
 # Valores por defecto; la configuración global los puede cambiar (tabla `| clave | valor |`).
 AJUSTES = {

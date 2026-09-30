@@ -91,7 +91,7 @@ y se ofrece `tarea-repo --migrar`.
 - **Al retomar**, el usuario no relee el plan: Claude lo lee y da el estado en 2–3 líneas (cuántos
   pasos van, cuál sigue, qué le toca al usuario).
 - **Nada de Claude va a Toggl**: su tiempo lo escribe `P asentar` en
-  `~/Obsidian/global/claude/registro-tiempo/<nombre>-AAAA-MM.md` (el nombre del repo; sin repo, el
+  `~/Obsidian/Global/claude/registro-tiempo/<nombre>-AAAA-MM.md` (el nombre del repo; sin repo, el
   del proyecto de Toggl). Toggl es solo tu trabajo.
 
 ## La bandeja y lo de Claude
@@ -102,7 +102,7 @@ y se ofrece `tarea-repo --migrar`.
   tarea tuya (con visto bueno), delegarla a Claude (pasa a `para-claude.md`) o descartarla.
 - **Lo de Claude** se ejecuta cuando lo pides («haz lo de Claude»), con su plan, y nunca va a Toggl.
 - **Dónde:** en un repo, en su `tareas/` (lo lleva `tarea-repo`); sin repo, en
-  `~/Obsidian/global/por-revisar.md` y `para-claude.md`, una sección por proyecto, siguiendo
+  `~/Obsidian/Global/por-revisar.md` y `para-claude.md`, una sección por proyecto, siguiendo
   `tarea-repo/references/modo-revisar.md` y `modo-claude.md` sin la parte de git.
 
 ## Verificar tu tiempo

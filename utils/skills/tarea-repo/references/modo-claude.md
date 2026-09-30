@@ -1,7 +1,7 @@
 # Lo de Claude: `para-claude.md`
 
 Lo que una revisión delegó a Claude vive en **`tareas/para-claude.md`** (sin repo,
-`~/Obsidian/global/para-claude.md`). **No está en Toggl ni va a estar**: Toggl es solo del usuario.
+`~/Obsidian/Global/para-claude.md`). **No está en Toggl ni va a estar**: Toggl es solo del usuario.
 Si no existe, se crea desde `assets/para-claude.esqueleto.md` al delegar la primera entrada.
 
 ## Ejecutar

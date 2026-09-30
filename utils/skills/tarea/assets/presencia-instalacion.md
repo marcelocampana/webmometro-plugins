@@ -49,7 +49,7 @@ fuera ni bloquea el mensaje: en el peor caso no anota nada.
 ## 3. El registro de tiempo de Claude
 
 **El tiempo de Claude no va a Toggl** (Toggl es solo del usuario). `presencia.py asentar` lo escribe
-en `~/Obsidian/global/claude/registro-tiempo/<nombre>-AAAA-MM.md` (o `CLAUDE_TIEMPO_DIR`): un
+en `~/Obsidian/Global/claude/registro-tiempo/<nombre>-AAAA-MM.md` (o `CLAUDE_TIEMPO_DIR`): un
 archivo por mes con el nombre del repo o, sin repo, del proyecto de Toggl; una fila por tramo, con la
 tarea que estaba abierta o `—`. Corre al cerrar cada tarea y, además, **el mismo agente de launchd lo lanza una vez al día**: así
 nada se pierde aunque pasen semanas sin cerrar nada, antes de que Claude Code borre sus sesiones (30

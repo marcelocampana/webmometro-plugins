@@ -1,6 +1,6 @@
 # La bandeja: `por-revisar.md` (`--revisar`)
 
-La bandeja es **`tareas/por-revisar.md`** (sin repo, `~/Obsidian/global/por-revisar.md`, una sección
+La bandeja es **`tareas/por-revisar.md`** (sin repo, `~/Obsidian/Global/por-revisar.md`, una sección
 por proyecto). **Solo guarda**: no es cola, no tiene fecha ni dueño y no está en Toggl. Si no existe,
 se crea desde `assets/por-revisar.esqueleto.md` al anotar la primera entrada.
 
