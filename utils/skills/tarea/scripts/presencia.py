@@ -7,7 +7,7 @@ sigue trabajando, cuenta ese tramo como suyo; si hay dos sesiones en paralelo, s
 otra (Toggl permite un solo cronómetro por persona). Este script resuelve las dos cosas sin hablar
 con Toggl: guarda en local las señales de presencia y calcula, al cerrar una tarea, los tramos
 exactos de cada uno. **Toggl es solo del usuario**: el tiempo de Claude no va allí, se asienta en un
-registro local por proyecto y mes (`asentar`), que `balance` lee aparte.
+registro local por repo (o, sin repo, por proyecto de Toggl) y mes (`asentar`), que `balance` lee aparte.
 
 Dos señales, unidas minuto a minuto (un minuto con las dos cuenta una vez):
   - actividad en el Mac: segundos sin teclado ni mouse (HIDIdleTime) y la aplicación en primer
@@ -21,7 +21,7 @@ Uso:
     presencia.py registrar                         # cada minuto, desde launchd
     presencia.py mensaje < entrada-del-gancho.json  # desde el gancho UserPromptSubmit
     presencia.py marca --repo R --tarea ID --evento crear|abrir|pausar|retomar|cerrar
-                       [--coste 45m] [--vence AAAA-MM-DD] [--hora ISO]
+                       [--coste 45m] [--vence AAAA-MM-DD] [--hora ISO] [--proyecto NOMBRE]
     presencia.py tramos --repo R --tarea ID [--hasta ISO] [--completo]
     presencia.py sesion [--hasta ISO]
     presencia.py resumen --desde AAAA-MM-DD --hasta AAAA-MM-DD
@@ -51,7 +51,8 @@ from pathlib import Path
 
 DIR_DEFECTO = Path.home() / ".local" / "share" / "tarea" / "presencia"
 CONFIG_DEFECTO = Path.home() / "Github" / "AI-kit" / "config" / "context" / "toggl.md"
-# El tiempo de Claude, fuera de Toggl y fuera de todo repo: un archivo por proyecto y mes.
+# El tiempo de Claude, fuera de Toggl y fuera de todo repo: un archivo por repo (sin repo, por proyecto
+# de Toggl) y mes.
 TIEMPO_DEFECTO = Path.home() / "Obsidian" / "global" / "claude" / "registro-tiempo"
 
 # Valores por defecto; la configuración global los puede cambiar (tabla `| clave | valor |`).
@@ -621,10 +622,25 @@ def ultimo_asiento(lineas):
     return max(marcas) if marcas else None
 
 
+def proyecto_de_tarea(lineas, repo, tarea):
+    """El proyecto de Toggl que se anotó en las marcas de una tarea (`--proyecto`), o None."""
+    for m, t, c in lineas:
+        if t == "tarea" and len(c) >= 3 and c[0] == repo and c[1] == tarea:
+            for par in c[3:]:
+                if par.startswith("proyecto="):
+                    return par.split("=", 1)[1]
+    return None
+
+
 def calcular_asiento(desde, hasta, lineas, ajustes, sesiones=None):
-    """Los tramos de Claude entre `desde` y `hasta`, uno por fila: repo, tarea abierta en ese repo
-    (o `—`), minutos y cuánto fue solo, sin el usuario presente. Si dos tareas del mismo repo
-    estuvieron abiertas a la vez, el tramo va a la que se abrió después: nunca cuenta dos veces."""
+    """Los tramos de Claude entre `desde` y `hasta`, uno por fila: repo, tarea abierta (o `—`),
+    minutos y cuánto fue solo, sin el usuario presente.
+
+    **En un repo**, la tarea es la que estaba abierta en ese repo y el archivo lleva el nombre del
+    repo. **Fuera de todo repo**, la tarea es la de un proyecto sin repo (`sin-repo`) que estuviera
+    abierta, y el archivo lleva el nombre de su proyecto de Toggl (`marca --proyecto`); sin ninguna,
+    va a `sin-proyecto`. Si dos tareas estuvieron abiertas a la vez, el tramo va a la que se abrió
+    después: nunca cuenta dos veces."""
     abiertas = {}
     for repo, tarea in {(c[0], c[1]) for m, t, c in lineas if t == "tarea" and len(c) >= 3}:
         for a, b in abierta_en(eventos_tarea(lineas, repo, tarea), hasta):
@@ -638,40 +654,48 @@ def calcular_asiento(desde, hasta, lineas, ajustes, sesiones=None):
     con_presencia = {m.date() for m, t, _ in lineas if t in ("mac", "mensaje")}
     filas = []
     for nombre, tramos in sorted(tramos_claude(desde, hasta, ajustes, sesiones=sesiones).items()):
+        raiz = raices.get(nombre)
+        es_repo = bool(raiz) and (Path(raiz) / ".git").exists()
         piezas, resto = [], tramos
-        for a, b, tarea in sorted(abiertas.get(nombre, []), key=lambda x: x[0], reverse=True):
+        for a, b, tarea in sorted(abiertas.get(nombre if es_repo else "sin-repo", []), key=lambda x: x[0], reverse=True):
             piezas += [(x, y, tarea) for x, y in cortar(resto, [(a, b)])]
             resto = restar(resto, [(a, b)])
         piezas += [(x, y, "—") for x, y in resto]
-        enlace = enlace_toggl(raices.get(nombre))
         for x, y, tarea in sorted(piezas):
+            if es_repo:
+                enlace, archivo = enlace_toggl(raiz), nombre
+            else:
+                proyecto = proyecto_de_tarea(lineas, "sin-repo", tarea) if tarea != "—" else None
+                enlace = {"proyecto": proyecto} if proyecto else None
+                archivo = proyecto or "sin-proyecto"
             for a, b in partir_por_dia(x, y):
                 if (b - a).total_seconds() < 1:   # restos de un corte: nada que contar
                     continue
                 con = sum((q - p).total_seconds() for p, q in cortar([(a, b)], presentes))
-                filas.append({"inicio": a, "fin": b, "repo": nombre, "tarea": tarea, "enlace": enlace,
+                filas.append({"inicio": a, "fin": b, "repo": nombre if es_repo else "—", "tarea": tarea,
+                              "enlace": enlace, "archivo": archivo,
                               "segundos": int((b - a).total_seconds()),
                               "solo_s": int((b - a).total_seconds() - con) if a.date() in con_presencia else None})
     return filas
 
 
 def archivo_de(fila):
-    """`<proyecto>-AAAA-MM.md`: el nombre del proyecto de Toggl; sin enlace, el del repo."""
-    nombre = fila["enlace"]["proyecto"] if fila["enlace"] else ("sin-proyecto" if fila["repo"] == "-" else fila["repo"])
-    return carpeta_tiempo() / ("%s-%s.md" % (slug(nombre), fila["inicio"].strftime("%Y-%m")))
+    """`<nombre>-AAAA-MM.md`: el del repo; fuera de todo repo, el del proyecto de Toggl."""
+    return carpeta_tiempo() / ("%s-%s.md" % (slug(fila["archivo"]), fila["inicio"].strftime("%Y-%m")))
 
 
 def encabezado_tiempo(fila):
     e = fila["enlace"] or {}
-    proyecto = e.get("proyecto") or ("sin proyecto" if fila["repo"] == "-" else fila["repo"])
-    marcador = "<!-- tiempo-claude · proyecto %s «%s» · cliente %s «%s» · lo escribe presencia.py asentar -->" % (
-        e.get("proyecto_id") or "-", proyecto, e.get("cliente_id") or "-", e.get("cliente") or "-")
+    proyecto = e.get("proyecto") or "-"
+    marcador = "<!-- tiempo-claude · %s · proyecto %s «%s» · cliente %s «%s» · lo escribe presencia.py asentar -->" % (
+        ("repo " + fila["repo"]) if fila["repo"] != "—" else "sin repo", e.get("proyecto_id") or "-", proyecto,
+        e.get("cliente_id") or "-", e.get("cliente") or "-")
     return (marcador + "\n\n# Tiempo de Claude · %s · %s\n\n"
-            "Lo que trabajó Claude en este proyecto, tramo a tramo. No va a Toggl ni se suma con tu tiempo.\n"
+            "Lo que trabajó Claude aquí, tramo a tramo. No va a Toggl ni se suma con tu tiempo.\n"
             "«Solo»: minutos sin ti delante (`—` si ese día no hay registro de presencia). «Tarea»: la que\n"
-            "estaba abierta en el repo, o `—`.\n\n"
+            "estaba abierta, o `—`.\n\n"
             "| Fecha | Inicio | Fin | Min | Solo | Repo | Tarea |\n"
-            "| --- | --- | --- | --- | --- | --- | --- |\n") % (proyecto, fila["inicio"].strftime("%Y-%m"))
+            "| --- | --- | --- | --- | --- | --- | --- |\n") % (fila["archivo"], fila["inicio"].strftime("%Y-%m"))
 
 
 def asentar(hasta, ajustes, dias=31):
@@ -703,7 +727,7 @@ def asentar(hasta, ajustes, dias=31):
 
 FILA_TIEMPO = re.compile(r"^\|\s*(\d{4}-\d{2}-\d{2})\s*\|\s*(\d{2}:\d{2}(?::\d{2})?)\s*\|\s*(\d{2}:\d{2}(?::\d{2})?)\s*\|"
                          r"\s*\d+\s*\|\s*(\d+|—)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|")
-PROYECTO_TIEMPO = re.compile(r"<!--\s*tiempo-claude\s*·\s*proyecto\s+\S+\s*«([^»]*)»")
+PROYECTO_TIEMPO = re.compile(r"<!--\s*tiempo-claude\s*·[^·]*·\s*proyecto\s+\S+\s*«([^»]*)»")
 
 
 def leer_registro(desde, hasta):
@@ -712,7 +736,7 @@ def leer_registro(desde, hasta):
     for ruta in sorted(d.glob("*-[0-9][0-9][0-9][0-9]-[0-9][0-9].md")) if d.exists() else []:
         texto = ruta.read_text(encoding="utf-8")
         m = PROYECTO_TIEMPO.search(texto)
-        proyecto = m.group(1) if m else ruta.stem[:-8]
+        proyecto = m.group(1) if m and m.group(1) != "-" else ruta.stem[:-8]
         for linea in texto.splitlines():
             f = FILA_TIEMPO.match(linea)
             if not f or not (desde.isoformat() <= f.group(1) <= hasta.isoformat()):
@@ -740,7 +764,7 @@ def claude_solo(desde, hasta, ajustes):
     if cola_desde < limite_b:
         for f in calcular_asiento(cola_desde, min(limite_b, ahora()), lineas, ajustes):
             e = f["enlace"]
-            filas.append({"proyecto": e["proyecto"] if e else ("sin proyecto" if f["repo"] == "-" else f["repo"]),
+            filas.append({"proyecto": e["proyecto"] if e else f["archivo"],
                           "repo": f["repo"], "tarea": f["tarea"], "segundos": f["segundos"], "solo_s": f["solo_s"]})
 
     def reparto(lista):
@@ -984,6 +1008,7 @@ def main(argv=None):
     m.add_argument("--coste")
     m.add_argument("--vence")
     m.add_argument("--hora")
+    m.add_argument("--proyecto", help="sin repo: el nombre del proyecto de Toggl, para el registro de Claude")
     t = sub.add_parser("tramos")
     t.add_argument("--repo", required=True)
     t.add_argument("--tarea", required=True)
@@ -991,7 +1016,7 @@ def main(argv=None):
     t.add_argument("--completo", action="store_true", help="sin recortar por presencia (trabajo fuera del Mac)")
     s = sub.add_parser("sesion")
     s.add_argument("--hasta")
-    st = sub.add_parser("asentar", help="el tiempo de Claude, al registro local por proyecto y mes")
+    st = sub.add_parser("asentar", help="el tiempo de Claude, al registro local por repo y mes")
     st.add_argument("--hasta")
     mt = sub.add_parser("mi-tiempo", help="tu tiempo frente al computador, por aplicación, desde el último envío")
     mt.add_argument("--hasta")
@@ -1056,6 +1081,8 @@ def main(argv=None):
             extra.append("coste=%s" % a.coste)
         if a.vence:
             extra.append("vence=%s" % a.vence)
+        if a.proyecto:
+            extra.append("proyecto=%s" % a.proyecto)
         t = momento(a.hora)
         anotar(t, "tarea", a.repo, a.tarea, a.evento, *extra)
         print(json.dumps({"ok": True, "hora": t.isoformat()}))

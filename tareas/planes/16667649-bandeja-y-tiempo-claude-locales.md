@@ -35,4 +35,7 @@ aprobar el merge y decidir sobre la rutina `enviar-claude-sin-tarea`.
   sale del marcador.
 - «Solo» queda en `—` los días sin registro de presencia (antes del 26-09): no se puede afirmar.
 - Los trocitos que deja cortar un tramo por una tarea se cuentan (antes se perdían 4½ min en la semana).
+- Corrección del usuario: el archivo de tiempo lleva el nombre del repo; sin repo, el del proyecto de
+  Toggl (`marca --proyecto`). Registro regenerado.
+- Rutina `enviar-claude-sin-tarea` borrada y `balance-semana` apunta a `por-revisar.md` (con tu sí).
 - El agente de launchd ya corre el código nuevo (apunta al repo): hizo el primer asiento solo, a las 21:18.

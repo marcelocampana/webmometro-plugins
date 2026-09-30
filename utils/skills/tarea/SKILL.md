@@ -91,7 +91,8 @@ y se ofrece `tarea-repo --migrar`.
 - **Al retomar**, el usuario no relee el plan: Claude lo lee y da el estado en 2–3 líneas (cuántos
   pasos van, cuál sigue, qué le toca al usuario).
 - **Nada de Claude va a Toggl**: su tiempo lo escribe `P asentar` en
-  `~/Obsidian/global/claude/registro-tiempo/<proyecto>-AAAA-MM.md`. Toggl es solo tu trabajo.
+  `~/Obsidian/global/claude/registro-tiempo/<nombre>-AAAA-MM.md` (el nombre del repo; sin repo, el
+  del proyecto de Toggl). Toggl es solo tu trabajo.
 
 ## La bandeja y lo de Claude
 

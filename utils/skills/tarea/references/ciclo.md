@@ -36,8 +36,10 @@ el tiempo de Claude va a la que se abrió después, y el tuyo cuenta una vez (`b
 **Solo lo tuyo**: tus tareas, tus subtareas, sus estados y el tiempo que cronometras tú con la app
 de Toggl —subtareas, reuniones, llamadas—. **Nada de Claude va a Toggl**: ni sus pasos (van al plan)
 ni su tiempo, que `P asentar` escribe en su registro local
-(`~/Obsidian/global/claude/registro-tiempo/<proyecto>-AAAA-MM.md`), por proyecto de Toggl y mes. Su
-proyecto es el del repo cuyos archivos toca, no el de la carpeta donde se abrió la sesión. `P tramos`
+(`~/Obsidian/global/claude/registro-tiempo/<nombre>-AAAA-MM.md`), un archivo por mes: **con repo,
+lleva el nombre del repo; sin repo, el del proyecto de Toggl**. El repo es el de los archivos que
+toca, no el de la carpeta donde se abrió la sesión. Por eso una tarea sin repo se marca con su
+proyecto: `P marca --repo sin-repo --tarea ID --evento crear --proyecto "<nombre en Toggl>"`. `P tramos`
 sigue dando tu tiempo como `duracion` y el de Claude como `claude`, para el historial; «Verificar tu
 tiempo» (`tarea`) contrasta el tuyo con el Mac.
 

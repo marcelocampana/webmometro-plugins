@@ -201,7 +201,8 @@ class TiempoDeClaude(Base):
     def test_resumen_por_proyecto(self):
         self.mac("10:00", "10:10")
         self.sesion("s1", self.cada("10:00", "10:30"))
-        r = correr("claude", "--desde", "2026-09-26", "--hasta", "2026-09-26")["repos"]["repo"]
+        # La carpeta no es un repo y no había tarea sin repo abierta: va a `sin-proyecto`.
+        r = correr("claude", "--desde", "2026-09-26", "--hasta", "2026-09-26")["proyectos"]["sin-proyecto"]
         self.assertEqual((r["claude"], r["con_usuario"], r["solo"]), ("29m", "10m", "19m"))
 
 
@@ -256,7 +257,7 @@ class Atribucion(Base):
 
 
 class RegistroDeTiempo(Atribucion):
-    """El tiempo de Claude no va a Toggl: se asienta en un archivo local por proyecto y mes."""
+    """El tiempo de Claude no va a Toggl: se asienta en un archivo local por repo (sin repo, por proyecto de Toggl) y mes."""
 
     def enlazar(self, repo, proyecto="Plugins IA", cliente="Interno"):
         (self.repos[repo] / "tareas").mkdir(exist_ok=True)
@@ -285,10 +286,10 @@ class RegistroDeTiempo(Atribucion):
         self.sesion("s1", [(h, "a", "plugins") for h in ("10:00", "10:02", "10:04", "10:21", "10:23", "10:50", "10:52")])
         r = correr("asentar", "--hasta", t("11:00").isoformat())
         self.assertEqual(r["filas"], 3)
-        filas = self.filas("plugins-ia-2026-09.md")
+        filas = self.filas("plugins-2026-09.md")
         self.assertEqual([(f[1][:5], f[2][:5], f[3], f[6]) for f in filas],
                          [("10:00", "10:05", "5", "—"), ("10:21", "10:24", "3", "7"), ("10:50", "10:53", "3", "—")])
-        texto = (Path(os.environ["CLAUDE_TIEMPO_DIR"]) / "plugins-ia-2026-09.md").read_text()
+        texto = (Path(os.environ["CLAUDE_TIEMPO_DIR"]) / "plugins-2026-09.md").read_text()
         self.assertIn("proyecto 42 «Plugins IA» · cliente 7 «Interno»", texto)
 
     def test_asentar_es_idempotente(self):
@@ -297,12 +298,28 @@ class RegistroDeTiempo(Atribucion):
         correr("asentar", "--hasta", t("11:00").isoformat())
         self.assertEqual(correr("asentar", "--hasta", t("11:00").isoformat())["filas"], 0)
         self.assertEqual(correr("asentar", "--hasta", t("11:30").isoformat())["filas"], 0)
-        self.assertEqual(len(self.filas("plugins-ia-2026-09.md")), 1)
+        self.assertEqual(len(self.filas("plugins-2026-09.md")), 1)
 
-    def test_repo_sin_enlace_usa_su_nombre(self):
+    def test_repo_sin_enlace_tambien_usa_su_nombre(self):
         self.sesion("s1", [(h, "a", "sitio") for h in ("10:00", "10:02")])
         correr("asentar", "--hasta", t("11:00").isoformat())
         self.assertEqual(len(self.filas("sitio-2026-09.md")), 1)
+
+    def test_sin_repo_hereda_el_nombre_de_toggl(self):
+        fuera = Path(self.tmp.name) / "notas"
+        fuera.mkdir()
+        presencia.anotar(t("09:55"), "tarea", "sin-repo", "88", "crear", "proyecto=Webmómetro › Administración")
+        presencia.anotar(t("10:00"), "tarea", "sin-repo", "88", "abrir")
+        ruta = Path(os.environ["CLAUDE_PROYECTOS_DIR"]) / "-x-" / "s7.jsonl"
+        ruta.parent.mkdir(parents=True, exist_ok=True)
+        with open(ruta, "w", encoding="utf-8") as f:
+            for h in ("10:00", "10:02", "11:30"):
+                f.write(json.dumps({"timestamp": t(h).isoformat(), "cwd": str(fuera), "type": "assistant",
+                                    "message": {"content": []}}) + "\n")
+        presencia.anotar(t("10:30"), "tarea", "sin-repo", "88", "cerrar")
+        correr("asentar", "--hasta", t("12:00").isoformat())
+        self.assertEqual([(f[3], f[5], f[6]) for f in self.filas("webmometro-administracion-2026-09.md")], [("3", "—", "88")])
+        self.assertEqual([(f[3], f[6]) for f in self.filas("sin-proyecto-2026-09.md")], [("1", "—")])
 
     def test_dos_tareas_abiertas_no_cuentan_dos_veces(self):
         presencia.anotar(t("10:00"), "tarea", "sitio", "1", "abrir")
@@ -334,7 +351,7 @@ class RegistroDeTiempo(Atribucion):
         r = correr("claude", "--desde", "2026-09-26", "--hasta", "2026-09-26")
         self.assertEqual(r["repos"]["sitio"]["claude"], "14m")
         self.assertEqual(r["proyectos"]["Sitio web"]["claude"], "14m")
-        self.assertEqual(len(self.filas("sitio-web-2026-09.md")), 1)   # la cola no se escribió
+        self.assertEqual(len(self.filas("sitio-2026-09.md")), 1)   # la cola no se escribió
 
     def test_slug_del_proyecto(self):
         self.assertEqual(presencia.slug("Plugins de IA"), "plugins-de-ia")
