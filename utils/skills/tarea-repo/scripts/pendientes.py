@@ -200,18 +200,57 @@ def al_dia(raiz):
     return bool(raiz) and any((raiz / "tareas" / n).exists() for n in ("config.md", "toggl.md"))
 
 
+CAPTURADA = "· sesión cerrada sin cierre"
+
+
+def mergeada(raiz, rama, base):
+    """La rama ya volvió a la base: sigue viva y es ancestro de la base, o se borró y la base tiene
+    su merge (`Merge <rama>…` o `Merge branch '<rama>'`). Sin esa evidencia, no se da por mergeada."""
+    if git(raiz, "rev-parse", "--verify", "--quiet", "refs/heads/" + rama):
+        return subprocess.run(["git", "-C", str(raiz), "merge-base", "--is-ancestor", rama, base],
+                              capture_output=True).returncode == 0
+    asuntos = (git(raiz, "log", base, "--merges", "--format=%s") or "").splitlines()
+    patron = re.compile(r"^Merge (?:branch ')?%s(?:'|:|\s|$)" % re.escape(rama))
+    return any(patron.match(a) for a in asuntos)
+
+
+def retirar_mergeadas(raiz, texto):
+    """Quita de `## A medias` lo que anotó la captura (`sesión cerrada sin cierre`) cuando su rama ya
+    se mergeó: el cierre deja el rastro en el historial, y la entrada quedaría diciendo «a medias»."""
+    base = base_de(raiz)
+    cabecera = "## A medias\n"
+    if not base or cabecera not in texto:
+        return texto, []
+    antes, despues = texto.split(cabecera, 1)
+    cuerpo, sep, resto = despues.partition("\n## ")
+    quedan, retiradas = [], []
+    for linea in cuerpo.split("\n"):
+        m = re.search(r"rama `([^`]+)`", linea)
+        if linea.startswith("- ") and CAPTURADA in linea and m and mergeada(raiz, m.group(1), base):
+            retiradas.append(m.group(1))
+            continue
+        quedan.append(linea)
+    if not retiradas:
+        return texto, []
+    cuerpo = re.sub(r"\n{3,}", "\n\n", "\n".join(quedan))
+    return antes + cabecera + cuerpo + (sep + resto if sep else ""), retiradas
+
+
 def capturar(ruta, hoy=None):
-    """Añade a `## A medias` las ramas sin mergear que no figuran en `pendientes.md`. Devuelve sus nombres."""
+    """Añade a `## A medias` las ramas sin mergear que no figuran en `pendientes.md`, y quita las que
+    anotó antes y ya se mergearon. Devuelve los nombres de las añadidas."""
     hoy = hoy or date.today().isoformat()
     raiz = raiz_de(ruta)
     if not al_dia(raiz):
         return []
     archivo = raiz / "tareas" / "pendientes.md"
-    texto = archivo.read_text(encoding="utf-8") if archivo.exists() else ESQUELETO.read_text(encoding="utf-8")
+    original = archivo.read_text(encoding="utf-8") if archivo.exists() else ESQUELETO.read_text(encoding="utf-8")
+    texto, _ = retirar_mergeadas(raiz, original)
     nuevas = [r for r in ramas_sin_mergear(raiz) if "rama `%s`" % r["rama"] not in texto]
-    if not nuevas:
-        return []
-    archivo.write_text(insertar(texto, "A medias", [entrada(raiz, r, hoy) for r in nuevas]), encoding="utf-8")
+    if nuevas:
+        texto = insertar(texto, "A medias", [entrada(raiz, r, hoy) for r in nuevas])
+    if texto != original:
+        archivo.write_text(texto, encoding="utf-8")
     return [r["rama"] for r in nuevas]
 
 

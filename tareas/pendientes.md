@@ -9,7 +9,7 @@ se decide, en `por-revisar.md`. Se retoma cuando lo pides («qué quedó pendien
 historial, hecha o descartada con su motivo.
 
 Una entrada por línea:
-`- **Título** · Área · rama `<rama>` o — · plan `planes/<slug>.md` o — · AAAA-MM-DD — qué falta · por qué quedó`.
+`- **Título** · Área · rama `<rama>` o — · plan `~/.claude/plans/<nombre>.md` o — · AAAA-MM-DD — qué falta · por qué quedó`.
 Sin repo (`~/Obsidian/Global/pendientes.md`), una sección `## <Proyecto>` por proyecto, con estas
 tres debajo como `###`.
 
