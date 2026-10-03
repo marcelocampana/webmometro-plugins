@@ -22,6 +22,7 @@ Vive en `~/Github/AI-kit/config/context/toggl.md` (o donde diga `TOGGL_CONFIG`).
 | `sesion_min` | 90 | Sesión continua a partir de la cual se avisa de una pausa |
 | `pausa_min` | 10 | Hueco que cuenta como pausa y corta la sesión |
 | `repetir_aviso_min` | 30 | El aviso no se repite antes de esto |
+| `avisar_pausa` | 1 | 0: sin aviso de pausa en ningún proyecto, ni en la conversación ni en macOS |
 | `notificar_mac` | 1 | 1: el aviso también sale como notificación de macOS, aunque no le escribas a Claude; 0: solo en la conversación |
 | `proyecto_mi_tiempo` | 0 | Id del proyecto de Toggl donde iba tu tiempo frente al computador; ya no se envía (lo cronometras tú) |
 | `imprevisto_min` | 30 | Claude trabajando más que esto en un repo sin tarea abierta: `balance` lo señala (ya no se ofrece crear nada en Toggl) |
