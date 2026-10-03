@@ -216,6 +216,15 @@ class Guardia(unittest.TestCase):
         self.pasa("ls %s && cat %s/x/hooks.json" % (cache, cache))
         self.pasa("python3 -c 'print(1)' %s/installed_plugins.json" % cache)
 
+    def test_almohadilla_dentro_de_una_palabra_no_es_comentario(self):
+        cache = "~/.claude/plugins/cache"
+        self.pasa('M=%s/x.py; s=a:b; python3 $M --p ${s##*:} > /dev/null; python3 -c "\nprint(1)"' % cache)
+        self.pasa("git log --format=#%h -1 && echo a#b")
+        self.pasa("ls %s  # it's a comment\nls" % cache)
+        self.bloquea("echo x#y; git commit --allow-empty -m x")
+        self.bloquea("ls # comentario\ngit commit --allow-empty -m x")
+        self.bloquea("cd %s && echo ${HOME##*/} && rm -rf x" % cache)
+
     def test_mensaje_del_usuario_registra_el_permiso(self):
         entrada = json.dumps({"session_id": "s9", "prompt": "apruebo el merge"})
         sys_stdin = sys.stdin

@@ -154,9 +154,14 @@ def usar_permiso(sesion, repo, accion, ahora=None, consumir=True):
 # ── análisis del comando ──────────────────────────────────────────────────────────────────────
 
 def saltos_a_punto_y_coma(cmd):
-    """Los saltos de línea fuera de comillas separan comandos: se vuelven `;`."""
-    salida, comilla, escape = [], None, False
+    """Los saltos de línea fuera de comillas separan comandos: se vuelven `;`. Quita los comentarios
+    como bash: `#` solo abre uno al empezar una palabra (`${x##*/}` o `a#b` no lo son)."""
+    salida, comilla, escape, comentario = [], None, False, False
     for ch in cmd:
+        if comentario:
+            if ch != "\n":
+                continue
+            comentario = False
         if escape:
             salida.append(ch)
             escape = False
@@ -170,6 +175,9 @@ def saltos_a_punto_y_coma(cmd):
                 comilla = None
         elif ch in "'\"":
             comilla = ch
+        elif ch == "#" and (not salida or salida[-1].isspace() or salida[-1] in ";&|()<>"):
+            comentario = True
+            continue
         elif ch == "\n":
             salida.append(" ; ")
             continue
@@ -180,6 +188,7 @@ def saltos_a_punto_y_coma(cmd):
 def segmentos(cmd):
     lex = shlex.shlex(saltos_a_punto_y_coma(cmd), posix=True, punctuation_chars=True)
     lex.whitespace_split = True
+    lex.commenters = ""  # los comentarios ya los quitó saltos_a_punto_y_coma, con la regla de bash
     actual, salida = [], []
     for tok in lex:
         if tok in OPERADORES:

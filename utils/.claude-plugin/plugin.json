@@ -1,7 +1,7 @@
 {
   "name": "utils",
   "displayName": "Utils",
-  "version": "6.1.1",
+  "version": "6.1.2",
   "description": "Skills personales de utilidad general para Webmometro. Sistema de tareas: Toggl 2.0 es del usuario y lo lleva él a mano —Claude solo crea las tareas que el usuario elige de «Esto te toca a ti» y verifica sus registros—; el trabajo de Claude vive en su plan y su rama, lo decidido sin hacer en pendientes.md y lo anotado sin decidir en por-revisar.md, y todo sale al historial hecho o descartado con su porqué (Tarea, Tarea Repo). Ganchos: una guardia de git que bloquea commits, merge y push sobre main y la rama destino salvo con «apruebo el merge» del usuario, y la captura de lo que queda a medias al cerrar la sesión. Además, la vista diaria (Agenda), la planificación semanal (Plan Semanal), la revisión semanal con lo abierto, el tiempo del usuario y el de Claude por separado (Balance) y el registro local de presencia y del tiempo de Claude.",
   "author": {
     "name": "Webmometro"
