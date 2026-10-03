@@ -69,7 +69,7 @@ tareas/
 ├── pendientes.md  Lo decidido sin hacer: Por hacer · A medias (con motivo) · Espera tu decisión
 ├── por-revisar.md La bandeja: lo anotado sin decidir. Solo guarda
 ├── auditoria.md   Hallazgos de una revisión por áreas, bajo petición
-├── planes/        <slug>.md · el plan de Claude: pasos, skill, contexto y «Esto te toca a ti»
+├── planes/        Solo los planes anteriores a utils 6.1; el plan vive en ~/.claude/plans/
 └── historial/     AAAA-MM.md · lo cerrado y lo descartado, con su porqué
 ```
 
