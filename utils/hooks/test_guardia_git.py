@@ -217,6 +217,18 @@ class Guardia(unittest.TestCase):
             sys.stdin = sys_stdin
             del os.environ["GUARDIA_FORZAR_ERROR"]
 
+    def test_dentro_de_otro_shell_tambien_se_revisa(self):
+        self.main_adelantada()
+        self.bloquea("bash -c 'git push origin main'")
+        self.bloquea("sh -lc \"cd %s && git push\"" % self.r)
+        self.bloquea("zsh -c 'git commit --allow-empty -m x'")
+        self.bloquea("eval git push origin main")
+        self.bloquea("echo $(git push origin main)")
+        self.bloquea("echo `git push origin main`")
+        self.bloquea("bash -c \"bash -c 'git push origin main'\"")
+        self.pasa("bash -c 'git status && git log -1'")
+        self.pasa("bash script.sh")
+
     def test_comando_ajeno_a_git_pasa(self):
         self.pasa("python3 -m unittest && ls -la")
 

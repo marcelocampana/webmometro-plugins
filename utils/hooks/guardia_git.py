@@ -351,14 +351,33 @@ def toca_zona_protegida(texto):
         str(dir_plugins()) in t or ".claude/plugins/" in t
 
 
-def revisar_bash(cmd, cwd, sesion, ahora=None):
-    """Levanta Bloqueo con el motivo si el comando no debe correr."""
+SHELLS = {"bash", "sh", "zsh", "dash", "ksh"}
+SUSTITUCION = re.compile(r"\$\(([^()]*)\)|`([^`]*)`")
+
+
+def interior_de_shell(tokens):
+    """El texto de `bash -c '…'` (o `-lc`, `-ec`…), o None si el shell no lleva `-c`."""
+    for k, t in enumerate(tokens[1:], start=1):
+        if re.match(r"^-[A-Za-z]*c[A-Za-z]*$", t):
+            return tokens[k + 1] if k + 1 < len(tokens) else ""
+        if not t.startswith("-"):
+            return None
+    return None
+
+
+def revisar_bash(cmd, cwd, sesion, ahora=None, profundidad=0):
+    """Levanta Bloqueo con el motivo si el comando no debe correr. Mira también dentro de
+    `bash -c '…'`, `eval …`, `$(…)` y las comillas invertidas."""
     ahora = ahora or time.time()
+    if profundidad > 5:
+        bloquear("comando anidado demasiadas veces para revisarlo")
     destinos = re.findall(r">>?\s*['\"]?([^\s'\";&|]+)", cmd)
     if (toca_zona_protegida(cmd) and ESCRITURA.search(cmd)) or any(toca_zona_protegida(d) for d in destinos):
         bloquear("escribir en los permisos de la guardia o en la copia instalada de los plugins")
     if not re.search(r"(^|[^\w-])(git|gh)(\s|$)", cmd):
         return
+    for m in SUSTITUCION.finditer(cmd):
+        revisar_bash(m.group(1) or m.group(2) or "", cwd, sesion, ahora, profundidad + 1)
     for tokens in segmentos(cmd):
         while tokens and re.match(r"^[A-Za-z_][A-Za-z0-9_]*=", tokens[0]):
             tokens = tokens[1:]
@@ -370,7 +389,16 @@ def revisar_bash(cmd, cwd, sesion, ahora=None):
             destino = os.path.expanduser(tokens[1]) if len(tokens) > 1 else str(Path.home())
             cwd = os.path.join(cwd, destino)
             continue
-        if os.path.basename(tokens[0]) == "git":
+        nombre = os.path.basename(tokens[0])
+        if nombre in SHELLS:
+            interior = interior_de_shell(tokens)
+            if interior is not None:
+                revisar_bash(interior, cwd, sesion, ahora, profundidad + 1)
+            continue
+        if nombre == "eval":
+            revisar_bash(" ".join(tokens[1:]), cwd, sesion, ahora, profundidad + 1)
+            continue
+        if nombre == "git":
             revisar_git(tokens, cwd, sesion, ahora)
         elif os.path.basename(tokens[0]) == "gh" and tokens[1:3] == ["pr", "merge"]:
             repo = raiz(cwd) or Path(cwd)
