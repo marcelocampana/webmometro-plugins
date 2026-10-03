@@ -103,10 +103,15 @@ def dir_planes():
     return Path(os.environ.get("PLANES_CLAUDE", "~/.claude/plans")).expanduser()
 
 
+# El nombre termina en un espacio o en el cierre del comentario: `\b` cortaría en `-` y `/`, y
+# `webmometro` encontraría el plan de `webmometro-web-reports`, o la rama `utils` el de `utils/x`.
+FIN = r"(?=\s|-->)"
+
+
 def marcador_de(texto, repo, rama):
     primera = (texto or "").split("\n", 1)[0]
-    return bool(re.search(r"<!--[^>]*\brepo\s+%s\b" % re.escape(repo), primera)) and \
-        bool(re.search(r"<!--[^>]*\brama\s+%s\b" % re.escape(rama), primera))
+    return bool(re.search(r"<!--[^>]*\brepo\s+%s%s" % (re.escape(repo), FIN), primera)) and \
+        bool(re.search(r"<!--[^>]*\brama\s+%s%s" % (re.escape(rama), FIN), primera))
 
 
 def leer_plan(raiz, rama):
@@ -143,7 +148,7 @@ def leer_plan_en_repo(raiz, rama):
     for ruta in nombres.splitlines():
         nombre = ruta.rsplit("/", 1)[-1]
         t = leer(nombre)
-        if t and re.search(r"<!--[^>]*\brama\s+%s\b" % re.escape(rama), t):
+        if t and re.search(r"<!--[^>]*\brama\s+%s%s" % (re.escape(rama), FIN), t):
             return "tareas/planes/%s" % nombre, t
     return None, None
 

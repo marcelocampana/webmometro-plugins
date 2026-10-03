@@ -88,6 +88,13 @@ class Repo(unittest.TestCase):
         finally:
             del os.environ["PLANES_CLAUDE"]
 
+    def test_marcador_exige_el_nombre_entero(self):
+        marca = "<!-- tarea: plan · repo webmometro-web-reports · rama utils/copia-toggl · área utils -->"
+        self.assertTrue(p.marcador_de(marca, "webmometro-web-reports", "utils/copia-toggl"))
+        self.assertFalse(p.marcador_de(marca, "webmometro", "utils/copia-toggl"))
+        self.assertFalse(p.marcador_de(marca, "webmometro-web-reports", "utils"))
+        self.assertTrue(p.marcador_de("<!-- plan · repo r · rama x-->", "r", "x"))
+
     def test_rama_mergeada_no_entra(self):
         self.rama_con_plan()
         sh(self.r, "merge", "-q", "--no-ff", "-m", "merge", "arreglar-menu")

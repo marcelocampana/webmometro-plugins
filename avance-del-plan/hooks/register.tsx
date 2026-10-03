@@ -45,7 +45,9 @@ async function buscar($: Dolar, desde?: string): Promise<Plan | null> {
   const rama = raiz && (await git($, ['branch', '--show-current'], raiz))
   if (!raiz || !rama) return null
   const repo = raiz.slice(raiz.lastIndexOf('/') + 1)
-  const marca = new RegExp(`<!--[^>]*\\brepo\\s+${escapar(repo)}\\b[^>]*\\brama\\s+${escapar(rama)}\\b`)
+  // El nombre termina en un espacio o en el cierre del comentario: `\b` cortaría en `-` y `/`.
+  const fin = '(?=\\s|-->)'
+  const marca = new RegExp(`<!--[^>]*\\brepo\\s+${escapar(repo)}${fin}[^>]*\\brama\\s+${escapar(rama)}${fin}`)
 
   // El plan del modo plan, en la carpeta de Claude Code, encontrado por su marcador.
   const home = (await $.process.run(['printenv', 'HOME']).catch(() => undefined))?.stdout.trim()
@@ -67,7 +69,7 @@ async function buscar($: Dolar, desde?: string): Promise<Plan | null> {
   if (!(await $.fs.exists(dir))) return null
   const directo = `${dir}/${rama}.md`
   if (await $.fs.exists(directo)) return leerPlan(await $.fs.read(directo), rama, directo)
-  const viejo = new RegExp(`<!--[^>]*\\b(rama|slug)\\s+${escapar(rama)}\\b`)
+  const viejo = new RegExp(`<!--[^>]*\\b(rama|slug)\\s+${escapar(rama)}${fin}`)
   for (const entrada of await $.fs.list(dir)) {
     if (!entrada.name.endsWith('.md')) continue
     const ruta = `${dir}/${entrada.name}`
