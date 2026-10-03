@@ -8,9 +8,15 @@ y lo que se crea en Toggl son de `tarea/references/ciclo.md`; aquí va lo que a�
 Claude arma su plan como siempre (en modo plan, si el usuario lo usa). **Ninguna propuesta sin
 contexto del proyecto** (`contextualizacion.md`), y toda sugerencia se ancla en algo verificable.
 
-- **El plan se guarda** en `tareas/planes/<slug>.md` desde `assets/plan.esqueleto.md`: el contenido
-  del plan aprobado, sin reformatearlo, más el marcador y la tabla de pasos con su **skill** y su
-  **contexto**. El slug: el objetivo en minúsculas y con guiones.
+- **Hay un solo plan: el del modo plan**, en la carpeta donde lo guarda Claude Code
+  (`~/.claude/plans/<nombre>.md`). No se copia al repo ni se reescribe. Sin modo plan, Claude lo
+  escribe ahí mismo, como `~/.claude/plans/<slug>.md`. El slug: el objetivo en minúsculas y con
+  guiones; es también el nombre de la rama.
+- **Ese mismo archivo lleva** (`assets/plan.esqueleto.md` dice cómo): la primera línea con el
+  marcador `<!-- tarea: plan · repo <repo> · rama <slug> · área <Área> -->`, la tabla `## Pasos`
+  con su **skill**, su **contexto** y la columna «Hecho», y al final «Esto te toca a ti». Se
+  escriben al planificar, dentro del plan que se aprueba; el marcador se completa al abrir la rama.
+  El mod `avance-del-plan` y `pendientes.py` encuentran el plan por ese marcador.
 - **Termina con «Esto te toca a ti»** si hay algo que Claude no puede hacer y que le ocupa tiempo al
   usuario (`tarea`). El usuario elige qué va a Toggl, cuando quiera.
 - **Las decisiones** se piden en el momento; si quedan abiertas, van a `pendientes.md`, `Espera tu
@@ -20,7 +26,8 @@ contexto del proyecto** (`contextualizacion.md`), y toda sugerencia se ancla en 
 - **Área** (una de `config.md`) y **coste** estimado desde el historial (`estimacion.md`), en la
   cabecera del plan.
 
-Se aprueba **una vez**, y eso cubre la ejecución entera. El plan se commitea con el primer paso.
+Se aprueba **una vez**, y eso cubre la ejecución entera. El plan vive fuera del repo y no se
+commitea; el historial y `pendientes.md` lo citan por su ruta.
 
 ## Abrir
 
@@ -28,8 +35,10 @@ Se aprueba **una vez**, y eso cubre la ejecución entera. El plan se commitea co
    declara) limpia y actualizada, `git switch -c <slug> <destino>`. La rama sale **de la destino**,
    no de `main`. **Nunca se trabaja sobre la destino ni sobre `main`**: la guardia de git bloquea
    esos commits.
-2. `presencia.py marca --repo R --tarea <slug> --evento abrir`. En Toggl, nada.
-3. Si el trabajo sale de `pendientes.md`, la entrada se queda ahí hasta el cierre.
+2. En la primera línea del plan, el marcador con el repo y la rama (`<!-- tarea: plan · repo R · rama
+   <slug> · área … -->`): así el mod y `pendientes.py` lo encuentran.
+3. `presencia.py marca --repo R --tarea <slug> --evento abrir`. En Toggl, nada.
+4. Si el trabajo sale de `pendientes.md`, la entrada se queda ahí hasta el cierre.
 
 ## Ejecutar
 

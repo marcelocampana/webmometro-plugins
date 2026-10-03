@@ -16,7 +16,7 @@ desde `assets/pendientes.esqueleto.md` al anotar la primera entrada.
 Una entrada por línea:
 
 ```text
-- **Título** · Área · rama `<rama>` o — · plan `planes/<slug>.md` o — · AAAA-MM-DD — qué falta · por qué quedó
+- **Título** · Área · rama `<rama>` o — · plan `~/.claude/plans/<nombre>.md` o — · AAAA-MM-DD — qué falta · por qué quedó
 ```
 
 **El porqué es obligatorio**: «decisión tuya», «bloqueo: <qué>», «sin tiempo en la sesión»,

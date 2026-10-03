@@ -8,6 +8,8 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import os  # noqa: E402
+
 import pendientes as p  # noqa: E402
 
 PLAN = """<!-- tarea: plan · slug arreglar-menu · rama arreglar-menu · área General · coste ~30m -->
@@ -60,10 +62,31 @@ class Repo(unittest.TestCase):
         self.assertEqual(p.capturar(self.r, "2026-10-02"), ["arreglar-menu"])
         texto = self.pendientes()
         a_medias = texto.split("## A medias")[1].split("## Espera")[0]
-        self.assertIn("- **Arreglar el menú en móvil** · General · rama `arreglar-menu` · plan `planes/arreglar-menu.md`", a_medias)
+        self.assertIn("- **Arreglar el menú en móvil** · General · rama `arreglar-menu` · plan `tareas/planes/arreglar-menu.md`", a_medias)
         self.assertIn("faltan 2 de 3 pasos · sesión cerrada sin cierre", a_medias)
         self.assertEqual(p.capturar(self.r, "2026-10-02"), [])
         self.assertEqual(self.pendientes(), texto)
+
+    def test_plan_del_modo_plan_en_la_carpeta_de_claude(self):
+        planes = Path(self.tmp.name) / "plans"
+        planes.mkdir()
+        os.environ["PLANES_CLAUDE"] = str(planes)
+        try:
+            repo = self.r.name
+            texto = PLAN.replace("<!-- tarea: plan · slug arreglar-menu · rama arreglar-menu",
+                                 "<!-- tarea: plan · repo %s · rama otro-arreglo" % repo)
+            (planes / "shimmering-wombat.md").write_text(texto, encoding="utf-8")
+            (planes / "ajeno.md").write_text("<!-- tarea: plan · repo otro · rama otro-arreglo -->\n# Ajeno\n", encoding="utf-8")
+            sh(self.r, "switch", "-qc", "otro-arreglo")
+            sh(self.r, "commit", "-q", "--allow-empty", "-m", "x")
+            sh(self.r, "switch", "-q", "main")
+            self.assertEqual(p.capturar(self.r, "2026-10-03"), ["otro-arreglo"])
+            a_medias = self.pendientes().split("## A medias")[1]
+            self.assertIn("**Arreglar el menú en móvil** · General · rama `otro-arreglo`", a_medias)
+            self.assertIn("plan `%s`" % (planes / "shimmering-wombat.md"), a_medias)
+            self.assertIn("faltan 2 de 3 pasos", a_medias)
+        finally:
+            del os.environ["PLANES_CLAUDE"]
 
     def test_rama_mergeada_no_entra(self):
         self.rama_con_plan()

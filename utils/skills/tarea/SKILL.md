@@ -16,7 +16,7 @@ description: >
   la sesión.
 argument-hint: "[lo que el usuario quiere hacer]"
 metadata:
-  version: 6.0.1
+  version: 6.0.2
 ---
 
 # Tareas (tarea)
@@ -68,7 +68,7 @@ una consulta cualquiera por el MCP la renueva y se reintenta; con 4, se dice y s
 
 ## Lo de Claude: plan, rama y pendientes
 
-- **En un repo con `tareas/`**, el trabajo de Claude lleva rama, plan (`tareas/planes/<slug>.md`),
+- **En un repo con `tareas/`**, el trabajo de Claude lleva rama, plan (el del modo plan, en `~/.claude/plans/`),
   historial y `pendientes.md`: lo pone `tarea-repo`.
 - **Sin repo**, lo pendiente va a `~/Obsidian/Global/pendientes.md` y lo anotado sin decidir a
   `~/Obsidian/Global/por-revisar.md`, una sección por proyecto, siguiendo

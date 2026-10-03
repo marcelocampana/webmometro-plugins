@@ -89,7 +89,7 @@ Utilidades transversales de organización del trabajo.
   frente al computador se mide aparte (`presencia.py`), con avisos de pausa.
   Lee Toggl por una copia local reducida (`cola.py`).
 - **tarea-repo** — El trabajo de Claude en un repo con `tareas/`: plan
-  (`tareas/planes/<slug>.md`) y rama desde la rama destino de
+  (el del modo plan, en `~/.claude/plans/`, sin copia en el repo) y rama desde la rama destino de
   `tareas/config.md` (`main` por defecto, o una de pruebas como `preview`),
   pasos encadenados sin preguntar y cierre en cadena —historial, commit,
   merge y push— con tu «apruebo el merge». **Nada de lo decidido se pierde**:

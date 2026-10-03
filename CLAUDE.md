@@ -22,8 +22,9 @@ user-facing output (skills instruct their output language explicitly):
     that ends Claude's plan (numbered; only work that takes the user's time — decisions never go to
     Toggl), as subtasks if the work came from one of his Toggl tasks, and to read time entries for
     `presencia.py verificar`. Claude never opens, pauses or closes Toggl tasks.
-  - **Claude's work lives in its plan and its branch**: `tareas/planes/<slug>.md` (the approved plan,
-    with a step table), a branch per job cut from the repo's **target branch** (`tareas/config.md`
+  - **Claude's work lives in its plan and its branch**: one plan only — the plan-mode file Claude
+    Code keeps in `~/.claude/plans/` (never copied into the repo; utils 6.1), whose first line marks
+    `repo` and `rama` and which carries the `## Pasos` table and «Esto te toca a ti» — and a branch per job cut from the repo's **target branch** (`tareas/config.md`
     § Rama destino, `main` by default). Its id is the slug, not a Toggl id.
   - **Nothing decided gets lost**: `tareas/pendientes.md` (Por hacer · A medias, with the reason ·
     Espera tu decisión) holds what is decided and not done; `tareas/por-revisar.md` holds ideas not
@@ -51,7 +52,8 @@ user-facing output (skills instruct their output language explicitly):
     measured on the body after the frontmatter (`wc -c`, 4 chars ≈ 1 token).
 - **avance-del-plan** — a Claude Code *mod* (function-hooks module, `hooks/hooks.json` →
   `{"modules": ["./register.tsx"]}` plus a `types/` state contract): shows the current branch's plan
-  progress (`tareas/planes/<slug>.md`, `## Pasos` table, «Hecho» column) in the status line and a
+  progress (the plan-mode plan in `~/.claude/plans/` whose marker names the repo and branch; `## Pasos`
+  table, «Hecho» column; legacy `tareas/planes/` still read) in the status line and a
   `/plan` pane. Read-only. Uses `$.state.get/set` rather than `atom`/`update` because older CLI
   validators reject the latter; check it with `claude plugin validate avance-del-plan`.
 
@@ -218,7 +220,8 @@ las lleva él. En el repo quedan el trabajo de Claude y la memoria:
   de contexto sobre por qué el código está como está**: empieza por ahí antes de proponer cambios
   grandes.
 - **`tareas/pendientes.md`** — lo decidido que Claude aún no hace. **`tareas/por-revisar.md`** — lo
-  anotado sin decidir. **`tareas/planes/`** — el plan de cada trabajo.
+  anotado sin decidir. El plan de cada trabajo es el del modo plan (`~/.claude/plans/`), sin copia
+  en el repo; `tareas/planes/` guarda los anteriores a utils 6.1.
 - **`tareas/config.md`** — la rama destino, las áreas y las reglas del repo (utils está congelado
   hasta el 2026-10-16). **`tareas/auditoria.md`** — una revisión completa por áreas, bajo petición.
 
