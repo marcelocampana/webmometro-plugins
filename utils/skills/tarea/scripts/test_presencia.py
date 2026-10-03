@@ -399,6 +399,11 @@ class Aviso(Base):
         self.assertIsNotNone(presencia.aviso_pausa(t("10:40"), ajustes))
         self.assertIsNone(presencia.aviso_pausa(t("10:41"), ajustes))
 
+    def test_apagado_no_avisa(self):
+        ajustes = dict(presencia.leer_ajustes(), avisar_pausa=0)
+        self.mac("09:00", "10:40")
+        self.assertIsNone(presencia.aviso_pausa(t("10:40"), ajustes))
+
     def test_sin_aviso_tras_una_pausa(self):
         ajustes = presencia.leer_ajustes()
         self.mac("08:00", "09:40")

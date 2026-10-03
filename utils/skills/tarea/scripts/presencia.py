@@ -63,6 +63,7 @@ AJUSTES = {
     "repetir_aviso_min": 30,  # no se repite el aviso antes de esto
     "claude_hueco_min": 5,   # hueco entre mensajes de Claude que corta su tramo de trabajo
     "claude_herramienta_max_min": 30,  # un comando de Claude cuenta entero hasta esto
+    "avisar_pausa": 1,       # 0: sin aviso de pausa, ni en la conversación ni en macOS
     "notificar_mac": 1,      # 1: el aviso de pausa también sale como notificación de macOS
     "proyecto_mi_tiempo": 0,  # id del proyecto de Toggl donde va tu tiempo frente al computador
 }
@@ -285,6 +286,8 @@ def sesion_actual(hasta, ajustes):
 
 
 def aviso_pausa(hasta, ajustes):
+    if not ajustes.get("avisar_pausa", 1):
+        return None
     sesion = sesion_actual(hasta, ajustes)
     if not sesion or sesion["minutos"] < ajustes["sesion_min"]:
         return None

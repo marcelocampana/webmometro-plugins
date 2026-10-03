@@ -16,7 +16,7 @@ description: >
   la sesión.
 argument-hint: "[lo que el usuario quiere hacer]"
 metadata:
-  version: 6.0.0
+  version: 6.0.1
 ---
 
 # Tareas (tarea)
