@@ -1,7 +1,7 @@
 {
   "name": "avance-del-plan",
   "displayName": "Avance del plan",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Mod de Claude Code que muestra el avance del plan de la rama en curso (el del modo plan, en ~/.claude/plans/, con su tabla «Pasos»): una línea en la barra de estado («Plan 4/11 · sigue: …») y un panel con /plan, con cada paso hecho, en curso o pendiente y lo que espera del usuario.",
   "author": {
     "name": "Webmometro"
