@@ -4,7 +4,7 @@ Hallazgos de la revisión completa por áreas: lo que conviene hacer para dar el
 
 **Última revisión:** {{AAAA-MM-DD HH:MM}} · **Áreas cubiertas:** {{lista}}
 
-Cada `Motivo` cita evidencia concreta —archivo y línea, o el comando que lo delata—. Una fila sin evidencia no se puede evaluar. Como en la bandeja, nada de aquí está priorizado; lo que se acepta se crea como tarea en Toggl con el visto bueno del usuario, se delega a Claude (`para-claude.md`) o se descarta.
+Cada `Motivo` cita evidencia concreta —archivo y línea, o el comando que lo delata—. Una fila sin evidencia no se puede evaluar. Como en la bandeja, nada de aquí está priorizado; lo que se acepta se crea como tarea en Toggl con el visto bueno del usuario, se delega a Claude (`pendientes.md`) o se descarta con su motivo en el historial.
 
 | Tarea | Área | Severidad | Motivo |
 | --- | --- | --- | --- |

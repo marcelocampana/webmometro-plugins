@@ -7,7 +7,7 @@ Cada tarea propuesta se afina con `redaccion-tareas.md` y se ancla en la fuente;
 proyecto sale de `contextualizacion.md`.
 
 **Regla única de destino: todo entra por la bandeja** (`tareas/por-revisar.md`, formato en
-`modo-revisar.md`). Nada de una fuente externa aterriza en Toggl ni en `para-claude.md` sin pasar por
+`modo-revisar.md`). Nada de una fuente externa aterriza en Toggl ni en `pendientes.md` sin pasar por
 la bandeja y una revisión del usuario. Y como siempre: **se propone
 y se espera**, nunca se escribe directo.
 
@@ -56,9 +56,9 @@ mezclarlos falsearía la prioridad, que la decide el usuario.
 
 ### Deduplicar contra cinco fuentes
 
-Antes de proponer, descarta lo que ya esté en: lo **pendiente** del proyecto en Toggl
-(`cola.py leer --vista pendientes --proyecto <ID>`), `por-revisar.md` y `para-claude.md`, **el
-historial** (algo ya resuelto no vuelve) y `auditoria.md`.
+Antes de proponer, descarta lo que ya esté en: lo **pendiente** del usuario en Toggl
+(`cola.py leer --vista pendientes --proyecto <ID>`), `por-revisar.md` y `pendientes.md`, **el
+historial** (algo ya resuelto o descartado no vuelve) y `auditoria.md`.
 Si un ítem es una variante de algo existente, dilo en una línea en vez de crear un duplicado.
 
 ## Qué NO hace la ingesta
@@ -81,5 +81,5 @@ ingerirlo** en una línea. El destino sigue siendo la bandeja.
 | El archivo no existe o no se puede leer | Dilo y para. No adivines su contenido. |
 | No contiene nada accionable | Dilo en una línea: «son datos, no recomendaciones». No fuerces tareas. |
 | Trae decenas de ítems | Propón los que pasen el filtro y di cuántos descartaste y por qué. No los escribas todos por volumen. |
-| El usuario pide que vayan directo a la cola | Es su lista: se acepta y se crean en Toggl (`tarea`), pero se dice que lo normal es revisarlas desde la bandeja. |
+| El usuario pide que vayan directo | Se acepta: lo suyo que ocupa tiempo, a Toggl (`tarea`); lo de Claude, a `pendientes.md`. Se dice que lo normal es revisarlas desde la bandeja. |
 | La conversación no tiene material | Dilo. Una ingesta vacía es un resultado válido. |

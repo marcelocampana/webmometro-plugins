@@ -10,28 +10,28 @@
     },
     {
       "id": 2,
-      "name": "crear-con-area-y-coste",
+      "name": "anotar-va-a-la-bandeja",
       "prompt": "Anota una tarea: arreglar el menú.",
-      "expected_output": "Lee tareas/toggl.md, propone un enunciado afinado (verbo + objeto + ámbito), el área Componentes desde toggl.md y un coste desde el historial, y espera el visto bueno. Con el sí, crea la tarea en Toggl con 'Área: Componentes' en la primera línea de la descripción. No escribe nada en markdown.",
+      "expected_output": "Es una idea sin decidir: la anota en tareas/por-revisar.md en una línea (título, área de config.md, origen, fecha, por qué) y lo dice en una línea. No crea nada en Toggl.",
       "files": [
-        "evals/fixtures/enlazado/tareas/toggl.md",
+        "evals/fixtures/enlazado/tareas/config.md",
         "evals/fixtures/enlazado/tareas/historial/2026-07.md"
       ]
     },
     {
       "id": 3,
-      "name": "abrir-rama-desde-main-limpia",
-      "prompt": "Abre la del menú.",
-      "expected_output": "git status y git fetch; con main limpia y al día crea una rama que describe la tarea. En Toggl pasa la tarea a In Progress y marca 'abrir' en presencia.py. Nunca trabaja sobre main.",
+      "name": "abrir-rama-desde-la-destino",
+      "prompt": "Hazlo: arregla el menú.",
+      "expected_output": "Guarda el plan en tareas/planes/<slug>.md, git status y git fetch; con la rama destino de config.md limpia y al día crea la rama <slug> desde ella y marca 'abrir' con presencia.py. No toca Toggl. Nunca commitea sobre la destino ni sobre main.",
       "files": [
-        "evals/fixtures/enlazado/tareas/toggl.md"
+        "evals/fixtures/enlazado/tareas/config.md"
       ]
     },
     {
       "id": 4,
-      "name": "cierre-una-confirmacion-cadena-completa",
-      "prompt": "Sí, quedó terminada.",
-      "expected_output": "Con esa única confirmación ejecuta sin pausas: tramos, presencia.py asentar (el tiempo de Claude a su registro local, nunca a Toggl) y Done en Toggl, entrada en tareas/historial/AAAA-MM.md (comentario bajo ## Comentarios con ancla, fila de ocho columnas bajo ### <Área>), commit y merge. No hace una segunda pregunta.",
+      "name": "cierre-tras-apruebo-el-merge",
+      "prompt": "Lo vi, apruebo el merge.",
+      "expected_output": "Con esa confirmación ejecuta sin pausas: marca cerrar, tramos y presencia.py asentar, entrada en tareas/historial/AAAA-MM.md (comentario con ancla y fila de nueve columnas que enlaza el plan), lo que quedó abierto a pendientes.md, commit, merge a la destino y push. No toca Toggl y no hace una segunda pregunta.",
       "files": [
         "evals/fixtures/enlazado/tareas/historial/2026-07.md"
       ]
@@ -47,14 +47,14 @@
       "id": 6,
       "name": "plan-de-siete-pasos-en-el-archivo-del-plan",
       "prompt": "Registra el plan que acabamos de aprobar: son siete pasos que vas a hacer tú de corrido, sin que yo tenga que validar nada entre medio.",
-      "expected_output": "Crea UNA tarea en Toggl y escribe los siete pasos en tareas/planes/<id>-<slug>.md (con skill y contexto por paso), una sola rama; ninguna subtarea, porque no hay nada que haga el usuario. Encadena los pasos marcando «Hecho» con evidencia, sin pedir visto bueno; pide confirmación solo al cerrar, y la cadena termina con merge y push. El historial lleva una fila que enlaza el plan.",
+      "expected_output": "Escribe el plan en tareas/planes/<slug>.md (con skill y contexto por paso), una sola rama; nada en Toggl. Encadena los pasos marcando «Hecho» con evidencia, sin pedir visto bueno; al terminar muestra el resultado y pide «apruebo el merge»; la cadena termina con merge y push. El historial lleva una fila que enlaza el plan.",
       "files": []
     },
     {
       "id": 7,
       "name": "cierre-delegado",
       "prompt": "Hazte cargo de la de precios completa y ciérrala al terminar; no me pidas confirmación.",
-      "expected_output": "Trabaja la tarea con commits en su rama sin preguntar, pero NO mergea: al terminar informa en 2-3 líneas dónde ver el resultado (rama, preview, commits) y pide la aprobación del merge a la rama destino. Explica en una línea que el merge siempre la lleva, aunque se haya encargado cerrar sin confirmación. Sin ese sí, el trabajo queda commiteado en la rama.",
+      "expected_output": "Trabaja con commits en su rama sin preguntar, pero NO mergea: al terminar informa en 2-3 líneas dónde ver el resultado y pide que el usuario escriba «apruebo el merge». Explica en una línea que la guardia de git lo exige aunque se haya encargado cerrar sin confirmación. Sin ese mensaje, el trabajo queda commiteado en la rama; no intenta rodear la guardia.",
       "files": []
     },
     {
@@ -75,11 +75,11 @@
     },
     {
       "id": 10,
-      "name": "que-sigue-por-la-copia",
-      "prompt": "¿Qué sigue?",
-      "expected_output": "Lee con cola.py leer (vista hoy, o pendientes --proyecto con el ID del marcador de toggl.md) y responde; nunca tasks list del MCP y no abre el historial. Avisa si la primera depende de otra que va después.",
+      "name": "que-quedo-pendiente",
+      "prompt": "¿Qué quedó pendiente?",
+      "expected_output": "Lee tareas/pendientes.md (o pendientes.py listar) y responde con las tres secciones, de lo más antiguo a lo más nuevo; no abre el historial ni lee Toggl. Ofrece retomar una, no la empieza.",
       "files": [
-        "evals/fixtures/enlazado/tareas/toggl.md"
+        "evals/fixtures/enlazado/tareas/config.md"
       ]
     },
     {
@@ -93,9 +93,9 @@
     },
     {
       "id": 12,
-      "name": "migrar-muestra-la-carga-y-pide-un-visto-bueno",
-      "prompt": "Migra este repo a Toggl (--migrar).",
-      "expected_output": "Corre migrar_a_toggl.py armar, muestra una tabla corta (cuántas crear, cuántas actualizar por tener ya toggl:id, cuántas van a tareas/por-revisar.md en vez de a Toggl, las áreas y los pares dudosos) y pide el visto bueno una vez. Con el sí: bulk-create y bulk-patch (validados con dry_run), git rm de tareas.md, revisar.md y secciones.md, escribe toggl.md, deja historial y auditoría intactos.",
+      "name": "migrar-reparte-entre-toggl-y-pendientes",
+      "prompt": "Migra este repo (--migrar).",
+      "expected_output": "Corre migrar_a_toggl.py armar y propone de quién es cada tarea: lo del usuario que ocupa tiempo a Toggl, lo de Claude a tareas/pendientes.md, las decisiones a 'Espera tu decisión', la bandeja a por-revisar.md. Muestra una tabla corta y pide el visto bueno una vez. Con el sí: bulk-create/bulk-patch solo con lo del usuario (dry_run antes), git rm de tareas.md, revisar.md y secciones.md, escribe config.md y pendientes.md, deja historial y auditoría intactos.",
       "files": [
         "evals/fixtures/conectado-toggl/tareas/tareas.md",
         "evals/fixtures/conectado-toggl/tareas/secciones.md"
@@ -121,15 +121,25 @@
       "id": 15,
       "name": "revisar-y-delegar-a-claude",
       "prompt": "Revisemos la bandeja. La del contraste de botones que la haga Claude, la del menú es mía y la del README descártala.",
-      "expected_output": "Lee tareas/por-revisar.md. La del contraste pasa a tareas/para-claude.md con fecha de delegación (nada en Toggl); la del menú se crea como tarea del usuario en Toggl tras su visto bueno; la del README sale del archivo. Commitea solo esos dos archivos directo en la rama destino (tareas: bandeja) y hace push.",
+      "expected_output": "Lee tareas/por-revisar.md. La del contraste pasa a tareas/pendientes.md (Por hacer, «delegada en revisión»; nada en Toggl); la del menú se crea en Toggl como tarea del usuario si le ocupa tiempo; la del README sale y queda en ## Descartadas del historial con su motivo. Commitea solo esos archivos directo en la rama destino (tareas: pendientes) y hace push.",
       "files": []
     },
     {
       "id": 16,
-      "name": "haz-lo-de-claude",
-      "prompt": "Haz lo de Claude del contraste de botones.",
-      "expected_output": "Usa el id pc-<slug>, escribe el plan en tareas/planes/pc-<slug>.md, marca abrir con presencia.py, crea la rama y ejecuta; no crea nada en Toggl. Al terminar pide la aprobación del merge tras mostrar el resultado; al cerrar corre presencia.py asentar, saca la entrada de para-claude.md y la deja en el historial.",
+      "name": "retomar-un-pendiente",
+      "prompt": "Sigue con lo del contraste de botones.",
+      "expected_output": "Toma la entrada de pendientes.md, escribe o lee su plan en tareas/planes/<slug>.md, da el estado en 2-3 líneas, marca abrir con presencia.py y trabaja en su rama; no crea nada en Toggl. Al terminar pide «apruebo el merge» tras mostrar el resultado; al cerrar la entrada sale de pendientes.md y queda en el historial.",
       "files": []
+    },
+    {
+      "id": 17,
+      "name": "detecta-utils5-y-ofrece-migrar",
+      "prompt": "¿Qué quedó pendiente?",
+      "expected_output": "En el Paso 0 ve tareas/toggl.md sin config.md (y un para-claude.md): lo dice en una línea (utils 5, sin migrar) y ofrece --migrar; mientras, lee toggl.md como config y para-claude.md como lo pendiente.",
+      "files": [
+        "evals/fixtures/utils5/tareas/toggl.md",
+        "evals/fixtures/utils5/tareas/para-claude.md"
+      ]
     }
   ]
 }

@@ -28,8 +28,8 @@ El patrón: el «después» dice **qué se verá distinto cuando esté hecho**. 
 
 ## La columna Tarea es una línea
 
-El detalle —mockups, secciones afectadas, alcance, medidas— **va en la descripción de la tarea en Toggl**, que es donde acaba
-de todos modos al cerrarla. Una Tarea de tres líneas rompe la lectura de la tabla y duplica lo que el
+El detalle —mockups, secciones afectadas, alcance, medidas— **va en el plan**, o en la descripción si es
+una tarea del usuario en Toggl; de todos modos acaba en el historial al cerrarla. Una Tarea de tres líneas rompe la lectura de la tabla y duplica lo que el
 cierre va a escribir igual.
 
 Si el enunciado no cabe en una línea, casi siempre es porque:
@@ -39,13 +39,11 @@ Si el enunciado no cabe en una línea, casi siempre es porque:
 
 ## Cuándo partir una tarea
 
-**Las tareas ordenan al usuario; el plan ordena a Claude.** Una tarea se parte solo si entre los
-trozos hay algo del usuario: tiene que **decidir, validar o hacer** algo antes de que siga el otro;
-tienen **distinta prioridad** o se harán en **momentos distintos**; o podría querer **quedarse con
-uno** y dejar el otro. Lo que le toca al usuario va como subtarea. Si no, es una sola tarea y sus
-pasos viven en el plan (`tareas/planes/`): siete filas para un
-trabajo que Claude hace de corrido son siete cierres que nadie supervisa y, en un repo conectado, siete
-veces más llamadas a Toggl.
+**El plan ordena a Claude; Toggl, al usuario.** Un trabajo de Claude se parte solo si los trozos
+tienen **distinta prioridad**, se harán en **momentos distintos**, o el usuario podría querer
+**quedarse con uno** y dejar el otro. Lo que le toca al usuario va a «Esto te toca a ti» del plan,
+no como trozo. Si no, es un solo trabajo y sus pasos viven en el plan (`tareas/planes/`): siete
+entradas para algo que Claude hace de corrido son siete cierres que nadie supervisa.
 
 **Si el enunciado necesita una «y», probablemente son dos.** Propón partirla cuando:
 

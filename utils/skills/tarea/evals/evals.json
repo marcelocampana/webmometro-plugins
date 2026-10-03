@@ -3,30 +3,30 @@
   "evals": [
     {
       "id": 1,
-      "name": "repo-enlazado-lleva-git",
-      "prompt": "Corrige el desplegable del menú en móvil y déjalo como tarea.",
-      "expected_output": "Crea la tarea en Toggl en el proyecto que enlaza el tareas/toggl.md del repo actual (descripción con 'Área:' en la primera línea, asignada al usuario) y, al abrirla, invoca tarea-repo para la rama. No escribe la tarea en ningún markdown.",
+      "name": "esto-te-toca-a-ti",
+      "prompt": "(Al terminar de planificar en un repo) El plan tiene un paso que es validar el copy con la clínica y otro de subir el sitemap en Search Console.",
+      "expected_output": "El plan termina con una sección «Esto te toca a ti», numerada, con esos dos pasos y su tiempo aproximado. No crea nada en Toggl hasta que el usuario elige cuáles. Los pasos de Claude no aparecen ahí.",
       "files": []
     },
     {
       "id": 2,
-      "name": "sin-repo-sin-git",
-      "prompt": "Empiezo la facturación de septiembre.",
-      "expected_output": "La tarea es de un proyecto sin repo (Administración): la crea si no existe, marca 'abrir' con --repo sin-repo y pasa el estado a In Progress en Toggl. Sin rama ni commit.",
+      "name": "elegir-cuales-van-a-toggl",
+      "prompt": "Agrega la 1 a Toggl.",
+      "expected_output": "Crea solo la tarea 1 en Toggl, en una llamada: proyecto del config.md del repo, etiqueta de área y 'Área:' en la primera línea, una línea 'Sale de:' con el plan, asignada al usuario, con estimated_mins y sin fecha. Si el trabajo salió de una tarea del usuario en Toggl, va como subtarea de esa. No cambia el estado de ninguna tarea.",
       "files": []
     },
     {
       "id": 3,
-      "name": "plan-de-claude-fuera-de-toggl",
-      "prompt": "Implementa el plan: son cuatro pasos, hazlos todos.",
-      "expected_output": "Crea UNA tarea (el objetivo, asignada y con estimación); los cuatro pasos de Claude no van a Toggl sino al plan (en un repo, tareas/planes/); solo lo que le toca al usuario va como subtarea. Encadena los pasos sin pedir visto bueno entre ellos; al cerrar envía solo el tiempo de Claude, con la etiqueta claude, y pide confirmación solo al cerrar.",
+      "name": "claude-no-toca-estados",
+      "prompt": "Empiezo la facturación de septiembre.",
+      "expected_output": "No abre la tarea en Toggl ni la pasa a In Progress: Toggl lo lleva el usuario a mano. A lo sumo ofrece crearla si no existe. Las decisiones no se crean como tareas.",
       "files": []
     },
     {
       "id": 4,
       "name": "abiertas-por-la-copia",
       "prompt": "¿Qué tengo abierto?",
-      "expected_output": "Lee con cola.py leer --vista hoy y presencia.py abiertas —nunca tasks list del MCP— y responde en una sola lista corta. Para todos los proyectos con la capacidad del día remite a agenda.",
+      "expected_output": "Lee con cola.py leer --vista hoy —nunca tasks list del MCP— y responde en una sola lista corta. Para todos los proyectos con la capacidad del día remite a agenda.",
       "files": []
     },
     {

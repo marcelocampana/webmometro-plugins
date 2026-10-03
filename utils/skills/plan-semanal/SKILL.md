@@ -13,7 +13,7 @@ description: >
   `balance`).
 argument-hint: "[--replanificar]"
 metadata:
-  version: 2.0.4
+  version: 2.0.5
 ---
 
 # Planificar la semana (plan-semanal)
@@ -44,7 +44,7 @@ día aguanta. El orden dentro del día lo da la prioridad de cada tarea.
 2. **Semana:** la que empieza el lunes próximo, o la actual si es lunes o se pide replanificar.
    Las fechas salen de `date`, nunca de la memoria.
 3. **Candidatas:** `cola.py leer --vista pendientes --json` —todos los proyectos, con o sin repo, en
-   una sola lectura—, sin lo bloqueado. La bandeja (`por-revisar.md`) y lo de Claude (`para-claude.md`)
+   una sola lectura—, sin lo bloqueado. La bandeja (`por-revisar.md`) y lo de Claude (`pendientes.md`)
    no están en Toggl y no se planifican. **Nunca `tasks list` del MCP.**
    Una tarea y las subtareas del usuario se planifican cada una en su día; la subtarea que la tarea
    necesita antes, antes.
@@ -52,7 +52,7 @@ día aguanta. El orden dentro del día lo da la prioridad de cada tarea.
    lo ya estimado en él. Si la configuración de `agenda` trae `## Capacidad`, esa manda.
 5. **Arrastre:** tareas con día de la semana pasada que no están hechas. Van primero.
 6. **Planificado a mano:** lo que el usuario ya fechó en Toggl para esta semana se respeta tal cual.
-7. **Un repo del registro sin `tareas/toggl.md`** (sin migrar o sin enlazar): se ofrece, en una
+7. **Un repo del registro sin `tareas/config.md` ni `toggl.md`** (sin migrar o sin enlazar): se ofrece, en una
    línea, `tarea-repo --migrar` allí; mientras, sus tareas no se ven.
 
 Consultas a Toggl: una lectura (por la copia), una de capacidad y una para escribir. **No se lee el

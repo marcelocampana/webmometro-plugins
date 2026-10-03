@@ -588,10 +588,16 @@ def restar(intervalos, quitar):
 
 
 def enlace_toggl(raiz):
-    """El proyecto y el cliente de Toggl de un repo, del marcador de su `tareas/toggl.md`, o None."""
-    try:
-        texto = (Path(raiz) / "tareas" / "toggl.md").read_text(encoding="utf-8")
-    except (OSError, TypeError):
+    """El proyecto y el cliente de Toggl de un repo, del marcador de su `tareas/config.md` (o del
+    `toggl.md` de un repo aún en utils 5), o None."""
+    texto = None
+    for nombre in ("config.md", "toggl.md"):
+        try:
+            texto = (Path(raiz) / "tareas" / nombre).read_text(encoding="utf-8")
+            break
+        except (OSError, TypeError):
+            continue
+    if texto is None:
         return None
     m = re.search(r"<!--\s*tarea:\s*toggl\s*·\s*proyecto\s+(\d+)\s*«([^»]*)»"
                   r"(?:\s*·\s*cliente\s+(\d+)\s*«([^»]*)»)?", texto)
@@ -1054,6 +1060,16 @@ def main(argv=None):
             sello = carpeta() / "ultimo-asiento"
             if not sello.exists() or datetime.now().timestamp() - sello.stat().st_mtime > 86400:
                 asentar(ahora(), ajustes)
+                sello.touch()
+        except Exception:  # noqa: BLE001
+            pass
+        try:
+            # Una vez al día, las ramas sin mergear a `pendientes.md` de cada repo de la agenda.
+            sello = carpeta() / "ultima-captura"
+            if not sello.exists() or datetime.now().timestamp() - sello.stat().st_mtime > 86400:
+                sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tarea-repo" / "scripts"))
+                import pendientes  # noqa: E402
+                pendientes.capturar_todos()
                 sello.touch()
         except Exception:  # noqa: BLE001
             pass

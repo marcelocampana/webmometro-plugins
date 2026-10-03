@@ -1,0 +1,39 @@
+{
+  "description": "utils: guardia de git (ramas protegidas; merge y push solo con «apruebo el merge» del usuario) y captura de lo que queda a medias al cerrar la sesión",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Write|Edit|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/guardia_git.py\" pre",
+            "timeout": 20
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/guardia_git.py\" mensaje",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/skills/tarea-repo/scripts/pendientes.py\" capturar --gancho",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

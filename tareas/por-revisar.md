@@ -11,3 +11,4 @@ Una entrada por línea: `- **Título** · Área · origen (tarea, commit o archi
 Sin repo (`~/Obsidian/Global/por-revisar.md`), una sección `## <Proyecto>` por proyecto de Toggl.
 
 <!-- - **Corregir el desplegable del menú en móvil** · General · `AppHeader.vue:88` · 2026-09-29 — se corta en iPhone SE; visto al cerrar la tarea 16642210 -->
+- **Obligar a decidir los pendientes antiguos** · utils · plan `completar-bien-el-trabajo` · 2026-10-02 — una entrada de `pendientes.md` con más de 3–4 semanas obliga a hacerla o descartarla con motivo; se dejó para después del congelamiento

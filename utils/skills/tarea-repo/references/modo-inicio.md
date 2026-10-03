@@ -7,7 +7,8 @@ una petición de tareas**). Si lo que hay es un `tareas.md` con `## Ahora`, no e
 
 1. **Contextualizar** (`contextualizacion.md`): qué es el proyecto, su estructura, su deuda declarada
    y `git log`.
-2. **Enlazar el proyecto de Toggl.** `projects list` con el nombre del repo; si hay uno que encaja:
+2. **Enlazar el proyecto de Toggl** (donde irán las tareas que el usuario elija). `projects list`
+   con el nombre del repo; si hay uno que encaja:
    «Este repo parece del proyecto X (cliente Y). ¿Lo uso?». Si no, se propone crearlo, con los
    clientes de `clients list`, y si ningún cliente encaja se ofrece crear uno. **Los proyectos se
    crean públicos**: los privados son de pago (402). Nada se crea en Toggl sin visto bueno.
@@ -19,12 +20,14 @@ una petición de tareas**). Si lo que hay es un `tareas.md` con `## Ahora`, no e
    proyecto y de lo que el usuario ya nombró. **Un área se gana su sitio**: si solo tendría una tarea,
    va en `General`. Pocas y estables.
 4. **Crear**, con el visto bueno:
-   - `tareas/toggl.md` desde `assets/toggl.esqueleto.md`, con el marcador, las áreas acordadas y la rama destino (`main` salvo que el usuario diga otra, como `preview`).
+   - `tareas/config.md` desde `assets/config.esqueleto.md`, con el marcador, las áreas acordadas y
+     la rama destino (`main` salvo que el usuario diga otra, como `preview`).
    - `tareas/auditoria.md` desde `assets/auditoria.esqueleto.md`.
    - `tareas/historial/` vacío.
-   - `tareas/por-revisar.md` y `tareas/para-claude.md` desde sus esqueletos: la bandeja y lo de
-     Claude, que nunca van a Toggl.
-5. **Ofrecer, en una línea cada uno:** el bloque para `CLAUDE.md` (`assets/claude-md-puntero.md`) y
-   crear en Toggl las tareas que el usuario ya nombró.
+   - `tareas/por-revisar.md` y `tareas/pendientes.md` desde sus esqueletos: lo anotado sin decidir
+     y lo decidido sin hacer, que nunca van a Toggl.
+5. **Ofrecer, en una línea:** el puntero para `CLAUDE.md` (`assets/claude-md-puntero.md`). La regla
+   de ramas no se copia: la impone la guardia de git del plugin.
 
-Las tareas iniciales se crean en Toggl como cualquier otra (`tarea`), con su área en la descripción.
+Lo que el usuario ya nombró como trabajo de Claude va a `pendientes.md`; lo suyo que ocupa tiempo,
+a Toggl si lo elige (`tarea`).

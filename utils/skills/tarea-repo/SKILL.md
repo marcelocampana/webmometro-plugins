@@ -1,31 +1,32 @@
 ---
 name: tarea-repo
 description: >
-  La parte de repositorio del sistema de tareas: para las tareas de un proyecto de Toggl enlazado a
-  un repo (su `tareas/toggl.md`), pone la ceremonia de git —rama por tarea, commit, merge, push—,
-  lleva el plan de Claude de cada tarea (`tareas/planes/`) y guarda la memoria del repo: el
-  historial de lo cerrado y por qué (`tareas/historial/`), la revisión por áreas (`auditoria.md`), la
-  configuración del repo en Toggl (`toggl.md`: enlace, áreas, reglas), la bandeja de lo anotado sin
-  decidir (`tareas/por-revisar.md`) y lo delegado a Claude (`tareas/para-claude.md`), que nunca van a
-  Toggl. La lista de pendientes del usuario vive en Toggl y la gobierna `tarea`; este skill entra al
-  abrir y al cerrar una tarea de repo, y para: montar `tareas/` en un repo nuevo (`--init`), migrar un repo con el formato
-  anterior de `tareas.md` a Toggl (`--migrar`), revisar el proyecto completo (`--auditoria`), extraer
-  tareas de una conversación o un archivo (`--ingerir`), anotar en la bandeja o revisarla y delegar
-  (`--revisar`), ejecutar lo delegado a Claude («haz lo de Claude») y reconciliar estados con Toggl
-  (`--toggl`). Estima el coste de una tarea
-  desde el historial del repo. NO lo uses para tareas de un proyecto sin repo (eso es solo `tarea`),
-  para TODOs efímeros de la sesión, ni para issues de GitHub/Jira/Linear; si no existe `tareas/` y el
-  usuario no pidió nada de tareas, no lo actives.
-argument-hint: "[--init | --migrar | --auditoria | --ingerir | --revisar | --toggl]"
+  La parte de repositorio del sistema de tareas: el trabajo de Claude en un repo con `tareas/`. Pone
+  la ceremonia de git —rama por tarea, commits como puntos de guardado, merge y push con la
+  aprobación del usuario—, guarda el plan de Claude (`tareas/planes/<slug>.md`, que termina con
+  «Esto te toca a ti») y la memoria del repo: el historial de lo cerrado y lo descartado, con su
+  porqué (`tareas/historial/`), lo decidido que aún no se hace o quedó a medias
+  (`tareas/pendientes.md`), la bandeja de lo anotado sin decidir (`tareas/por-revisar.md`), la
+  revisión por áreas (`auditoria.md`) y la configuración del repo (`config.md`: rama destino, áreas,
+  enlace a Toggl, reglas). Toggl es del usuario y lo lleva él: aquí no se abre ni se cierra nada
+  allá. Úsalo al empezar o cerrar trabajo en un repo con `tareas/`, cuando el usuario pregunte "qué
+  quedó pendiente", "sigue con X", "anota esto", "revisemos la bandeja", y para: montar `tareas/` en
+  un repo nuevo (`--init`), migrar un repo con un formato anterior (`--migrar`: el `tareas.md`
+  antiguo o el `toggl.md` de utils 5), revisar el proyecto completo (`--auditoria`) y extraer tareas
+  de una conversación o un archivo (`--ingerir`). Estima el coste de una tarea desde el historial
+  del repo. NO lo uses para lo que solo toca Toggl (eso es `tarea`), para TODOs efímeros de la
+  sesión, ni para issues de GitHub/Jira/Linear; si no existe `tareas/` y el usuario no pidió nada de
+  tareas, no lo actives.
+argument-hint: "[--init | --migrar | --auditoria | --ingerir | --revisar]"
 metadata:
-  version: 5.0.0
+  version: 6.0.0
 ---
 
 # Tareas de repositorio (tarea-repo)
 
-**Los pendientes viven en Toggl** (skill `tarea`). El repo guarda lo que ya se hizo y por qué, y el
-trabajo de repo lleva su ceremonia: **una tarea, una rama**, y al cerrar, historial, commit y merge.
-Así Claude sabe qué se ha venido haciendo sin leer una lista de pendientes en cada repo.
+El trabajo de Claude en un repo se organiza con **su plan y su rama**; lo que queda sin hacer, en
+`pendientes.md`; lo hecho y lo descartado, con su porqué, en el historial. **Nada de lo decidido se
+pierde**: cada pendiente sale de una sola forma, al historial. Toggl es del usuario (`tarea`).
 
 **Este archivo es el núcleo.** El detalle de cada modo vive en `references/`, y se lee **uno**.
 
@@ -33,18 +34,17 @@ Así Claude sabe qué se ha venido haciendo sin leer una lista de pendientes en 
 
 | Si el usuario… | Lee |
 | --- | --- |
-| abre o cierra una tarea de este repo, o crea una | `references/modo-gestion.md` |
+| empieza o cierra trabajo de Claude en este repo | `references/modo-gestion.md` |
+| pregunta qué quedó pendiente, o pide retomar algo | `references/modo-pendientes.md` |
 | pide montar `tareas/`, o no existe y pidió algo de tareas (`--init`) | `references/modo-inicio.md` |
-| el repo aún tiene `tareas/tareas.md`, o pide migrar (`--migrar`) | `references/modo-migracion.md` |
-| anota o aparca algo, o revisa la bandeja y delega (`--revisar`) | `references/modo-revisar.md` |
-| pide ejecutar lo delegado a Claude («haz lo de Claude») | `references/modo-claude.md` |
+| el repo tiene un formato anterior, o pide migrar (`--migrar`) | `references/modo-migracion.md` |
+| anota o aparca algo, o revisa la bandeja (`--revisar`) | `references/modo-revisar.md` |
 | pide revisar el proyecto completo (`--auditoria`) | `references/modo-auditoria.md` |
 | pasa un archivo de tareas, o pide extraerlas de la conversación (`--ingerir`) | `references/modo-ingesta.md` |
 
 Las de apoyo —`archivado`, `contextualizacion`, `redaccion-tareas`, `estimacion`,
-`historial-lectura`, `impacto-documental`— **solo cuando la del modo las cite**
-para el paso que estás ejecutando. El ciclo en Toggl (crear, abrir, cerrar, registros de tiempo) es
-de `tarea/references/ciclo.md`: aquí no se repite.
+`historial-lectura`, `impacto-documental`— **solo cuando la del modo las cite**. Crear en Toggl y
+el tiempo de Claude son de `tarea/references/ciclo.md`: aquí no se repiten.
 
 ## Paso 0 · Precondición (siempre, antes de todo)
 
@@ -52,10 +52,11 @@ de `tarea/references/ciclo.md`: aquí no se repite.
 RAIZ=$(git rev-parse --show-toplevel) && ls "$RAIZ"/tareas/ 2>/dev/null
 ```
 
-- **Existe `tareas/toggl.md`** → el repo está enlazado; lee su marcador
-  (`<!-- tarea: toggl · proyecto ID «Nombre» · cliente ID «Nombre» -->`) y sus áreas.
-- **Existe `tareas/tareas.md`** (o un `tareas.md` plano con `## Ahora`) → **formato anterior, sin
-  migrar**. Dilo en una línea y ofrece `--migrar`. Hasta entonces, no escribas pendientes ahí.
+- **Existe `tareas/config.md`** → el repo está al día; lee su rama destino y sus áreas.
+- **Existe `tareas/toggl.md` y no `config.md`** (o un `para-claude.md`) → **utils 5, sin migrar**.
+  Dilo en una línea y ofrece `--migrar`. Hasta entonces, se lee `toggl.md` como si fuera `config.md`.
+- **Existe `tareas/tareas.md`** (o un `tareas.md` plano con `## Ahora`) → **formato antiguo**.
+  Dilo en una línea y ofrece `--migrar`.
 - **No existe nada** → `modo-inicio.md` si el usuario pidió algo de tareas; **retírate en silencio**
   si no.
 - **Sin git** (`git rev-parse --git-dir` falla) → el skill se detiene y lo explica en una línea.
@@ -64,56 +65,48 @@ RAIZ=$(git rev-parse --show-toplevel) && ls "$RAIZ"/tareas/ 2>/dev/null
 
 ```text
 tareas/
-├── toggl.md       Configuración del repo en Toggl: enlace, áreas, reglas y comentarios
-├── auditoria.md   Hallazgos de una revisión por áreas, bajo petición
+├── config.md      Rama destino, áreas, enlace al proyecto de Toggl y reglas del repo
+├── pendientes.md  Lo decidido sin hacer: Por hacer · A medias (con motivo) · Espera tu decisión
 ├── por-revisar.md La bandeja: lo anotado sin decidir. Solo guarda
-├── para-claude.md Lo que una revisión delegó a Claude. Nunca va a Toggl
-├── planes/        <id>-<slug>.md · el plan de Claude para cada tarea: pasos, skill y contexto
-└── historial/     AAAA-MM.md · lo cerrado y su porqué, escrito en el mismo cierre
+├── auditoria.md   Hallazgos de una revisión por áreas, bajo petición
+├── planes/        <slug>.md · el plan de Claude: pasos, skill, contexto y «Esto te toca a ti»
+└── historial/     AAAA-MM.md · lo cerrado y lo descartado, con su porqué
 ```
-
-La cola del usuario y sus estados están en Toggl; se leen con `tarea/scripts/cola.py leer --proyecto
-<ID del marcador>`. En el repo no hay pendientes del usuario: solo lo que aún no se decide
-(`por-revisar.md`) y lo que es de Claude (`para-claude.md`). El tiempo de Claude va a su registro
-local (`presencia.py asentar`), nunca a Toggl.
 
 ## La ceremonia, en corto
 
-- **Planificar:** con el usuario, qué hace falta para lograr la tarea. Los pasos de Claude, con su
-  skill y su contexto, van al plan (`tareas/planes/`); lo que le toca al usuario, como subtareas en
-  Toggl, que cronometra él. **Se aprueba una vez** y eso cubre la ejecución y el cierre.
-- **Abrir:** la **rama destino** (`toggl.md` § Rama destino; `main` si no la declara) limpia y
-  actualizada, y una rama nueva que salga de ella y describa la tarea. **Nunca se trabaja sobre la
-  destino ni sobre `main`.** En Toggl, lo de `tarea`.
-- **Los pasos del plan** se encadenan sin preguntar; cada uno puede llevar su commit —un punto de
-  guardado en la rama de la tarea, que no pide nada— y se marca hecho en el plan, con evidencia. Al
-  retomar, el estado en 2–3 líneas: el usuario no relee el plan.
-- **Cerrar:** **una sola confirmación, después de que el usuario vea el resultado**, y con ella corre
-  la cadena entera sin pausas: tiempo de Claude a su registro local, estado en Toggl, entrada en el
-  historial, commit, merge a la destino y push. Solo la paran la destino sucia o desactualizada, un conflicto de merge o
-  cambios ajenos a la tarea. Si la destino no es `main`, pasar a `main` es otro acto, con su propia
-  aprobación.
+- **Planificar:** Claude arma su plan como siempre; se guarda en `tareas/planes/<slug>.md` y termina
+  con **«Esto te toca a ti»** si hay algo del usuario que le ocupa tiempo (`tarea`). Se aprueba una
+  vez, y eso cubre la ejecución.
+- **Abrir:** la **rama destino** (`config.md` § Rama destino; `main` si no la declara) limpia y
+  actualizada, y una rama nueva que salga de ella. **Nunca se trabaja sobre la destino ni sobre
+  `main`**: la guardia de git del plugin bloquea esos commits.
+- **Los pasos** se encadenan sin preguntar; cada uno puede llevar su commit en la rama (un punto de
+  guardado) y se marca hecho en el plan, con evidencia.
+- **Si no se termina**, lo que falta va a `pendientes.md` con su motivo, y la rama queda viva.
+- **Cerrar:** **una sola confirmación, después de que el usuario vea el resultado**. El merge y el
+  push los desbloquea solo su mensaje «apruebo el merge» (la guardia de git). Con él corre la cadena
+  entera: tiempo de Claude a su registro, historial, commit, merge a la destino y push.
 
 ## Comunicación ejecutiva
 
 - **Una propuesta cabe en 2–4 líneas**; una observación, en una. Tablas antes que prosa.
 - **No recapitules el contexto leído.** Se usa, no se narra.
-- **La justificación larga vive en la descripción de la tarea o en el historial, no en el chat.**
-
-> Propongo: **Corregir el desplegable del menú en móvil** (`AppHeader.vue`), área General, ~20m. ¿La creo?
+- **La justificación larga vive en el plan o en el historial, no en el chat.**
 
 ## Reglas invariantes
 
-1. **Ninguna tarea se crea sin visto bueno**; la IA no reordena la cola del usuario.
-2. **Se completa una tarea y se para**; sugerir la siguiente sí, empezarla no. Los pasos de Claude no
-   son tareas: viven en el plan y se encadenan hasta el cierre **sin preguntar por el siguiente paso**.
-3. **El historial se escribe en el mismo cierre**, dentro de la cadena, nunca como paso aparte.
-4. **Del historial se lee la sección del ancla, nunca el archivo entero** (`historial-lectura.md`).
-5. **Las áreas salen de `toggl.md`**: un área nueva se añade ahí con visto bueno, no se inventa.
-6. **Ningún merge a la rama destino ni a `main` sin la aprobación del usuario, dada después de ver
-   el resultado.** Ni un encargo previo («complétala», «no me pidas confirmación») ni el plan aprobado
-   la sustituyen. Sin ella, el trabajo se queda commiteado en su rama. Es fija: no se configura.
+1. **Nada se crea en Toggl sin que el usuario lo elija**; la IA no reordena su cola.
+2. **Se completa un trabajo y se para**; sugerir el siguiente sí, empezarlo no. Los pasos del plan
+   se encadenan **sin preguntar por el siguiente**.
+3. **Nada sale sin rastro.** Lo que no se termina va a `pendientes.md` con su motivo; lo que se
+   descarta, al historial con el suyo.
+4. **El historial se escribe en el mismo cierre**, dentro de la cadena.
+5. **Del historial se lee la sección del ancla, nunca el archivo entero** (`historial-lectura.md`).
+6. **Las áreas salen de `config.md`**: un área nueva se añade ahí con visto bueno.
+7. **Ningún merge a la rama destino ni a `main` sin «apruebo el merge»**, escrito por el usuario
+   después de ver el resultado. **Nunca se rodea la guardia** (ni con otro comando, ni editándola).
 
 ## Idioma
 
-Español neutro con el usuario. El contenido del historial y de las tareas, en el idioma del proyecto.
+Español neutro con el usuario. El contenido del historial y de los planes, en el idioma del proyecto.

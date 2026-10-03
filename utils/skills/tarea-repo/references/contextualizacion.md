@@ -10,10 +10,11 @@ que se va a tocar.
 
 1. **`CLAUDE.md` y los docs que señale.** Qué es el proyecto, sus convenciones, su deuda declarada y
    sus trampas conocidas.
-2. **`tareas/toggl.md`**: el proyecto de Toggl, las áreas y las reglas propias del repo.
-3. **Lo pendiente del proyecto:** `cola.py leer --vista pendientes --proyecto <ID>` (nombre, área y
-   primera línea de cada tarea). Nunca `tasks list` crudo. Y `tareas/por-revisar.md` y
-   `para-claude.md`: lo anotado sin decidir y lo delegado a Claude.
+2. **`tareas/config.md`** (o `toggl.md` en un repo sin migrar): la rama destino, las áreas y las
+   reglas propias del repo.
+3. **Lo pendiente:** `tareas/pendientes.md` (lo decidido sin hacer) y `tareas/por-revisar.md` (lo
+   anotado sin decidir). Lo del usuario en Toggl solo si hace falta, por la copia (`cola.py leer
+   --vista pendientes --proyecto <ID>`), nunca con `tasks list` crudo.
 4. **El historial reciente:** la zona `## Tareas archivadas` del mensual en curso y del anterior, y
    de ahí **solo el comentario** (por su ancla, `historial-lectura.md`) de lo que toque el mismo
    ámbito que la tarea nueva.

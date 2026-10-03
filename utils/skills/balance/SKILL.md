@@ -9,20 +9,21 @@ description: >
   "mi balance", "revisión semanal", "cómo me fue esta semana", "en qué se me va el tiempo", "cuánto le
   dedico a cada cliente", "estadísticas de Toggl", "cuánto trabajé", "cuánto tiempo frente al
   computador", "qué aplicaciones uso más", "qué podría automatizar", "cuánto trabajó Claude solo", "cuánto tarda Claude en una tarea",
-  "estimo bien?", "¿cumplí el plan?", "cuánto de lo que hice estaba planificado", o cuando una rutina programada pida el resumen de la semana. **Solo lee: nunca
+  "estimo bien?", "¿cumplí el plan?", "cuánto de lo que hice estaba planificado", "qué cerré esta
+  semana", "qué quedó abierto", "qué tengo pendiente de decidir", o cuando una rutina programada pida el resumen de la semana. **Solo lee: nunca
   escribe en Toggl ni en ninguna lista de tareas**; lo que haya que cambiar lo propone para
   la bandeja (`por-revisar.md` del repo) y lo deja a `tarea-repo`. NO lo uses para la vista de hoy (eso es `agenda`), ni para abrir,
   cerrar o crear tareas (eso es `tarea`).
 argument-hint: "[--semana | --mes | --desde AAAA-MM-DD --hasta AAAA-MM-DD]"
 metadata:
-  version: 1.6.0
+  version: 1.7.0
 ---
 
 # Balance del trabajo (balance)
 
 `agenda` responde qué toca hoy; `tarea`, qué se hace ahora. Este skill mira hacia atrás para que lo
-siguiente salga mejor: **dónde se fue el tiempo, qué se estimó mal, qué se repite y cómo está el
-cuerpo**. Por defecto, la semana pasada de lunes a domingo; `--mes` o un rango, si se pide.
+siguiente salga mejor: **qué se cerró y qué sigue abierto, dónde se fue el tiempo, qué se estimó mal,
+qué se repite y cómo está el cuerpo**. Por defecto, la semana pasada de lunes a domingo; `--mes` o un rango, si se pide.
 
 ## Solo lee
 
@@ -57,6 +58,8 @@ P="$HOME/Github/AI-kit/plugins/webmometro-plugins/utils/skills/tarea/scripts/pre
 python3 "$P" resumen --desde "$DESDE" --hasta "$HASTA"   # tu tiempo, atención, apps, sesiones
 python3 "$P" claude  --desde "$DESDE" --hasta "$HASTA"   # Claude por proyecto: total, contigo y solo
 python3 "$P" plan comparar --semana "$SEMANA"            # plan original contra lo medido
+R="$HOME/Github/AI-kit/plugins/webmometro-plugins/utils/skills/tarea-repo/scripts/pendientes.py"
+python3 "$R" listar --todos                               # lo abierto: pendientes, bandeja, ramas
 ```
 
 - **Toggl**: los registros del período en una consulta (`time-entries list` con `date_from` y
@@ -64,12 +67,12 @@ python3 "$P" plan comparar --semana "$SEMANA"            # plan original contra 
   registro por registro. Sin el MCP en la sesión o sin respuesta: se dice y se sigue con lo demás.
 - **Sin registro de presencia** (no se instaló, o el período es anterior): se dice, y se omiten tu
   tiempo, salud y aplicaciones. No se sustituyen por Toggl: serían tiempo de proyecto.
-- **Historiales**: de cada repo de la configuración de `agenda`, solo la zona `## Tareas archivadas`
-  de los mensuales del período (nunca `## Comentarios`, nunca el archivo entero).
+- **Historiales**: de cada repo de la configuración de `agenda`, solo las zonas `## Tareas archivadas`
+  y `## Descartadas` de los mensuales del período (nunca `## Comentarios`, nunca el archivo entero).
 
 ## Paso 1 · Componer
 
-`references/informe.md`: las ocho secciones, cómo se calcula cada una y la plantilla. **Cabe en una
+`references/informe.md`: las nueve secciones, cómo se calcula cada una y la plantilla. **Cabe en una
 pantalla**: cada sección, dos o tres líneas; lo que no informa, no sale.
 
 ## Reglas invariantes

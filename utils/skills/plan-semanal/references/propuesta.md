@@ -45,7 +45,7 @@ Van al pie, una línea cada uno y solo si se cumplen:
 - **Un `Vence` no se cumple** ni poniéndolo primero: se dice cuál y cuándo cae.
 - **El plan contradice una dependencia** escrita en la descripción o las notas («necesita X» y X va
   después): se dice; no se reordena.
-- **Repos sin migrar** (sin `tareas/toggl.md`): se nombran al pie; sus tareas no se ven.
+- **Repos sin migrar** (sin `tareas/config.md` ni `toggl.md`): se nombran al pie; sus tareas no se ven.
 
 ## Plantilla
 

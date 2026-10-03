@@ -65,3 +65,18 @@ consulta local.
 
 No lee títulos de ventana, contenido de mensajes ni la pantalla. No habla con Toggl: a Toggl solo
 escribe el skill `tarea` (tus tareas y sus estados), desde una sesión.
+
+## 4. La captura diaria de lo que queda a medias
+
+El mismo agente de launchd corre, una vez al día, `tarea-repo/scripts/pendientes.py` sobre los repos
+de la agenda que ya están en utils 5 o 6: cada rama sin mergear que no figure en
+`tareas/pendientes.md` entra en `A medias`. No commitea nada. Nada que instalar: viene con el agente.
+
+## 5. Los ganchos del plugin
+
+La guardia de git (`utils/hooks/guardia_git.py`) y la captura al cerrar la sesión vienen en
+`utils/hooks/hooks.json` y se activan solas al instalar o actualizar el plugin (hace falta abrir una
+sesión nueva). **Comprobar:** en una sesión nueva, en una rama `main` de prueba, `git commit` debe
+salir bloqueado con el mensaje «Guardia de git: bloqueado». Se ven con `/hooks` en una terminal con
+`claude`.
+

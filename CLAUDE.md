@@ -15,7 +15,40 @@ user-facing output (skills instruct their output language explicitly):
 - **brand-voice-pro** — full-stack plugin: skills + agents + commands + MCP servers.
 - **design-system** — skills-only: design-system audit/docs + social carousel generation.
 - **seo-suite** — skills-only: a 10-skill SEO suite (snapshots → audit/CRO/audience/AI-search, plus content clusters, landing blueprints and change tracking).
-- **utils** — skills-only: general-purpose personal utilities (a task system). **Toggl 2.0 is the single task list for every project** (utils 4.0.0): `tarea` creates, opens (In Progress), pauses and closes tasks in Toggl; `tarea-repo` adds the repo ceremony — a branch per task cut from and merged back into the repo's **target branch** (`toggl.md` § Rama destino, `main` by default, e.g. `preview` for a test branch; promoting it to `main` is a separate, separately approved act), a one-confirmation close chain (Toggl, history, commit, merge) — **the merge always needs the user's approval given after seeing the result; no prior "finish it"/"don't ask me" nor the approved plan replaces it, and it is not configurable** (utils 4.8.0); commits on the task branch are save points and need nothing — for tasks whose Toggl project is linked from a repo's `tareas/toggl.md` (marker `<!-- tarea: toggl · proyecto … -->`, plus the repo's areas and rules). A repo keeps only its memory: `tareas/historial/AAAA-MM.md` (what was done and why, grouped by area — the context Claude reads), `auditoria.md` and `toggl.md`, plus two local lists that never reach Toggl (utils 5.0.0): `tareas/por-revisar.md` — **the inbox**: whatever is noted and not yet decided; it only stores, and reviewing is a separate step that turns an entry into a user task in Toggl, delegates it to Claude or drops it — and `tareas/para-claude.md`, what a review delegated to Claude (run on request as `pc-<slug>`, with its plan, branch and history; `modo-claude.md`). Changes to those two files outside a task are the one direct commit allowed on the target branch (`tareas: bandeja`). Projects without a repo keep both lists in `~/Obsidian/Global/`. The user's pending list is never in the repo, and repos still on the old `tareas.md` / `revisar.md` / `secciones.md` format are moved with `tarea-repo --migrar` (`scripts/migrar_a_toggl.py`, read-only until the user approves). **A task's area is a Toggl tag** (utils 4.3.0 reverted the earlier "no sections" rule at the user's request), repeated as the first line of its description (`Área: …`) as a fallback for scripts; `cola.py` takes the area from the non-cross-cutting tag first. No subprojects. Cross-cutting tag: `imprevisto` (`por-revisar` and `claude` survive only on pre-5.0.0 items). **Toggl organizes the user; the plan organizes Claude** (utils 4.7.0): a task is the user's goal; only what the user must do himself goes as subtasks (one level, timed by the user with the Toggl app); Claude's steps never go to Toggl — they live in the task's plan, `tareas/planes/<id>-<slug>.md` (skill and context per step), approved once, chained without asking, marked done with evidence, and summarized in 2–3 lines when the task is resumed. The repo close chain ends with merge **and push**. **Tasks are read through `tarea/scripts/cola.py`**, never raw `tasks list`: each raw task is ~2,000 chars; `cola.py` calls the Focus API with the connector's OAuth session (`~/.toggl/focus-tools.json`; Toggl 2.0 accepts no API token) and **never refreshes it** (refreshing rotates the refresh token and would log the connector out), keeps only the useful fields plus full description and notes, and caches the copy (`cola.py invalidar` after any write). The shared infrastructure (`presencia.py`, `cola.py`, install assets) stays under `tarea/` so the launch agent and hook paths never move. **Toggl is only the user's work; nothing of Claude's goes there** (utils 5.0.0, reverting 4.4.0's Claude-time-in-Toggl). `tarea/scripts/presencia.py` reads Claude Code's local session transcripts and attributes each stretch of Claude's work to the repo whose files its tools touch — never to the folder the session was opened in — and `presencia.py asentar` writes it to a local ledger, `~/Obsidian/Global/claude/registro-tiempo/<name>-AAAA-MM.md` (the repo's name; with no repo, the Toggl project's) (one row per stretch: repo, the task open in that repo or `—`, minutes, minutes alone), idempotently, on every close and once a day from the launchd agent (Claude Code deletes transcripts after 30 days). `balance` reads it through `presencia.py claude`, which adds the not-yet-settled tail without writing. The user times his own work with the Toggl app, and `presencia.py verificar` checks those entries against his Mac activity (late start, timer left running, pauses, main apps) — read-only. The nightly routine is optional and paused. The user's own time stays local and is never summed with project time: the same stdlib script, run every minute by launchd and by a `UserPromptSubmit` hook, records keyboard/mouse idle time, the frontmost app and which session each message went to (attention follows the repo that session was working in), and raises the pause alert. `Coste` is estimated from closed-task history (matched by task *family* — verb + object — never by area mean). Project time (Toggl) and the user's own time (presence) are **never summed together**. `agenda` is the read-only daily view over all projects (the copy plus Toggl `capacities` for the working day; the `agenda.md` config keeps only the repo registry, which orders projects) — **it never writes to Toggl or any repo**, which is what lets it run unattended from a routine. `balance` is the read-only weekly review over both times, plus plan-versus-reality, estimation bias, automation candidates, health and app usage. `plan-semanal` is the only skill that writes a plan: it assigns each task a day in Toggl (`start_date` = `end_date`, plus `estimated_mins`) with the user's approval and snapshots the original version locally (`presencia.py plan guardar`), because Toggl keeps only the latest dates and plan-versus-reality must compare against Monday's plan. `tarea`, `tarea-repo`, `agenda`, `balance`, and `plan-semanal` all use a deliberately thin SKILL.md core that dispatches to one per-mode reference — keep the core under ~2.4k tokens and each reference under ~1.7k. **The core ceiling measures the body, not the frontmatter**: a skill's `description` is the activation trigger, is long and specific by design, and is loaded as listing metadata rather than as instructions, so it does not compete for the core's budget. Measure with `wc -c` on the text after the closing `---` (4 chars ≈ 1 token).
+- **utils** — skills + hooks: general-purpose personal utilities (a task system). **utils 6.0.0 —
+  "complete the work well":**
+  - **Toggl 2.0 is the user's, and he runs it by hand** (creates, plans, times, closes). Claude
+    touches Toggl only to create the tasks the user picks from the **«Esto te toca a ti»** section
+    that ends Claude's plan (numbered; only work that takes the user's time — decisions never go to
+    Toggl), as subtasks if the work came from one of his Toggl tasks, and to read time entries for
+    `presencia.py verificar`. Claude never opens, pauses or closes Toggl tasks.
+  - **Claude's work lives in its plan and its branch**: `tareas/planes/<slug>.md` (the approved plan,
+    with a step table), a branch per job cut from the repo's **target branch** (`tareas/config.md`
+    § Rama destino, `main` by default). Its id is the slug, not a Toggl id.
+  - **Nothing decided gets lost**: `tareas/pendientes.md` (Por hacer · A medias, with the reason ·
+    Espera tu decisión) holds what is decided and not done; `tareas/por-revisar.md` holds ideas not
+    yet decided; every entry leaves only into the history, done or under `## Descartadas` with its
+    reason. `pendientes.py capturar` (plugin `SessionEnd` hook + daily from the launchd agent) adds
+    unmerged branches to `A medias` deterministically; `balance` shows «Lo abierto» weekly.
+  - **The git guard** (`utils/hooks/guardia_git.py`, `PreToolUse` + `UserPromptSubmit`) is what
+    enforces the branch rule, in every git repo and every permission mode: it blocks commits on
+    protected branches (main, master, origin default, the target branch), and merge/push into them
+    unless the user typed «apruebo el merge» in that same session (one merge + one push, 10 min).
+    It fails closed and protects its own permission files. Project `CLAUDE.md` files no longer copy
+    the rule; a few lines in the global `~/.claude/CLAUDE.md` explain it.
+  - `tareas/config.md` (formerly `toggl.md`, still read as a fallback) holds the target branch,
+    areas, the Toggl project link and repo rules. `tarea-repo --migrar` moves utils-5 repos
+    (`a-config`) and old `tareas.md` repos.
+  - Time: `presencia.py` records the user's presence and Claude's time to a local ledger
+    (`~/Obsidian/Global/claude/registro-tiempo/`), never to Toggl; `balance` reads both, never
+    summed. Tasks in Toggl are read through `tarea/scripts/cola.py` (OAuth session of the connector,
+    never refreshed), never raw `tasks list`. `agenda` and `plan-semanal` stay as they are but are
+    dormant (the user plans by hand). The shared infrastructure stays under `tarea/` so the launchd
+    agent paths never move — note the agent runs the **repo's** `presencia.py`, so code on a checked
+    out branch runs live.
+  - `tarea`, `tarea-repo`, `agenda`, `balance`, and `plan-semanal` keep a thin SKILL.md core that
+    dispatches to one per-mode reference — core under ~2.4k tokens, each reference under ~1.7k,
+    measured on the body after the frontmatter (`wc -c`, 4 chars ≈ 1 token).
 
 ## Layout & manifest hierarchy
 
@@ -26,6 +59,7 @@ user-facing output (skills instruct their output language explicitly):
 <plugin>/skills/<skill>/SKILL.md    ← the core unit; frontmatter drives auto-activation
 <plugin>/skills/<skill>/references/ ← supporting docs a skill reads on demand
 <plugin>/skills/<skill>/scripts/    ← executable helpers (stdlib-only, invoked from SKILL.md)
+<plugin>/hooks/hooks.json           ← optional plugin hooks (utils: git guard + capture of open work)
 <plugin>/agents/<name>.md           ← optional autonomous subagents (brand-voice-pro only)
 <plugin>/commands/<name>.md         ← optional slash-command entry points (brand-voice-pro only)
 <plugin>/settings/*.local.md.example← optional per-project config template the user copies into .claude/
@@ -170,37 +204,23 @@ When a data source is missing, SEO skills degrade explicitly rather than fail.
    extracts a reference out of a `SKILL.md` and never opens a `.json` still needs all of them. Some
    skills carry no `metadata.version`; those have nothing to bump, and adding one is optional.
 
-## Cómo avanzamos: Toggl y `tareas/`
+## Cómo avanzamos: `tareas/`
 
-**Los pendientes viven en Toggl**, en el proyecto «Plugins de IA» que enlaza `tareas/toggl.md`: una
-sola lista para todos los proyectos, que también se edita a mano. En el repo queda la memoria:
+Las tareas del usuario están en Toggl, en el proyecto «Plugins IA» que enlaza `tareas/config.md`, y
+las lleva él. En el repo quedan el trabajo de Claude y la memoria:
 
-- **`tareas/toggl.md`** — el proyecto de Toggl, las áreas del repo con su ámbito y las reglas propias.
-- **`tareas/historial/AAAA-MM.md`** — lo cerrado, con el comentario íntegro de cada tarea. **Es la
-  mejor fuente de contexto sobre por qué el código está como está**: empieza por ahí antes de proponer
-  cambios grandes.
-- **`tareas/auditoria.md`** — hallazgos de una revisión completa por áreas, bajo petición.
-- **`tareas/por-revisar.md`** — la bandeja: lo anotado sin decidir. Solo guarda; revisar es otro
-  paso, que puede crear una tarea tuya en Toggl, delegarla a Claude o descartarla.
-- **`tareas/para-claude.md`** — lo que una revisión delegó a Claude. Nunca va a Toggl.
+- **`tareas/historial/AAAA-MM.md`** — lo cerrado y lo descartado, con su porqué. **Es la mejor fuente
+  de contexto sobre por qué el código está como está**: empieza por ahí antes de proponer cambios
+  grandes.
+- **`tareas/pendientes.md`** — lo decidido que Claude aún no hace. **`tareas/por-revisar.md`** — lo
+  anotado sin decidir. **`tareas/planes/`** — el plan de cada trabajo.
+- **`tareas/config.md`** — la rama destino, las áreas y las reglas del repo (utils está congelado
+  hasta el 2026-10-16). **`tareas/auditoria.md`** — una revisión completa por áreas, bajo petición.
 
-Reglas irrenunciables:
-
-1. **Una tarea, una rama.** Se comprueba que `main` está limpia y actualizada y se ramifica desde ahí;
-   **nunca se trabaja sobre `main`**.
-2. **La tarea es el objetivo del usuario; el plan es de Claude.** Se planifica con el usuario: los pasos
-   de Claude (con su skill y su contexto) van al plan, `tareas/planes/`, y no a Toggl; lo que le toca
-   al usuario va como subtareas, que cronometra él. Aprobado el plan, los pasos se encadenan sin pedir
-   confirmación. **Toggl es solo del usuario**: el tiempo de Claude va a su registro local
-   (`~/Obsidian/Global/claude/registro-tiempo/`), nunca a Toggl.
-3. **Se completa esa tarea y se para.** Al cerrar se pregunta una sola vez; con el visto bueno se
-   encadenan el estado en Toggl, el tiempo de Claude a su registro, el historial, el commit, el merge a `main` y el push sin pausas —salvo `main`
-   sucia o desactualizada, un conflicto o cambios ajenos a la tarea—.
-
-Nada se crea en Toggl sin visto bueno, y la IA no reordena la cola del usuario. El flujo completo lo
-gobiernan los skills `tarea` y `tarea-repo` (plugin `utils`).
+Ramas, merge y cierre los aplica la guardia de git y los detalla `tarea-repo` (plugin `utils`).
 
 ## Git
 
-`main` is the default branch. Commit only when the user asks; if on `main`, branch first.
+`main` is the default branch and is protected by the utils git guard: work on a branch; merge and
+push to `main` need the user's «apruebo el merge».
 Note `.gitignore` only excludes `.DS_Store`, so avoid committing stray macOS metadata.

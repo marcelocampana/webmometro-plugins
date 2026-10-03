@@ -24,7 +24,7 @@ Vive en `~/Github/AI-kit/config/context/toggl.md` (o donde diga `TOGGL_CONFIG`).
 | `repetir_aviso_min` | 30 | El aviso no se repite antes de esto |
 | `notificar_mac` | 1 | 1: el aviso también sale como notificación de macOS, aunque no le escribas a Claude; 0: solo en la conversación |
 | `proyecto_mi_tiempo` | 0 | Id del proyecto de Toggl donde iba tu tiempo frente al computador; ya no se envía (lo cronometras tú) |
-| `imprevisto_min` | 30 | Claude trabajando más que esto en un repo sin tarea abierta: se ofrece crear la tarea |
+| `imprevisto_min` | 30 | Claude trabajando más que esto en un repo sin tarea abierta: `balance` lo señala (ya no se ofrece crear nada en Toggl) |
 
 ## Registro de presencia
 
