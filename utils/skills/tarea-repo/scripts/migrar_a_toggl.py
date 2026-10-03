@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 """
-Migra un repo con el formato anterior (`tareas/tareas.md`, `revisar.md`, `secciones.md`) a Toggl
-como única lista: arma la carga de tareas que hay que crear o actualizar, y los archivos que quedan
-en el repo: `tareas/toggl.md` y `tareas/por-revisar.md` (la bandeja **no va a Toggl**).
+Migra un repo de un formato anterior al de utils 6.
 
-**Solo lee y propone.** `armar` no escribe nada: devuelve un JSON con las tareas en orden, los pares
-dudosos de `## Ahora` con su sección y el texto de `toggl.md`. El envío a Toggl (MCP `tasks
-bulk-create` / `bulk-patch`) y el `git rm` los hace el skill, con el visto bueno del usuario. Así, lo
-que se muestra es exactamente lo que se envía.
+- **Formato antiguo** (`tareas/tareas.md`, `revisar.md`, `secciones.md`): arma la carga de tareas
+  abiertas y los archivos que quedan en el repo: `tareas/config.md` y `tareas/por-revisar.md` (la
+  bandeja **no va a Toggl**). Qué tarea es del usuario (va a Toggl) y cuál es de Claude (va a
+  `tareas/pendientes.md`) lo propone el skill y lo confirma el usuario.
+- **utils 5** (`tareas/toggl.md`, `tareas/para-claude.md`): `a-config` renombra `toggl.md` a
+  `config.md` y convierte `para-claude.md` en `pendientes.md`. Sin `--aplicar`, solo dice qué haría.
+
+**`armar` solo lee y propone**: devuelve un JSON con las tareas en orden, los pares dudosos de
+`## Ahora` con su sección y las áreas. El envío a Toggl (MCP `tasks bulk-create` / `bulk-patch`) y
+el `git rm` los hace el skill, con el visto bueno del usuario. Así, lo que se muestra es
+exactamente lo que se envía.
 
 El orden de la cola se conserva: primero `## Ahora`, después las pendientes de cada sección en el
 orden del archivo. Toggl da a cada tarea nueva una posición mayor que la anterior, así que crearlas en
@@ -17,9 +22,10 @@ Uso:
     migrar_a_toggl.py armar tareas/ --proyecto ID --usuario UID
                       [--estados '{"todo":ID,"in_progress":ID,"blocked":ID}'] [--areas '{"Área":ID_ETIQUETA}']
                       [--hoy AAAA-MM-DD]
-    migrar_a_toggl.py toggl-md tareas/ --proyecto ID --nombre NOMBRE --cliente ID --cliente-nombre NOMBRE [--rama preview]
-                      [--forzar]
+    migrar_a_toggl.py config-md tareas/ --proyecto ID --nombre NOMBRE --cliente ID --cliente-nombre NOMBRE [--rama preview]
+                      [--forzar]          (alias antiguo: toggl-md)
     migrar_a_toggl.py por-revisar tareas/ [--hoy AAAA-MM-DD] [--forzar]
+    migrar_a_toggl.py a-config tareas/ [--aplicar]
 
 Códigos de salida: 0 bien · 1 hay pares dudosos que confirmar · 2 error.
 """
@@ -218,17 +224,79 @@ def payload(t, proyecto, usuario, estados, hoy, areas_ids=None):
     return p
 
 
-def toggl_md(proyecto, nombre, cliente, cliente_nombre, areas, rama="main"):
+def config_md(proyecto, nombre, cliente, cliente_nombre, areas, rama="main"):
     filas = "\n".join("| %s | %s |" % (a["nombre"], a["ambito"] or "—") for a in areas) or "| General | — |"
-    return ("<!-- tarea: toggl · proyecto %s «%s» · cliente %s «%s» -->\n\n# Toggl · %s\n\n"
-            "Configuración de este repo en Toggl. Los pendientes viven allí; aquí, cómo se ordenan. Lo común a\n"
-            "todos los repos está en la configuración global de Toggl.\n\n## Rama destino\n\n`%s`\n\n"
+    return ("<!-- tarea: toggl · proyecto %s «%s» · cliente %s «%s» -->\n\n# Configuración · %s\n\n"
+            "Configuración del sistema de tareas en este repo: la rama destino (la lee también la guardia de\n"
+            "git), las áreas, el proyecto de Toggl donde van las tareas que el usuario elige y las reglas propias.\n\n"
+            "## Rama destino\n\n`%s`\n\n"
             "La rama desde la que sale cada tarea y a la que vuelve al cerrarse, siempre con la aprobación del\n"
             "usuario después de ver el resultado. Si no es `main`, pasar de ella a `main` es un acto aparte.\n\n## Áreas\n\n"
-            "Cada tarea lleva la etiqueta de su área, con uno de estos nombres, y la repite en la primera línea\n"
-            "de la descripción (`Área: <nombre>`).\n\n"
-            "| Área | Qué abarca |\n| --- | --- |\n%s\n\n## Reglas\n\n<!-- Opcional: lo propio de este repo en Toggl. -->\n\n"
+            "Cada plan, pendiente y fila del historial lleva una de estas áreas; las tareas que van a Toggl la\n"
+            "llevan como etiqueta y en la primera línea de la descripción (`Área: <nombre>`).\n\n"
+            "| Área | Qué abarca |\n| --- | --- |\n%s\n\n## Reglas\n\n<!-- Opcional: lo propio de este repo. -->\n\n"
             "## Comentarios\n\n<!-- Opcional. -->\n") % (proyecto, nombre, cliente, cliente_nombre, nombre, rama, filas)
+
+
+toggl_md = config_md  # nombre anterior
+
+ENTRADA_PC = re.compile(r"^- \*\*(?P<titulo>.+?)\*\* · (?P<area>[^·]+?) · (?P<origen>.+?) · delegada (?P<fecha>\d{4}-\d{2}-\d{2}) — (?P<que>.+)$")
+
+
+def pendientes_desde_para_claude(texto):
+    """Convierte las entradas de `para-claude.md` en líneas de `Por hacer` de `pendientes.md`.
+    Una línea que no tenga el formato se conserva tal cual, para no perder nada."""
+    lineas, pendientes = [], False
+    for linea in texto.splitlines():
+        if linea.startswith("## "):
+            pendientes = linea.strip() == "## Pendientes"
+            continue
+        if not pendientes or not linea.startswith("- "):
+            continue
+        m = ENTRADA_PC.match(linea.strip())
+        if m:
+            lineas.append("- **%s** · %s · rama — · plan — · %s — %s · delegada en revisión (%s)" % (
+                m["titulo"], m["area"].strip(), m["fecha"], m["que"].strip(), m["origen"].strip()))
+        else:
+            lineas.append(linea.rstrip())
+    return lineas
+
+
+def pendientes_md(lineas):
+    esqueleto = Path(__file__).resolve().parent.parent / "assets" / "pendientes.esqueleto.md"
+    texto = esqueleto.read_text(encoding="utf-8")
+    if lineas:
+        texto = texto.replace("## Por hacer\n", "## Por hacer\n\n" + "\n".join(lineas) + "\n", 1)
+    return texto
+
+
+def a_config(carpeta, aplicar=False):
+    """utils 5 → 6: `toggl.md` → `config.md` y `para-claude.md` → `pendientes.md`."""
+    hechos = []
+    toggl, config = carpeta / "toggl.md", carpeta / "config.md"
+    if toggl.exists() and not config.exists():
+        hechos.append("toggl.md → config.md")
+        if aplicar:
+            texto = re.sub(r"^# Toggl · ", "# Configuración · ", toggl.read_text(encoding="utf-8"), count=1, flags=re.M)
+            config.write_text(texto, encoding="utf-8")
+            toggl.unlink()
+    pc, pend = carpeta / "para-claude.md", carpeta / "pendientes.md"
+    if pc.exists():
+        lineas = pendientes_desde_para_claude(pc.read_text(encoding="utf-8"))
+        hechos.append("para-claude.md → pendientes.md (%d entradas)" % len(lineas))
+        if aplicar:
+            if pend.exists():
+                actual = pend.read_text(encoding="utf-8")
+                pend.write_text(actual.replace("## Por hacer\n", "## Por hacer\n\n" + "\n".join(lineas) + "\n", 1)
+                                if lineas else actual, encoding="utf-8")
+            else:
+                pend.write_text(pendientes_md(lineas), encoding="utf-8")
+            pc.unlink()
+    elif not pend.exists():
+        hechos.append("pendientes.md nuevo")
+        if aplicar:
+            pend.write_text(pendientes_md([]), encoding="utf-8")
+    return {"ok": True, "aplicado": aplicar, "cambios": hechos}
 
 
 def main(argv=None):
@@ -241,7 +309,7 @@ def main(argv=None):
     a.add_argument("--estados", type=json.loads, help='{"todo":ID,"in_progress":ID,"blocked":ID}')
     a.add_argument("--areas", type=json.loads, help='{"Área": id de su etiqueta}')
     a.add_argument("--hoy")
-    t = sub.add_parser("toggl-md")
+    t = sub.add_parser("config-md", aliases=["toggl-md"])
     t.add_argument("carpeta")
     t.add_argument("--proyecto", type=int, required=True)
     t.add_argument("--nombre", required=True)
@@ -253,8 +321,15 @@ def main(argv=None):
     pr.add_argument("carpeta")
     pr.add_argument("--hoy")
     pr.add_argument("--forzar", action="store_true")
+    ac = sub.add_parser("a-config", help="utils 5 → 6: toggl.md → config.md y para-claude.md → pendientes.md")
+    ac.add_argument("carpeta")
+    ac.add_argument("--aplicar", action="store_true", help="sin esto, solo dice qué haría")
     args = p.parse_args(argv)
     carpeta = Path(args.carpeta)
+    if args.orden == "a-config":
+        r = a_config(carpeta, args.aplicar)
+        print(json.dumps(r, ensure_ascii=False))
+        return 0
     if not (carpeta / "tareas.md").exists():
         print("No hay %s: no hay nada que migrar." % (carpeta / "tareas.md"), file=sys.stderr)
         return 2
@@ -271,12 +346,12 @@ def main(argv=None):
         destino.write_text(por_revisar_md(bandeja, args.hoy or date.today().isoformat()), encoding="utf-8")
         print(json.dumps({"ok": True, "escrito": str(destino), "entradas": len(bandeja)}, ensure_ascii=False))
         return 0
-    destino = carpeta / "toggl.md"
+    destino = carpeta / "config.md"
     if destino.exists() and not args.forzar:
         print("%s ya existe; --forzar para reescribirlo." % destino, file=sys.stderr)
         return 2
     areas = armar(carpeta, args.proyecto, None)["areas"]
-    destino.write_text(toggl_md(args.proyecto, args.nombre, args.cliente, args.cliente_nombre, areas, args.rama), encoding="utf-8")
+    destino.write_text(config_md(args.proyecto, args.nombre, args.cliente, args.cliente_nombre, areas, args.rama), encoding="utf-8")
     print(json.dumps({"ok": True, "escrito": str(destino), "areas": len(areas)}, ensure_ascii=False))
     return 0
 

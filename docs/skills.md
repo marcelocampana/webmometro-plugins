@@ -79,35 +79,30 @@ seguimiento de cambios.
 
 Utilidades transversales de organización del trabajo.
 
-- **tarea** — El sistema de tareas, con **Toggl 2.0 como única lista** para
-  todos los proyectos, y **solo tuya**. Crea, abre, pausa y cierra tareas en
-  Toggl. **Nada de Claude va a Toggl**: su tiempo se asienta en un registro
-  local por repo —sin repo, por proyecto de Toggl— y mes
-  (`~/Obsidian/Global/claude/registro-tiempo/`),
-  atribuido al repo cuyos archivos toca, con tarea o sin ella. Lo tuyo lo
-  cronometras tú con la app, y Claude lo verifica contra tu actividad. Lo
-  anotado sin decidir va a la bandeja (`por-revisar.md`) y lo que una
-  revisión delega a Claude, a `para-claude.md`; ninguno de los dos va a Toggl. **Tu tiempo** frente al
-  computador se mide aparte y se queda en local (`presencia.py`: teclado,
-  aplicación en primer plano y mensajes a Claude), con avisos de pausa. La tarea es tu
-  objetivo; como subtareas van solo las cosas que te tocan a ti. Los pasos de
-  Claude, con su skill y su contexto, viven en el plan de la tarea
-  (`tareas/planes/`), se encadenan sin preguntar —cada commit en la rama es un punto de
-  guardado— y se confirma solo el merge, después de ver el resultado. Lee
-  la cola por una copia local reducida (`cola.py`), no por la respuesta
-  cruda de Toggl. Las tareas sin repo (facturar, reuniones) son las de un
-  proyecto que ningún repo enlaza.
-- **tarea-repo** — La parte de repositorio: para las tareas de un proyecto
-  enlazado a un repo (`tareas/toggl.md`), rama por tarea desde la rama
-  destino de `toggl.md` (`main` por defecto, o una de pruebas como `preview`),
-  cierre en cadena con commit, merge y push —el merge, siempre con tu
-  aprobación tras ver el resultado—, e historial de lo hecho y por qué como memoria del
-  repo (`tareas/historial/`). Estima el coste desde ese historial, audita el
-  proyecto por áreas, ingiere tareas de una conversación o un archivo a la
-  bandeja (`tareas/por-revisar.md`), la revisa contigo (tarea tuya en Toggl,
-  delegada a Claude en `tareas/para-claude.md` o descartada), ejecuta lo de
-  Claude cuando lo pides y migra a Toggl los repos con el formato anterior
-  (`--migrar`, con `migrar_a_toggl.py`).
+- **tarea** — El sistema de tareas. **Toggl 2.0 es tuyo y lo llevas tú, a
+  mano**: creas, planificas, cronometras y cierras. Claude solo crea en Toggl
+  las tareas que eliges de la sección **«Esto te toca a ti»** con que termina
+  su plan (lo que no puede hacer él y te ocupa tiempo; las decisiones no van),
+  y lee tus registros para verificarlos contra tu actividad en el Mac. Su
+  tiempo se asienta en un registro local por repo y mes
+  (`~/Obsidian/Global/claude/registro-tiempo/`), nunca en Toggl. **Tu tiempo**
+  frente al computador se mide aparte (`presencia.py`), con avisos de pausa.
+  Lee Toggl por una copia local reducida (`cola.py`).
+- **tarea-repo** — El trabajo de Claude en un repo con `tareas/`: plan
+  (`tareas/planes/<slug>.md`) y rama desde la rama destino de
+  `tareas/config.md` (`main` por defecto, o una de pruebas como `preview`),
+  pasos encadenados sin preguntar y cierre en cadena —historial, commit,
+  merge y push— con tu «apruebo el merge». **Nada de lo decidido se pierde**:
+  lo que no se termina va a `tareas/pendientes.md` con su motivo, lo anotado
+  sin decidir a `tareas/por-revisar.md`, y todo sale al historial, hecho o
+  descartado con su porqué. Estima el coste desde el historial, audita el
+  proyecto por áreas, ingiere tareas de una conversación o un archivo y migra
+  los repos con formatos anteriores (`--migrar`).
+- **Ganchos de utils** — La **guardia de git** bloquea, en todo repo y en
+  cualquier modo de permisos, los commits sobre `main` y la rama destino, y el
+  merge o push hacia ellas salvo que escribas «apruebo el merge» en esa
+  sesión; falla cerrada. Al cerrar la sesión (y una vez al día) se anotan en
+  `pendientes.md` las ramas que quedaron a medias.
 - **agenda** — Compone la vista diaria con todos los proyectos: lee la cola
   de Toggl por la copia local y la jornada de Toggl, y responde qué toca hoy
   y si cabe. Avisa de lo vencido, de varias tareas abiertas a la vez y de las
@@ -118,8 +113,10 @@ Utilidades transversales de organización del trabajo.
   un 20% para imprevistos), y con visto bueno escribe el día y la estimación
   en Toggl y guarda la versión original para medir después plan contra
   realidad. Solo escribe días y estimaciones. Todo sigue funcionando si un
-  lunes no se planifica.
-- **balance** — Revisión para mejorar: tiempo de proyecto por cliente
+  lunes no se planifica (hoy está en reposo: planificas a mano).
+- **balance** — Revisión para mejorar: **lo abierto** (lo cerrado en la
+  semana, los pendientes por antigüedad, lo que espera tu decisión, la bandeja
+  y las ramas sin mergear), tiempo de proyecto por cliente
   (Toggl) separado del tiempo real del usuario (registro de presencia),
   plan contra realidad, imprevistos, sesgo de estimación por familia de tarea, candidatas a
   automatizar, salud (sesiones sin pausa, horas frente al computador),

@@ -45,8 +45,8 @@ Al pie, **una línea cada uno**, y solo si se cumplen:
 - **La jornada es la de por defecto**: si `working-hours` del usuario está vacío, una vez: «la
   jornada de Toggl no está configurada: uso sus 8h por defecto».
 - **El empujón a planificar**, por umbral: ≥5 pendientes sin estimación o ≥2 vencidas.
-- **Lo de Claude**, si hay: las entradas de `tareas/para-claude.md` de los repos de la configuración
-  (y del global, `~/Obsidian/Global/para-claude.md`), contadas: «Claude tiene 3 pendientes en 2
+- **Lo de Claude**, si hay: las entradas de `tareas/pendientes.md` de los repos de la configuración
+  (y del global, `~/Obsidian/Global/pendientes.md`), contadas: «Claude tiene 3 pendientes en 2
   repos». No se listan ni suman a tu capacidad: no están en Toggl y las hace Claude cuando lo pidas.
 
 ## La plantilla

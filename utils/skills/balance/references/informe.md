@@ -1,7 +1,16 @@
 # El informe
 
-Ocho secciones, en este orden. **Una sección sin datos no sale**, y se nombra al pie en una línea
+Nueve secciones, en este orden. **Una sección sin datos no sale**, y se nombra al pie en una línea
 («sin registro de presencia: faltan tu tiempo, salud y aplicaciones»).
+
+## 0. Lo abierto
+
+Primero: muestra el avance y evita olvidos. De `pendientes.py listar --todos` y los historiales:
+**cerrado** (por repo, y lo descartado con su motivo), **espera tu
+decisión** (cada una, por nombre), **pendientes** `Por hacer` y `A medias` (las más antiguas con sus
+días; un «sesión cerrada sin cierre» se señala: le falta el porqué), **ramas sin mergear** fuera de
+`pendientes.md`, la **bandeja** (cuántas y la más antigua) y los repos `sin_migrar`. No decide nada:
+ofrece revisar.
 
 ## 1. Tiempo de proyecto
 
@@ -24,18 +33,11 @@ revisar); se dice así, sin juicio.
 
 ## 3. Plan contra realidad
 
-De `presencia.py plan comparar --semana AAAA-Www`: el plan **original** de la semana (el del lunes,
-aunque después se replanificara) frente a lo medido.
-
-- **Cumplimiento:** tareas cerradas a tiempo de las planificadas («6 de 9») y horas planificadas
-  frente a horas reales en esas tareas.
-- **Porcentaje planificado** (`porcentaje_planificado`): del tiempo medido en tareas, cuánto fue en
-  tareas del plan. **Es el número del criterio de las 4 semanas**: se muestra junto al de las
-  semanas anteriores, si las hay, para ver si sube.
-- **Lo que desplazó el plan:** las tareas `fuera_de_plan` con más tiempo, dos o tres, por nombre.
-- **Sin plan esa semana** (`hay_plan: false`): una línea, sin reproche. «Sin plan esta semana».
-
-Solo cuenta tiempo medido en local; los imprevistos sueltos de Toggl entran en la sección 4.
+Solo si hubo plan (`presencia.py plan comparar --semana AAAA-Www`, `hay_plan: true`); si no, la
+sección no sale: el usuario planifica a mano. **Cumplimiento** (cerradas a tiempo de las
+planificadas, horas planificadas frente a reales), **porcentaje planificado** del tiempo medido en
+tareas, junto al de semanas anteriores, y **lo que desplazó el plan** (las `fuera_de_plan` con más
+tiempo). Solo cuenta tiempo medido en local; los imprevistos de Toggl van en la sección 4.
 
 ## 4. Planificado contra imprevisto
 
@@ -101,6 +103,8 @@ Tres números por proyecto y por tarea: **total** (Claude trabajando), **contigo
 ```text
 Balance · 15 al 21 de septiembre
 
+Cerrado     7 (Plugins 4, Webmómetro 3) · 2 descartadas · espera tu decisión: «Precio del plan anual»
+Abierto     5 pendientes (el más antiguo, «Migrar el blog», 24 días) · 2 a medias · bandeja 9 (desde 08-15)
 Proyecto    ODC 6h (+2h) · Webmómetro 4h 30m · Plugins 2h
 Tu tiempo   9h 20m en 5 días · atención: Webmómetro 45%, ODC 40%
 Desempeño   66% con Claude en proyectos · 3h 10m sin Claude · 0,7h de Claude por hora tuya (antes 0,5)

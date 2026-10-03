@@ -14,9 +14,9 @@ Incluye cuatro plugins:
 - **seo-suite** — suite de 10 skills de SEO/AEO: contexto estratégico,
   snapshots de datos, auditoría, CRO, clústeres de contenido, blueprints de
   landing y seguimiento de cambios.
-- **utils** — utilidades personales: registro de actividad cross-cuenta y
-  sistema de tareas con Toggl 2.0 como única lista, rama por tarea e
-  historial en cada repo.
+- **utils** — utilidades personales: sistema de tareas (Toggl para lo que
+  haces tú; plan, rama y pendientes para lo de Claude; historial en cada repo),
+  guardia de git que protege `main` y la rama destino, y registro de tiempo.
 
 ## Dónde ver qué hace cada skill
 

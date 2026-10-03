@@ -11,7 +11,7 @@ description: >
   para planificar la semana (`plan-semanal`).
 argument-hint: "[--hoy | --dia AAAA-MM-DD | --config]"
 metadata:
-  version: 2.1.0
+  version: 2.1.1
 ---
 
 # Agenda diaria (agenda)
@@ -45,7 +45,7 @@ python3 "$P" resumen --desde HOY --hasta HOY  # horas trabajadas y atención sin
   configuración de la agenda aún trae `## Capacidad`, esa cifra manda y se dice en una línea.
 - **El orden entre proyectos**, de la configuración (`${AGENDA_CONFIG:-~/Github/AI-kit/config/context/agenda.md}`):
   el orden de su tabla `## Repos`. El proyecto de cada repo sale de la primera línea de su
-  `tareas/toggl.md`. Los proyectos sin repo van después. Sin configuración, se dice y se sigue sin
+  `tareas/config.md` (o `toggl.md` en un repo sin migrar). Los proyectos sin repo van después. Sin configuración, se dice y se sigue sin
   ese orden (solo por día y prioridad).
 
 ## Paso 1 · Componer la vista

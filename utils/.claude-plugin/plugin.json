@@ -1,8 +1,8 @@
 {
   "name": "utils",
   "displayName": "Utils",
-  "version": "5.0.0",
-  "description": "Skills personales de utilidad general para Webmometro. Incluye el sistema de tareas con Toggl 2.0 como única lista de tus pendientes para todos los proyectos —solo tuya: nada de Claude va a Toggl—, el tiempo de Claude en un registro local por repo y mes, el tiempo real del usuario medido aparte, avisos de pausa, la bandeja de lo anotado sin decidir y lo delegado a Claude en archivos del repo y una copia local reducida de la cola (Tarea), la ceremonia de repositorio con rama por tarea, cierre en cadena, revisión de la bandeja, ejecución de lo delegado a Claude, historial de lo hecho como memoria del repo, ingesta, auditoría y migración de repos con el formato anterior (Tarea Repo), la vista diaria con todos los proyectos y la jornada de Toggl (Agenda), la planificación de la semana por día en Toggl con la versión original guardada para medir plan contra realidad (Plan Semanal), la revisión semanal de tu tiempo y el de Claude por separado, plan contra realidad, estimación, salud y uso de aplicaciones (Balance) y, a futuro, otras herramientas de productividad y mantenimiento del entorno de trabajo.",
+  "version": "6.0.0",
+  "description": "Skills personales de utilidad general para Webmometro. Sistema de tareas: Toggl 2.0 es del usuario y lo lleva él a mano —Claude solo crea las tareas que el usuario elige de «Esto te toca a ti» y verifica sus registros—; el trabajo de Claude vive en su plan y su rama, lo decidido sin hacer en pendientes.md y lo anotado sin decidir en por-revisar.md, y todo sale al historial hecho o descartado con su porqué (Tarea, Tarea Repo). Ganchos: una guardia de git que bloquea commits, merge y push sobre main y la rama destino salvo con «apruebo el merge» del usuario, y la captura de lo que queda a medias al cerrar la sesión. Además, la vista diaria (Agenda), la planificación semanal (Plan Semanal), la revisión semanal con lo abierto, el tiempo del usuario y el de Claude por separado (Balance) y el registro local de presencia y del tiempo de Claude.",
   "author": {
     "name": "Webmometro"
   },
@@ -22,6 +22,8 @@
     "auditoria",
     "git-branch",
     "ingesta",
-    "historial"
+    "historial",
+    "git-guard",
+    "pendientes"
   ]
 }

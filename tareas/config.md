@@ -1,14 +1,18 @@
 <!-- tarea: toggl · proyecto 3968609 «Plugins IA» · cliente 762706 «Interno» -->
 
-# Toggl · Plugins IA
+# Configuración · Plugins IA
 
-Configuración de este repo en Toggl. Los pendientes viven allí; aquí, cómo se ordenan. Lo común a
-todos los repos está en la configuración global de Toggl.
+Configuración del sistema de tareas en este repo: la rama destino (la lee también la guardia de
+git), las áreas, el proyecto de Toggl donde van las tareas que el usuario elige y las reglas propias.
+
+## Rama destino
+
+`main`
 
 ## Áreas
 
-Cada tarea lleva la etiqueta de su área, con uno de estos nombres, y la repite en la primera línea
-de la descripción (`Área: <nombre>`).
+Cada plan, pendiente y fila del historial lleva una de estas áreas; las tareas que van a Toggl la
+llevan como etiqueta y en la primera línea de la descripción (`Área: <nombre>`).
 
 | Área | Qué abarca |
 | --- | --- |
@@ -21,7 +25,8 @@ de la descripción (`Área: <nombre>`).
 
 ## Reglas
 
-<!-- Opcional: lo propio de este repo en Toggl. -->
+- **utils congelado hasta el 2026-10-16.** Solo se arreglan fallos; las molestias con el sistema de
+  tareas se anotan en `por-revisar.md` y se ajustan juntas después de esa fecha, con evidencia.
 
 ## Comentarios
 

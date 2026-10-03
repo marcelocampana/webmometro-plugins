@@ -64,7 +64,7 @@ todas las muestras reunidas, sin ponderar por antigüedad. **Se dice de cuántos
 mediana de tres muestras repartidas en cinco meses describe una familia rara, y el usuario lee distinto
 ese número que uno de la semana pasada.
 
-En un repo conectado a Toggl, las duraciones del historial son medidas (`toggl.md`) y no llevan `~`:
+Con el registro de presencia, las duraciones del historial son medidas y no llevan `~`:
 la base crece con cada cierre, sin cambiar de dónde se lee.
 
 ## Qué muestra vale y cuál no

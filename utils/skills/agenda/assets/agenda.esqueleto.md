@@ -12,7 +12,7 @@ prioridad sobre ella.
 
 **El orden de esta tabla es la prioridad entre proyectos** cuando una tarea no tiene día: la agenda y
 el plan de la semana la usan para desempatar. El proyecto de Toggl de cada repo sale de su
-`tareas/toggl.md`; `balance` lee de aquí dónde está cada historial.
+`tareas/config.md`; `balance` lee de aquí dónde está cada historial.
 
 | Etiqueta | Ruta |
 | --- | --- |

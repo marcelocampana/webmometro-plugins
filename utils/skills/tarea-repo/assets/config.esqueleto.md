@@ -1,10 +1,10 @@
 <!-- tarea: toggl · proyecto {{ID}} «{{Proyecto}}» · cliente {{ID}} «{{Cliente}}» -->
 
-# Toggl · {{Proyecto}}
+# Configuración · {{Proyecto}}
 
-Configuración de este repo en Toggl. Los pendientes viven allí; aquí, cómo se ordenan. Lo común a
-todos los repos (espacio de trabajo, umbrales, etiquetas transversales) está en la configuración
-global de Toggl.
+Configuración del sistema de tareas en este repo: la rama destino (la lee también la guardia de
+git), las áreas, el proyecto de Toggl donde van las tareas que el usuario elige y las reglas propias.
+Lo común a todos los repos (espacio de trabajo, umbrales) está en la configuración global de Toggl.
 
 ## Rama destino
 
@@ -16,9 +16,9 @@ usuario después de ver el resultado. `main` por defecto; en un repo con rama de
 
 ## Áreas
 
-Cada tarea lleva la etiqueta de su área, con uno de estos nombres, y la repite en la primera línea
-de la descripción (`Área: <nombre>`). Un
-área se gana su sitio: si solo tendría una tarea, va en `General`.
+Cada plan, pendiente y fila del historial lleva una de estas áreas; las tareas que van a Toggl la
+llevan como etiqueta y en la primera línea de la descripción (`Área: <nombre>`). Un área se gana su
+sitio: si solo tendría una tarea, va en `General`.
 
 | Área | Qué abarca |
 | --- | --- |
@@ -26,11 +26,11 @@ de la descripción (`Área: <nombre>`). Un
 
 ## Reglas
 
-<!-- Opcional. Lo propio de este repo en Toggl, por ejemplo:
+<!-- Opcional. Lo propio de este repo, por ejemplo:
      - Lo del SII va al proyecto «Administración», no a este.
      - Las tareas del área Pagos son facturables.
      - Estimación por defecto de una tarea de contenido: 45m. -->
 
 ## Comentarios
 
-<!-- Opcional. Notas libres sobre cómo se trabaja este proyecto en Toggl. -->
+<!-- Opcional. Notas libres sobre cómo se trabaja este proyecto. -->

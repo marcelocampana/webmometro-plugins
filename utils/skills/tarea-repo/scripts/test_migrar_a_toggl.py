@@ -152,7 +152,7 @@ class Migracion(unittest.TestCase):
             codigo = m.main(["toggl-md", str(self.c), "--proyecto", "42", "--nombre", "Sitio",
                              "--cliente", "9", "--cliente-nombre", "Cliente"])
         self.assertEqual(codigo, 0)
-        texto = (self.c / "toggl.md").read_text(encoding="utf-8")
+        texto = (self.c / "config.md").read_text(encoding="utf-8")
         self.assertIn("proyecto 42 «Sitio» · cliente 9 «Cliente»", texto)
         self.assertIn("| Pagos | Cobro y checkout. |", texto)
         self.assertIn("## Rama destino\n\n`main`", texto)
@@ -164,7 +164,45 @@ class Migracion(unittest.TestCase):
         with redirect_stdout(io.StringIO()):
             m.main(["toggl-md", str(self.c), "--proyecto", "42", "--nombre", "Sitio",
                     "--cliente", "9", "--cliente-nombre", "Cliente", "--rama", "preview"])
-        self.assertIn("## Rama destino\n\n`preview`", (self.c / "toggl.md").read_text(encoding="utf-8"))
+        self.assertIn("## Rama destino\n\n`preview`", (self.c / "config.md").read_text(encoding="utf-8"))
+
+
+class AConfig(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.c = Path(self.tmp.name)
+        (self.c / "toggl.md").write_text("<!-- tarea: toggl · proyecto 1 «P» -->\n\n# Toggl · P\n\n## Rama destino\n\n`preview`\n", encoding="utf-8")
+        (self.c / "para-claude.md").write_text(
+            "# Para Claude\n\nEjemplo: `- **X** · A · o · delegada 2026-01-01 — y`.\n\n## Pendientes\n\n"
+            "- **Corregir el menú** · General · auditoria.md:12 · delegada 2026-09-30 — que no se corte en móvil\n"
+            "- una línea libre\n", encoding="utf-8")
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_sin_aplicar_no_toca_nada(self):
+        r = m.a_config(self.c)
+        self.assertEqual(len(r["cambios"]), 2)
+        self.assertTrue((self.c / "toggl.md").exists())
+        self.assertFalse((self.c / "pendientes.md").exists())
+
+    def test_aplicar_renombra_y_convierte(self):
+        m.a_config(self.c, aplicar=True)
+        self.assertFalse((self.c / "toggl.md").exists())
+        self.assertFalse((self.c / "para-claude.md").exists())
+        config = (self.c / "config.md").read_text(encoding="utf-8")
+        self.assertIn("# Configuración · P", config)
+        self.assertIn("`preview`", config)
+        pend = (self.c / "pendientes.md").read_text(encoding="utf-8")
+        por_hacer = pend.split("## Por hacer")[1].split("## A medias")[0]
+        self.assertIn("- **Corregir el menú** · General · rama — · plan — · 2026-09-30 — que no se corte en móvil"
+                      " · delegada en revisión (auditoria.md:12)", por_hacer)
+        self.assertIn("- una línea libre", por_hacer)
+
+    def test_aplicar_dos_veces_no_duplica(self):
+        m.a_config(self.c, aplicar=True)
+        r = m.a_config(self.c, aplicar=True)
+        self.assertEqual(r["cambios"], [])
 
 
 if __name__ == "__main__":
