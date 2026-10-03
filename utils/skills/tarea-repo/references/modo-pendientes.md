@@ -30,7 +30,8 @@ sabe si conviene seguir.
 - **Una revisión de la bandeja** que decide «Para Claude» (`modo-revisar.md`).
 - **La captura automática** (`scripts/pendientes.py capturar`, al cerrar la sesión y una vez al
   día): cada rama sin mergear que no figura aquí entra en `A medias`, con los pasos que faltan y si
-  hay cambios sin commitear. Al retomarla, Claude completa el porqué con el usuario.
+  hay cambios sin commitear. Al retomarla, Claude completa el porqué con el usuario. Lo que anotó
+  ella (`sesión cerrada sin cierre`) lo quita sola cuando la rama se mergea; lo escrito a mano, no.
 
 Lo que ya está aquí, en la bandeja o en el historial no se repite (`redaccion-tareas.md`).
 

@@ -95,6 +95,34 @@ class Repo(unittest.TestCase):
         self.assertFalse(p.marcador_de(marca, "webmometro-web-reports", "utils"))
         self.assertTrue(p.marcador_de("<!-- plan · repo r · rama x-->", "r", "x"))
 
+    def test_lo_capturado_sale_al_mergearse(self):
+        self.rama_con_plan()
+        self.rama_con_plan("otra")
+        self.assertEqual(p.capturar(self.r, "2026-10-02"), ["arreglar-menu", "otra"])
+        sh(self.r, "merge", "-q", "--no-ff", "-m", "Merge arreglar-menu: listo", "arreglar-menu")
+        sh(self.r, "branch", "-d", "arreglar-menu")          # borrada: cuenta el merge en la base
+        sh(self.r, "merge", "-q", "--no-ff", "-m", "integra", "otra")  # viva: cuenta que sea ancestro
+        self.assertEqual(p.capturar(self.r, "2026-10-03"), [])
+        a_medias = self.pendientes().split("## A medias")[1].split("## Espera")[0]
+        self.assertEqual(a_medias.strip(), "")
+
+    def test_lo_escrito_a_mano_no_se_retira(self):
+        self.rama_con_plan()
+        a_mano = "- **Arreglar el menú** · General · rama `arreglar-menu` · plan — · 2026-10-01 — falta probar"
+        (self.r / "tareas" / "pendientes.md").write_text(
+            p.ESQUELETO.read_text(encoding="utf-8").replace("## A medias\n", "## A medias\n\n" + a_mano + "\n"),
+            encoding="utf-8")
+        sh(self.r, "merge", "-q", "--no-ff", "-m", "Merge arreglar-menu", "arreglar-menu")
+        p.capturar(self.r, "2026-10-03")
+        self.assertIn(a_mano, self.pendientes())
+
+    def test_rama_borrada_sin_merge_no_se_retira(self):
+        self.rama_con_plan()
+        p.capturar(self.r, "2026-10-02")
+        sh(self.r, "branch", "-D", "arreglar-menu")
+        p.capturar(self.r, "2026-10-03")
+        self.assertIn("rama `arreglar-menu`", self.pendientes())
+
     def test_rama_mergeada_no_entra(self):
         self.rama_con_plan()
         sh(self.r, "merge", "-q", "--no-ff", "-m", "merge", "arreglar-menu")
