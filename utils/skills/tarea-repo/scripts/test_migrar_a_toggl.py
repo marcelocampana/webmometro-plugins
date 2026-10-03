@@ -160,6 +160,24 @@ class Migracion(unittest.TestCase):
             self.assertEqual(m.main(["toggl-md", str(self.c), "--proyecto", "42", "--nombre", "Sitio",
                                      "--cliente", "9", "--cliente-nombre", "Cliente"]), 2)
 
+    def test_config_md_crea_general_si_la_bandeja_la_usa(self):
+        (self.c / "secciones.md").write_text(SECCIONES.split("## General")[0] + "## Pagos\n\nCobro y checkout.\n",
+                                             encoding="utf-8")
+        (self.c / "tareas.md").write_text(TAREAS.split("## General")[0] + "## Componentes" +
+                                          TAREAS.split("## Componentes")[1], encoding="utf-8")
+        with redirect_stdout(io.StringIO()):
+            m.main(["config-md", str(self.c), "--proyecto", "42", "--nombre", "Sitio",
+                    "--cliente", "9", "--cliente-nombre", "Cliente"])
+        self.assertIn("| General | %s |" % m.GENERAL, (self.c / "config.md").read_text(encoding="utf-8"))
+
+    def test_la_bandeja_conserva_su_fecha_de_alta(self):
+        (self.c / "revisar.md").write_text(REVISAR + "| Otra cosa | sesión del 2026-09-12 | — | — |\n", encoding="utf-8")
+        with redirect_stdout(io.StringIO()):
+            m.main(["por-revisar", str(self.c), "--hoy", "2026-10-03"])
+        texto = (self.c / "por-revisar.md").read_text(encoding="utf-8")
+        self.assertIn("· sesión del 2026-09-12 · 2026-09-12", texto)   # sin git: la fecha escrita en la fila
+        self.assertIn("· auditoría del 20-09 · 2026-10-03", texto)     # sin ninguna: la del día
+
     def test_toggl_md_con_rama_destino(self):
         with redirect_stdout(io.StringIO()):
             m.main(["toggl-md", str(self.c), "--proyecto", "42", "--nombre", "Sitio",
@@ -203,6 +221,41 @@ class AConfig(unittest.TestCase):
         m.a_config(self.c, aplicar=True)
         r = m.a_config(self.c, aplicar=True)
         self.assertEqual(r["cambios"], [])
+
+    def test_toggl_md_de_utils5_queda_con_la_forma_de_config_md(self):
+        (self.c / "toggl.md").write_text(
+            "<!-- tarea: toggl · proyecto 1 «P» -->\n\n# Toggl · P\n\nConfiguración de este repo en Toggl.\n\n"
+            "## Áreas\n\nLa primera línea de la descripción de cada tarea es `Área: <nombre>`.\n\n"
+            "| Área | Qué abarca |\n| --- | --- |\n| Pagos | El cobro. |\n\n## Reglas\n\n- Una regla propia.\n",
+            encoding="utf-8")
+        m.a_config(self.c, aplicar=True)
+        config = (self.c / "config.md").read_text(encoding="utf-8")
+        self.assertIn("# Configuración · P\n\n" + m.INTRO + "\n\n## Rama destino\n\n`main`\n\n" + m.RAMA
+                      + "\n\n## Áreas\n\n" + m.AREAS + "\n\n| Área |", config)
+        self.assertNotIn("en Toggl.", config)
+        self.assertIn("| Pagos | El cobro. |", config)
+        self.assertIn("- Una regla propia.", config)
+
+
+class FechaDeAlta(unittest.TestCase):
+    def test_la_fecha_es_la_del_commit_que_anoto_la_entrada(self):
+        import os
+        import subprocess
+        with tempfile.TemporaryDirectory() as d:
+            c = Path(d)
+            def git(*a, fecha=None):
+                env = dict(os.environ, GIT_COMMITTER_DATE=fecha, GIT_AUTHOR_DATE=fecha) if fecha else None
+                subprocess.run(["git", "-C", d, *a], check=True, capture_output=True, env=env)
+            git("init", "-q")
+            git("config", "user.email", "t@t")
+            git("config", "user.name", "t")
+            (c / "revisar.md").write_text(REVISAR, encoding="utf-8")
+            git("add", "-A")
+            git("commit", "-qm", "bandeja", fecha="2026-09-15T10:00:00")
+            (c / "revisar.md").write_text(REVISAR + "| Nueva | — | — | — |\n", encoding="utf-8")
+            git("commit", "-qam", "otra", fecha="2026-09-20T10:00:00")
+            fechas = {b["nombre"]: b["fecha"] for b in m.leer_bandeja(c)}
+            self.assertEqual(fechas, {"Revisar el contraste de los botones": "2026-09-15", "Nueva": "2026-09-20"})
 
 
 if __name__ == "__main__":

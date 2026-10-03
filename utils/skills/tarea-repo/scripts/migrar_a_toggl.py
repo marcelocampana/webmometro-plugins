@@ -33,6 +33,7 @@ Códigos de salida: 0 bien · 1 hay pares dudosos que confirmar · 2 error.
 import argparse
 import json
 import re
+import subprocess
 import sys
 from datetime import date
 from pathlib import Path
@@ -191,16 +192,30 @@ def leer_bandeja(carpeta):
     filas, _ = leer_tablas(revisar)
     return [{"nombre": limpio(f["Tarea"]), "area": limpio(f.get("Sección") or f.get("Área") or "") or "General",
              "origen": limpio(f.get("Origen") or "") or "revisar.md",
-             "motivo": " ".join(x for x in (limpio(f.get("Motivo") or ""), limpio(f.get("Notas") or "")) if x)}
+             "motivo": " ".join(x for x in (limpio(f.get("Motivo") or ""), limpio(f.get("Notas") or "")) if x),
+             "fecha": fecha_de_alta(revisar, f)}
             for filas_s in filas.values() for f in filas_s if f.get("Tarea")]
 
 
+def fecha_de_alta(revisar, fila):
+    """El día en que la entrada se anotó: el del commit que añadió su texto a `revisar.md` o, sin git,
+    la primera fecha escrita en la fila. `revisar.md` no tenía columna de fecha, y la del día de la
+    migración haría parecer nueva una entrada de semanas."""
+    try:
+        r = subprocess.run(["git", "-C", str(revisar.parent), "log", "--reverse", "--format=%cs",
+                            "-S", fila["Tarea"], "--", revisar.name], capture_output=True, text=True, timeout=20)
+        primera = r.stdout.split()[0] if r.returncode == 0 and r.stdout.split() else None
+    except (OSError, subprocess.SubprocessError):
+        primera = None
+    return primera or fecha(" ".join(fila.get(k) or "" for k in ("Origen", "Motivo", "Notas")))
+
+
 def por_revisar_md(bandeja, hoy):
-    """`tareas/por-revisar.md`: el esqueleto del skill y una línea por entrada."""
+    """`tareas/por-revisar.md`: el esqueleto del skill y una línea por entrada, con su fecha de alta."""
     esqueleto = Path(__file__).resolve().parent.parent / "assets" / "por-revisar.esqueleto.md"
     texto = re.sub(r"\n<!-- - \*\*.*?-->\n", "\n", esqueleto.read_text(encoding="utf-8"), flags=re.S).rstrip() + "\n\n"
     for b in bandeja:
-        texto += "- **%s** · %s · %s · %s%s\n" % (b["nombre"], b["area"], b["origen"], hoy,
+        texto += "- **%s** · %s · %s · %s%s\n" % (b["nombre"], b["area"], b["origen"], b.get("fecha") or hoy,
                                                 (" — " + b["motivo"]) if b["motivo"] else "")
     return texto
 
@@ -224,18 +239,39 @@ def payload(t, proyecto, usuario, estados, hoy, areas_ids=None):
     return p
 
 
+INTRO = ("Configuración del sistema de tareas en este repo: la rama destino (la lee también la guardia de\n"
+         "git), las áreas, el proyecto de Toggl donde van las tareas que el usuario elige y las reglas propias.")
+RAMA = ("La rama desde la que sale cada tarea y a la que vuelve al cerrarse, siempre con la aprobación del\n"
+        "usuario después de ver el resultado. Si no es `main`, pasar de ella a `main` es un acto aparte.")
+AREAS = ("Cada plan, pendiente y fila del historial lleva una de estas áreas; las tareas que van a Toggl la\n"
+         "llevan como etiqueta y en la primera línea de la descripción (`Área: <nombre>`).")
+GENERAL = "Lo transversal y lo que no se gana un área propia."
+
+
 def config_md(proyecto, nombre, cliente, cliente_nombre, areas, rama="main"):
     filas = "\n".join("| %s | %s |" % (a["nombre"], a["ambito"] or "—") for a in areas) or "| General | — |"
     return ("<!-- tarea: toggl · proyecto %s «%s» · cliente %s «%s» -->\n\n# Configuración · %s\n\n"
-            "Configuración del sistema de tareas en este repo: la rama destino (la lee también la guardia de\n"
-            "git), las áreas, el proyecto de Toggl donde van las tareas que el usuario elige y las reglas propias.\n\n"
-            "## Rama destino\n\n`%s`\n\n"
-            "La rama desde la que sale cada tarea y a la que vuelve al cerrarse, siempre con la aprobación del\n"
-            "usuario después de ver el resultado. Si no es `main`, pasar de ella a `main` es un acto aparte.\n\n## Áreas\n\n"
-            "Cada plan, pendiente y fila del historial lleva una de estas áreas; las tareas que van a Toggl la\n"
-            "llevan como etiqueta y en la primera línea de la descripción (`Área: <nombre>`).\n\n"
+            "%s\n\n## Rama destino\n\n`%s`\n\n%s\n\n## Áreas\n\n%s\n\n"
             "| Área | Qué abarca |\n| --- | --- |\n%s\n\n## Reglas\n\n<!-- Opcional: lo propio de este repo. -->\n\n"
-            "## Comentarios\n\n<!-- Opcional. -->\n") % (proyecto, nombre, cliente, cliente_nombre, nombre, rama, filas)
+            "## Comentarios\n\n<!-- Opcional. -->\n") % (proyecto, nombre, cliente, cliente_nombre, nombre,
+                                                       INTRO, rama, RAMA, AREAS, filas)
+
+
+def config_desde_toggl(texto):
+    """El `toggl.md` de utils 5 con la forma de `config.md`: título, presentación, «Rama destino»
+    (`main` si no la declaraba) y la entrada de «Áreas». Áreas, reglas y comentarios se conservan."""
+    texto = re.sub(r"^# Toggl · ", "# Configuración · ", texto, count=1, flags=re.M)
+    m = re.search(r"^# .*\n", texto, re.M)
+    if m and "\n## " in texto[m.end():]:  # la presentación: lo que va entre el título y la primera sección
+        resto = texto[m.end():]
+        texto = texto[:m.end()] + "\n" + INTRO + "\n" + resto[resto.index("\n## "):]
+    if "## Rama destino" not in texto:
+        seccion = "## Rama destino\n\n`main`\n\n" + RAMA + "\n\n"
+        texto = texto.replace("## Áreas", seccion + "## Áreas", 1) if "## Áreas" in texto else \
+            texto.rstrip() + "\n\n" + seccion
+    texto = re.sub(r"(## Áreas\n\n)La primera línea de la descripción[^\n]*\n", lambda x: x.group(1) + AREAS + "\n",
+                   texto, count=1)
+    return texto.replace("<!-- Opcional: lo propio de este repo en Toggl. -->", "<!-- Opcional: lo propio de este repo. -->")
 
 
 toggl_md = config_md  # nombre anterior
@@ -277,8 +313,7 @@ def a_config(carpeta, aplicar=False):
     if toggl.exists() and not config.exists():
         hechos.append("toggl.md → config.md")
         if aplicar:
-            texto = re.sub(r"^# Toggl · ", "# Configuración · ", toggl.read_text(encoding="utf-8"), count=1, flags=re.M)
-            config.write_text(texto, encoding="utf-8")
+            config.write_text(config_desde_toggl(toggl.read_text(encoding="utf-8")), encoding="utf-8")
             toggl.unlink()
     pc, pend = carpeta / "para-claude.md", carpeta / "pendientes.md"
     if pc.exists():
@@ -350,7 +385,11 @@ def main(argv=None):
     if destino.exists() and not args.forzar:
         print("%s ya existe; --forzar para reescribirlo." % destino, file=sys.stderr)
         return 2
-    areas = armar(carpeta, args.proyecto, None)["areas"]
+    r = armar(carpeta, args.proyecto, None)
+    areas = r["areas"]
+    for b in r["bandeja"]:  # la bandeja lleva «General» por defecto: el área tiene que existir
+        if b["area"] not in [a["nombre"] for a in areas]:
+            areas.append({"nombre": b["area"], "ambito": GENERAL if b["area"] == "General" else ""})
     destino.write_text(config_md(args.proyecto, args.nombre, args.cliente, args.cliente_nombre, areas, args.rama), encoding="utf-8")
     print(json.dumps({"ok": True, "escrito": str(destino), "areas": len(areas)}, ensure_ascii=False))
     return 0
