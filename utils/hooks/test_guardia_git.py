@@ -197,6 +197,25 @@ class Guardia(unittest.TestCase):
             g.revisar_edicion(aprob + "/s1.json")
         self.pasa("ls %s 2>/dev/null" % aprob)
 
+    def test_escribir_en_la_zona_por_otras_vias_se_bloquea(self):
+        cache = "~/.claude/plugins/cache"
+        self.bloquea("sudo rm -rf %s/x" % cache)
+        self.bloquea("cd %s && rm -rf x" % cache)
+        self.bloquea("find %s -name '*.py' | xargs -0 rm" % cache)
+        self.bloquea("find %s -name x -exec rm {} +" % cache)
+        self.bloquea("find %s -name x -delete" % cache)
+        self.bloquea("sed -i '' 's/a/b/' %s/x.py" % cache)
+        self.bloquea("cat x | tee %s/x.py" % cache)
+        self.bloquea("bash -c 'mv %s/x /tmp/y'" % cache)
+        self.bloquea("echo $(cp /tmp/x %s/y)" % cache)
+
+    def test_leer_la_zona_pasa_aunque_nombre_una_orden_de_escritura(self):
+        cache = "~/.claude/plugins/cache"
+        self.pasa('grep -rn "cp " %s | head' % cache)
+        self.pasa("grep -rln rm %s" % cache)
+        self.pasa("ls %s && cat %s/x/hooks.json" % (cache, cache))
+        self.pasa("python3 -c 'print(1)' %s/installed_plugins.json" % cache)
+
     def test_mensaje_del_usuario_registra_el_permiso(self):
         entrada = json.dumps({"session_id": "s9", "prompt": "apruebo el merge"})
         sys_stdin = sys.stdin

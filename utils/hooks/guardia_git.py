@@ -34,7 +34,9 @@ from pathlib import Path
 VIGENCIA = 600  # segundos
 PERMITIDOS = re.compile(r"^tareas/(por-revisar\.md|pendientes\.md|historial/[^/]+\.md)$")
 OPERADORES = {";", "&&", "||", "|", "&", "(", ")", ";;", "|&"}
-ESCRITURA = re.compile(r"(\brm\b|\bmv\b|\bcp\b|sed\s+-i|\btee\b|\btouch\b|\bchmod\b|\bln\b|\btruncate\b|\bunlink\b)")
+ESCRITORES = {"rm", "rmdir", "mv", "cp", "tee", "touch", "chmod", "chown", "ln", "truncate", "unlink",
+              "install", "rsync", "mkdir", "dd"}
+PREFIJOS = {"env", "command", "nohup", "time", "sudo", "nice", "exec", "xargs"}
 AVISO = ("El merge y el push a una rama protegida los desbloquea solo el usuario, escribiendo "
          "«apruebo el merge» después de ver el resultado: muéstraselo y pídeselo. Para trabajar, usa "
          "una rama (git switch -c <rama>). No intentes rodear este bloqueo: ni con otro comando, ni "
@@ -394,6 +396,51 @@ def interior_de_shell(tokens):
     return None
 
 
+def escribe_algo(cmd, profundidad=0):
+    """True si el comando lleva una orden que escribe: una de ESCRITORES en posición de orden (o tras
+    `sudo`, `xargs`, `-exec`…), `sed -i`/`perl -i` o `find … -delete`; también dentro de `bash -c`,
+    `eval`, `$(…)` y comillas invertidas. La misma palabra como argumento (`grep "cp "`) no cuenta."""
+    if profundidad > 5:
+        return True
+    for m in SUSTITUCION.finditer(cmd):
+        if escribe_algo(m.group(1) or m.group(2) or "", profundidad + 1):
+            return True
+    for tokens in segmentos(cmd):
+        while tokens and re.match(r"^[A-Za-z_][A-Za-z0-9_]*=", tokens[0]):
+            tokens = tokens[1:]
+        if not tokens:
+            continue
+        nombres = [os.path.basename(t) for t in tokens]
+        if nombres[0] in SHELLS:
+            interior = interior_de_shell(tokens)
+            if interior is not None and escribe_algo(interior, profundidad + 1):
+                return True
+            continue
+        if nombres[0] == "eval" and escribe_algo(" ".join(tokens[1:]), profundidad + 1):
+            return True
+        for k, nombre in enumerate(nombres):
+            en_posicion = k == 0 or any(n in PREFIJOS for n in nombres[:k]) or \
+                tokens[k - 1] in ("-exec", "-execdir", "-ok", "-okdir")
+            if en_posicion and nombre in ESCRITORES:
+                return True
+        if nombres[0] in ("sed", "perl") and any(re.match(r"^-[A-Za-z]*i", t) or t.startswith("--in-place")
+                                                 for t in tokens[1:]):
+            return True
+        if nombres[0] == "find" and "-delete" in tokens:
+            return True
+    return False
+
+
+def escribe_en_zona(cmd):
+    """Una redirección hacia la zona protegida, o un comando que la nombra y escribe algo. Se juzga el
+    comando entero y no cada segmento: en `cd <zona> && rm x` o `find <zona> | xargs rm` la zona y la
+    escritura van en segmentos distintos."""
+    destinos = re.findall(r">>?\s*['\"]?([^\s'\";&|]+)", cmd)
+    if any(toca_zona_protegida(d) for d in destinos):
+        return True
+    return toca_zona_protegida(cmd) and escribe_algo(cmd)
+
+
 def revisar_bash(cmd, cwd, sesion, ahora=None, profundidad=0, estado=None):
     """Levanta Bloqueo con el motivo si el comando no debe correr. Mira también dentro de
     `bash -c '…'`, `eval …`, `$(…)` y las comillas invertidas."""
@@ -401,8 +448,7 @@ def revisar_bash(cmd, cwd, sesion, ahora=None, profundidad=0, estado=None):
     estado = {} if estado is None else estado
     if profundidad > 5:
         bloquear("comando anidado demasiadas veces para revisarlo")
-    destinos = re.findall(r">>?\s*['\"]?([^\s'\";&|]+)", cmd)
-    if (toca_zona_protegida(cmd) and ESCRITURA.search(cmd)) or any(toca_zona_protegida(d) for d in destinos):
+    if escribe_en_zona(cmd):
         bloquear("escribir en los permisos de la guardia o en la copia instalada de los plugins")
     if not re.search(r"(^|[^\w-])(git|gh)(\s|$)", cmd):
         return
