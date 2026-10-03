@@ -69,7 +69,7 @@
       "displayName": "Utils",
       "source": "./utils",
       "description": "Skills personales de utilidad general: sistema de tareas donde Toggl 2.0 es del usuario (Claude solo crea las tareas que él elige de «Esto te toca a ti»), el trabajo de Claude vive en su plan y su rama, lo decidido sin hacer en pendientes.md y todo sale al historial con su porqué; guardia de git que protege main y la rama destino (merge y push solo con «apruebo el merge»); vista diaria, planificación semanal, revisión semanal con lo abierto y registro local del tiempo del usuario y de Claude.",
-      "version": "6.1.3",
+      "version": "6.1.4",
       "keywords": [
         "utils",
         "productividad",
