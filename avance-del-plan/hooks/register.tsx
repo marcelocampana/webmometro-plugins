@@ -36,20 +36,43 @@ function leerPlan(texto: string, rama: string, archivo: string): Plan {
   return { titulo, rama, archivo, pasos, espera }
 }
 
+function escapar(texto: string): string {
+  return texto.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
 async function buscar($: Dolar, desde?: string): Promise<Plan | null> {
   const raiz = await git($, ['rev-parse', '--show-toplevel'], desde)
   const rama = raiz && (await git($, ['branch', '--show-current'], raiz))
   if (!raiz || !rama) return null
+  const repo = raiz.slice(raiz.lastIndexOf('/') + 1)
+  const marca = new RegExp(`<!--[^>]*\\brepo\\s+${escapar(repo)}\\b[^>]*\\brama\\s+${escapar(rama)}\\b`)
+
+  // El plan del modo plan, en la carpeta de Claude Code, encontrado por su marcador.
+  const home = (await $.process.run(['printenv', 'HOME']).catch(() => undefined))?.stdout.trim()
+  const planes = home ? `${home}/.claude/plans` : ''
+  if (planes && (await $.fs.exists(planes))) {
+    const archivos = (await $.fs.list(planes))
+      .filter(a => a.name.endsWith('.md'))
+      .sort((a, b) => b.mtimeMs - a.mtimeMs)
+      .slice(0, 200)
+    for (const a of archivos) {
+      const ruta = `${planes}/${a.name}`
+      const texto = await $.fs.read(ruta).catch(() => '')
+      if (marca.test(texto.split('\n', 1)[0] ?? '')) return leerPlan(texto, rama, ruta)
+    }
+  }
+
+  // Antes de utils 6.1, el plan vivía en tareas/planes/ del repo.
   const dir = `${raiz}/tareas/planes`
   if (!(await $.fs.exists(dir))) return null
   const directo = `${dir}/${rama}.md`
   if (await $.fs.exists(directo)) return leerPlan(await $.fs.read(directo), rama, directo)
-  const marcador = new RegExp(`<!--[^>]*\\b(rama|slug)\\s+${rama.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`)
+  const viejo = new RegExp(`<!--[^>]*\\b(rama|slug)\\s+${escapar(rama)}\\b`)
   for (const entrada of await $.fs.list(dir)) {
     if (!entrada.name.endsWith('.md')) continue
     const ruta = `${dir}/${entrada.name}`
     const texto = await $.fs.read(ruta).catch(() => '')
-    if (marcador.test(texto.split('\n', 1)[0] ?? '')) return leerPlan(texto, rama, ruta)
+    if (viejo.test(texto.split('\n', 1)[0] ?? '')) return leerPlan(texto, rama, ruta)
   }
   return null
 }
@@ -88,7 +111,10 @@ export const register: Register = on => {
 
   on('tool.call', { tool: 'Edit' }, async ($, e, next) => {
     const ran = await next(e)
-    if (e.file_path.includes('/tareas/planes/')) {
+    if (e.file_path.includes('/.claude/plans/')) {
+      const p = await cargar($)
+      await $.state.set(PLAN, p)
+    } else if (e.file_path.includes('/tareas/planes/')) {
       const p = await cargar($, e.file_path.slice(0, e.file_path.lastIndexOf('/')))
       await $.state.set(PLAN, p)
     }
@@ -97,7 +123,10 @@ export const register: Register = on => {
 
   on('tool.call', { tool: 'Write' }, async ($, e, next) => {
     const ran = await next(e)
-    if (e.file_path.includes('/tareas/planes/')) {
+    if (e.file_path.includes('/.claude/plans/')) {
+      const p = await cargar($)
+      await $.state.set(PLAN, p)
+    } else if (e.file_path.includes('/tareas/planes/')) {
       const p = await cargar($, e.file_path.slice(0, e.file_path.lastIndexOf('/')))
       await $.state.set(PLAN, p)
     }

@@ -35,7 +35,7 @@ cabecera del plan), con nueve columnas:
   Comentarios termina en `[detalle](#el-ancla)`, ancla del mismo archivo.
 - **Un trabajo es una sola fila**, aunque se haya retomado varias veces: Duración, lo medido en
   local; Claude, el `claude` de sus `tramos`. El comentario enlaza el plan
-  (`tareas/planes/<slug>.md`), donde queda el paso a paso.
+  por su ruta (`~/.claude/plans/<nombre>.md`), donde queda el paso a paso.
 - Una fila cerrada ya no cambia.
 
 ## Lo descartado

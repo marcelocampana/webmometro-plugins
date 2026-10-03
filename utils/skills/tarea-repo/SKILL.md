@@ -3,8 +3,8 @@ name: tarea-repo
 description: >
   La parte de repositorio del sistema de tareas: el trabajo de Claude en un repo con `tareas/`. Pone
   la ceremonia de git —rama por tarea, commits como puntos de guardado, merge y push con la
-  aprobación del usuario—, guarda el plan de Claude (`tareas/planes/<slug>.md`, que termina con
-  «Esto te toca a ti») y la memoria del repo: el historial de lo cerrado y lo descartado, con su
+  aprobación del usuario—, sigue el plan de Claude (el del modo plan, en `~/.claude/plans/`, con
+  su tabla de pasos y «Esto te toca a ti») y la memoria del repo: el historial de lo cerrado y lo descartado, con su
   porqué (`tareas/historial/`), lo decidido que aún no se hace o quedó a medias
   (`tareas/pendientes.md`), la bandeja de lo anotado sin decidir (`tareas/por-revisar.md`), la
   revisión por áreas (`auditoria.md`) y la configuración del repo (`config.md`: rama destino, áreas,
@@ -19,7 +19,7 @@ description: >
   tareas, no lo actives.
 argument-hint: "[--init | --migrar | --auditoria | --ingerir | --revisar]"
 metadata:
-  version: 6.0.0
+  version: 6.1.0
 ---
 
 # Tareas de repositorio (tarea-repo)
@@ -75,7 +75,8 @@ tareas/
 
 ## La ceremonia, en corto
 
-- **Planificar:** Claude arma su plan como siempre; se guarda en `tareas/planes/<slug>.md` y termina
+- **Planificar:** un solo plan, el del modo plan (en `~/.claude/plans/`, sin copia en el repo), con
+  la tabla «Pasos» y un marcador con el repo y la rama; termina
   con **«Esto te toca a ti»** si hay algo del usuario que le ocupa tiempo (`tarea`). Se aprueba una
   vez, y eso cubre la ejecución.
 - **Abrir:** la **rama destino** (`config.md` § Rama destino; `main` si no la declara) limpia y

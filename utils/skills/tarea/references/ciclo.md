@@ -15,7 +15,7 @@ Solo las que eligió de «Esto te toca a ti» o las que dicta él («crea una ta
   los ids, y la que falte se crea con `tags create` antes) **y** en la primera línea de la
   descripción, `Área: <área>`.
 - **Descripción:** tras la línea del área, qué se espera y una línea de origen: `Sale de:
-  <repo> · tareas/planes/<slug>.md` (o la conversación, si no hay plan).
+  <repo> · ~/.claude/plans/<nombre>.md` (o la conversación, si no hay plan).
 - **Asignada al usuario** (`user_account_id`), con `estimated_mins` = el tiempo que decía la lista.
   Sin fecha, salvo que el usuario la diga: **planificar es suyo**. Si la dice, `start_date` y
   `end_date` juntas (Toggl rechaza una sin la otra).

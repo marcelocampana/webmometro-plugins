@@ -22,7 +22,7 @@
       "id": 3,
       "name": "abrir-rama-desde-la-destino",
       "prompt": "Hazlo: arregla el menú.",
-      "expected_output": "Guarda el plan en tareas/planes/<slug>.md, git status y git fetch; con la rama destino de config.md limpia y al día crea la rama <slug> desde ella y marca 'abrir' con presencia.py. No toca Toggl. Nunca commitea sobre la destino ni sobre main.",
+      "expected_output": "Usa como único plan el del modo plan (en ~/.claude/plans/), le pone el marcador con repo y rama; git status y git fetch; con la rama destino de config.md limpia y al día crea la rama <slug> desde ella y marca 'abrir' con presencia.py. No toca Toggl. Nunca commitea sobre la destino ni sobre main.",
       "files": [
         "evals/fixtures/enlazado/tareas/config.md"
       ]
@@ -47,7 +47,7 @@
       "id": 6,
       "name": "plan-de-siete-pasos-en-el-archivo-del-plan",
       "prompt": "Registra el plan que acabamos de aprobar: son siete pasos que vas a hacer tú de corrido, sin que yo tenga que validar nada entre medio.",
-      "expected_output": "Escribe el plan en tareas/planes/<slug>.md (con skill y contexto por paso), una sola rama; nada en Toggl. Encadena los pasos marcando «Hecho» con evidencia, sin pedir visto bueno; al terminar muestra el resultado y pide «apruebo el merge»; la cadena termina con merge y push. El historial lleva una fila que enlaza el plan.",
+      "expected_output": "Usa el plan del modo plan, en ~/.claude/plans/, sin copiarlo al repo, con la tabla Pasos (skill y contexto por paso), una sola rama; nada en Toggl. Encadena los pasos marcando «Hecho» con evidencia, sin pedir visto bueno; al terminar muestra el resultado y pide «apruebo el merge»; la cadena termina con merge y push. El historial lleva una fila que enlaza el plan.",
       "files": []
     },
     {
@@ -128,7 +128,7 @@
       "id": 16,
       "name": "retomar-un-pendiente",
       "prompt": "Sigue con lo del contraste de botones.",
-      "expected_output": "Toma la entrada de pendientes.md, escribe o lee su plan en tareas/planes/<slug>.md, da el estado en 2-3 líneas, marca abrir con presencia.py y trabaja en su rama; no crea nada en Toggl. Al terminar pide «apruebo el merge» tras mostrar el resultado; al cerrar la entrada sale de pendientes.md y queda en el historial.",
+      "expected_output": "Toma la entrada de pendientes.md, lee su plan en ~/.claude/plans/ por el marcador (o lo escribe ahí), da el estado en 2-3 líneas, marca abrir con presencia.py y trabaja en su rama; no crea nada en Toggl. Al terminar pide «apruebo el merge» tras mostrar el resultado; al cerrar la entrada sale de pendientes.md y queda en el historial.",
       "files": []
     },
     {

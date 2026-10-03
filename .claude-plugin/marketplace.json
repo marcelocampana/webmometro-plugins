@@ -69,7 +69,7 @@
       "displayName": "Utils",
       "source": "./utils",
       "description": "Skills personales de utilidad general: sistema de tareas donde Toggl 2.0 es del usuario (Claude solo crea las tareas que él elige de «Esto te toca a ti»), el trabajo de Claude vive en su plan y su rama, lo decidido sin hacer en pendientes.md y todo sale al historial con su porqué; guardia de git que protege main y la rama destino (merge y push solo con «apruebo el merge»); vista diaria, planificación semanal, revisión semanal con lo abierto y registro local del tiempo del usuario y de Claude.",
-      "version": "6.0.3",
+      "version": "6.1.0",
       "keywords": [
         "utils",
         "productividad",
@@ -93,8 +93,8 @@
       "name": "avance-del-plan",
       "displayName": "Avance del plan",
       "source": "./avance-del-plan",
-      "description": "Mod de Claude Code que muestra el avance del plan de la rama en curso (tareas/planes/<slug>.md, tabla «Pasos»): una línea en la barra de estado («Plan 4/11 · sigue: …») y un panel con /plan, con cada paso hecho, en curso o pendiente y lo que espera del usuario.",
-      "version": "0.1.0",
+      "description": "Mod de Claude Code que muestra el avance del plan de la rama en curso (el del modo plan, en ~/.claude/plans/, con su tabla «Pasos»): una línea en la barra de estado («Plan 4/11 · sigue: …») y un panel con /plan, con cada paso hecho, en curso o pendiente y lo que espera del usuario.",
+      "version": "0.2.0",
       "keywords": [
         "plan",
         "avance",

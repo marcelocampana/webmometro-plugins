@@ -9,8 +9,10 @@ curso.
 - **Se actualiza** al abrir la sesión, cada vez que Claude edita un plan y tras un `git switch`,
   `checkout`, `merge` o `commit`.
 
-Lee `tareas/planes/<rama>.md` (o el plan cuyo marcador `<!-- … rama <rama> … -->` nombra la rama) y
-su tabla `## Pasos`, columna «Hecho», que lleva el skill `tarea-repo` del plugin `utils`. Sin plan
+Lee el plan del modo plan, en `~/.claude/plans/`, cuya primera línea nombra el repo y la rama en
+curso (`<!-- tarea: plan · repo <repo> · rama <rama> … -->`), y su tabla `## Pasos`, columna
+«Hecho», que lleva el skill `tarea-repo` del plugin `utils`. Los planes anteriores a utils 6.1, en
+`tareas/planes/` del repo, se siguen leyendo. Sin plan
 para la rama, no muestra nada. Solo lee: no escribe en ningún archivo.
 
 Usa `$.state.get/set` en vez de `atom`/`update`: el validador de algunas versiones del CLI rechaza

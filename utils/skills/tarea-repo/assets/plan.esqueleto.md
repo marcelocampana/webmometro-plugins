@@ -1,7 +1,8 @@
-<!-- tarea: plan · slug {{slug}} · rama {{rama}} · área {{Área}} · coste ~{{estimación}} -->
-<!-- El plan es el registro de Claude: no va a Toggl. Es el plan aprobado, tal cual, más la tabla de
-     pasos. Claude lo lee al retomar y lo completa al cerrar. El usuario solo lee «Estado» y
-     «Esto te toca a ti». -->
+<!-- tarea: plan · repo {{repo}} · rama {{slug}} · área {{Área}} · coste ~{{estimación}} -->
+<!-- Lo que el plan del modo plan lleva además de su propio texto. Hay un solo plan: el que guarda
+     Claude Code en ~/.claude/plans/ (sin modo plan, Claude lo escribe ahí como <slug>.md). No se
+     copia al repo. El marcador de la primera línea lo encuentra (mod avance-del-plan,
+     pendientes.py); se completa al abrir la rama. -->
 
 # {{Objetivo}}
 
@@ -9,9 +10,7 @@
 
 Van 0 de {{N}} pasos. Sigue: {{primer paso}}. Espera de ti: {{una decisión, o «nada por ahora»}}.
 
-## Plan
-
-{{El plan aprobado, sin reformatear.}}
+{{El texto del plan, como lo escribe el modo plan.}}
 
 ## Pasos
 

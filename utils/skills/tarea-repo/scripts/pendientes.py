@@ -98,8 +98,38 @@ def ramas_sin_mergear(raiz):
     return salida
 
 
+def dir_planes():
+    """La carpeta donde Claude Code guarda los planes del modo plan."""
+    return Path(os.environ.get("PLANES_CLAUDE", "~/.claude/plans")).expanduser()
+
+
+def marcador_de(texto, repo, rama):
+    primera = (texto or "").split("\n", 1)[0]
+    return bool(re.search(r"<!--[^>]*\brepo\s+%s\b" % re.escape(repo), primera)) and \
+        bool(re.search(r"<!--[^>]*\brama\s+%s\b" % re.escape(rama), primera))
+
+
 def leer_plan(raiz, rama):
-    """(archivo, texto) del plan de la rama: `tareas/planes/<rama>.md`, o el que la nombre en su marcador."""
+    """(ruta, texto) del plan de la rama: el del modo plan, en `~/.claude/plans/`, cuyo marcador nombra
+    este repo y esta rama (el más reciente si hay varios). Antes de utils 6.1 el plan vivía en
+    `tareas/planes/` del repo: si no hay otro, se busca ahí."""
+    carpeta = dir_planes()
+    if carpeta.is_dir():
+        candidatos = sorted(carpeta.glob("*.md"), key=lambda f: f.stat().st_mtime, reverse=True)
+        for f in candidatos[:200]:
+            try:
+                with f.open(encoding="utf-8") as h:
+                    primera = h.readline()
+            except OSError:
+                continue
+            if marcador_de(primera, Path(raiz).name, rama):
+                defecto = Path("~/.claude/plans").expanduser()
+                ruta = "~/.claude/plans/%s" % f.name if carpeta == defecto else str(f)
+                return ruta, f.read_text(encoding="utf-8")
+    return leer_plan_en_repo(raiz, rama)
+
+
+def leer_plan_en_repo(raiz, rama):
     actual = git(raiz, "branch", "--show-current")
     def leer(nombre):
         if rama == actual:
@@ -108,13 +138,13 @@ def leer_plan(raiz, rama):
         return git(raiz, "show", "%s:tareas/planes/%s" % (rama, nombre))
     texto = leer(rama + ".md")
     if texto:
-        return rama + ".md", texto
+        return "tareas/planes/%s.md" % rama, texto
     nombres = git(raiz, "ls-tree", "--name-only", rama, "tareas/planes/") or ""
     for ruta in nombres.splitlines():
         nombre = ruta.rsplit("/", 1)[-1]
         t = leer(nombre)
         if t and re.search(r"<!--[^>]*\brama\s+%s\b" % re.escape(rama), t):
-            return nombre, t
+            return "tareas/planes/%s" % nombre, t
     return None, None
 
 
@@ -145,7 +175,7 @@ def entrada(raiz, r, hoy):
     if r["cambios_sin_commitear"]:
         falta += "; cambios sin commitear"
     return "- **%s** · %s · rama `%s` · plan %s · %s — %s · sesión cerrada sin cierre" % (
-        titulo or r["rama"], area or "—", r["rama"], "`planes/%s`" % archivo if archivo else "—",
+        titulo or r["rama"], area or "—", r["rama"], "`%s`" % archivo if archivo else "—",
         r["fecha"] or hoy, falta)
 
 
