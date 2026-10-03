@@ -38,7 +38,9 @@ def sin_id(texto):
 
 def leer(ruta):
     ahora, secciones, seccion, cabecera = [], {}, None, None
-    for linea in open(ruta, encoding="utf-8").read().split("\n"):
+    with open(ruta, encoding="utf-8") as f:
+        texto = f.read()
+    for linea in texto.split("\n"):
         if linea.startswith("## "):
             seccion, cabecera = linea[3:].strip(), None
             continue

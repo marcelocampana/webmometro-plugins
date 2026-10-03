@@ -19,7 +19,7 @@ description: >
   tareas, no lo actives.
 argument-hint: "[--init | --migrar | --auditoria | --ingerir | --revisar]"
 metadata:
-  version: 6.1.2
+  version: 6.1.3
 ---
 
 # Tareas de repositorio (tarea-repo)
