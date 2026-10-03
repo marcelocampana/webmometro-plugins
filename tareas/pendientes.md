@@ -15,8 +15,6 @@ tres debajo como `###`.
 
 ## Por hacer
 
-- **Verificar la guardia de git en vivo** · utils · rama — · plan `planes/completar-bien-el-trabajo.md` · 2026-10-02 — con utils 6.0.0 instalado y una sesión nueva en modo automático: commit en main bloqueado, merge y push solo tras «apruebo el merge», permiso de otra sesión no sirve · los ganchos del plugin solo se cargan desde la versión instalada, después del merge
-
 ## A medias
 
 ## Espera tu decisión
