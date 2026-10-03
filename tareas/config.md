@@ -16,7 +16,7 @@ llevan como etiqueta y en la primera línea de la descripción (`Área: <nombre>
 
 | Área | Qué abarca |
 | --- | --- |
-| General | Documentación raíz (`README.md`, `CLAUDE.md`, `docs/`), configuración y todo lo transversal a los cuatro plugins. |
+| General | Documentación raíz (`README.md`, `CLAUDE.md`, `docs/`), configuración y todo lo transversal a los plugins. |
 | Manifests | `.claude-plugin/marketplace.json` y los cuatro `plugin.json`. Vive aparte porque un bump de versión toca dos archivos a la vez: es una sola tarea aquí, nunca una fila duplicada por plugin. |
 | brand-voice-pro | Los skills, agents, commands y el `.mcp.json` del plugin. Es el único con las cuatro piezas. |
 | design-system | Los tres skills del plugin: `carousel-design`, `design-system` e `image-prompt`. |

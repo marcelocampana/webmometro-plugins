@@ -121,3 +121,11 @@ Utilidades transversales de organización del trabajo.
   plan contra realidad, imprevistos, sesgo de estimación por familia de tarea, candidatas a
   automatizar, salud (sesiones sin pausa, horas frente al computador),
   uso de aplicaciones y tiempo que Claude trabajó solo. **Solo lee.**
+
+## avance-del-plan
+
+Mod de Claude Code, sin skills. Muestra en la barra de estado en qué paso va
+el plan de la rama en curso (`Plan 4/11 · sigue: …`) y, con `/plan`, un panel
+con cada paso hecho, en curso o pendiente y lo que espera de ti. Lee la tabla
+«Pasos» que lleva `tarea-repo`; solo lee.
+

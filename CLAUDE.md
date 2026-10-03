@@ -9,7 +9,7 @@ There is no build, test, or lint step — the "artifacts" are Markdown skills/ag
 and JSON manifests that Claude Code loads. Work here means authoring or editing those files
 and keeping the manifests valid and consistent.
 
-The marketplace currently ships four plugins, all authored in **Spanish neutro** for
+The marketplace currently ships five plugins, all authored in **Spanish neutro** for
 user-facing output (skills instruct their output language explicitly):
 
 - **brand-voice-pro** — full-stack plugin: skills + agents + commands + MCP servers.
@@ -49,6 +49,11 @@ user-facing output (skills instruct their output language explicitly):
   - `tarea`, `tarea-repo`, `agenda`, `balance`, and `plan-semanal` keep a thin SKILL.md core that
     dispatches to one per-mode reference — core under ~2.4k tokens, each reference under ~1.7k,
     measured on the body after the frontmatter (`wc -c`, 4 chars ≈ 1 token).
+- **avance-del-plan** — a Claude Code *mod* (function-hooks module, `hooks/hooks.json` →
+  `{"modules": ["./register.tsx"]}` plus a `types/` state contract): shows the current branch's plan
+  progress (`tareas/planes/<slug>.md`, `## Pasos` table, «Hecho» column) in the status line and a
+  `/plan` pane. Read-only. Uses `$.state.get/set` rather than `atom`/`update` because older CLI
+  validators reject the latter; check it with `claude plugin validate avance-del-plan`.
 
 ## Layout & manifest hierarchy
 
@@ -59,7 +64,7 @@ user-facing output (skills instruct their output language explicitly):
 <plugin>/skills/<skill>/SKILL.md    ← the core unit; frontmatter drives auto-activation
 <plugin>/skills/<skill>/references/ ← supporting docs a skill reads on demand
 <plugin>/skills/<skill>/scripts/    ← executable helpers (stdlib-only, invoked from SKILL.md)
-<plugin>/hooks/hooks.json           ← optional plugin hooks (utils: git guard + capture of open work)
+<plugin>/hooks/hooks.json           ← optional plugin hooks (utils: git guard + capture; avance-del-plan: a mod module)
 <plugin>/agents/<name>.md           ← optional autonomous subagents (brand-voice-pro only)
 <plugin>/commands/<name>.md         ← optional slash-command entry points (brand-voice-pro only)
 <plugin>/settings/*.local.md.example← optional per-project config template the user copies into .claude/
