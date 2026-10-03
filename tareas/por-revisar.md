@@ -12,5 +12,4 @@ Sin repo (`~/Obsidian/Global/por-revisar.md`), una sección `## <Proyecto>` por 
 
 <!-- - **Corregir el desplegable del menú en móvil** · General · `AppHeader.vue:88` · 2026-09-29 — se corta en iPhone SE; visto al cerrar la tarea 16642210 -->
 - **Obligar a decidir los pendientes antiguos** · utils · plan `completar-bien-el-trabajo` · 2026-10-02 — una entrada de `pendientes.md` con más de 3–4 semanas obliga a hacerla o descartarla con motivo; se dejó para después del congelamiento
-- **La guardia no sigue el cambio de rama dentro de un mismo comando** · utils · `utils/hooks/guardia_git.py` · 2026-10-03 — revisa con la rama actual, así que `git switch main && git merge x && git push` en una sola línea se evaluaría como si siguiera en la rama de trabajo; habría que simular el `switch`/`checkout` dentro de la cadena
 - **La guardia revisa el commit antes de que corra el `git add` de la misma línea** · utils · `utils/hooks/guardia_git.py` · 2026-10-03 — `git add tareas/x.md && git commit` en una línea se bloquea aunque solo toque la bandeja; hoy basta separarlo en dos comandos

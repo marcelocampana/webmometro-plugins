@@ -201,7 +201,8 @@ def args_no_opcion(args, con_valor=()):
             salida.extend(args[i + 1:])
             break
         if a.startswith("-"):
-            if a in con_valor:
+            # `-m`, o un grupo de opciones cortas que termina en una que lleva valor (`-qm`, `-am`)
+            if a in con_valor or (re.match(r"^-[A-Za-z]{2,}$", a) and "-" + a[-1] in con_valor):
                 saltar = True
             continue
         salida.append(a)
@@ -255,7 +256,7 @@ def destinos_push(repo, rama, args):
     return salida, False
 
 
-def revisar_push(repo, rama, args, sesion, ahora):
+def revisar_push(repo, rama, args, sesion, ahora, modificadas=frozenset()):
     destinos, masivo = destinos_push(repo, rama, args)
     prot = protegidas(repo)
     if masivo:
@@ -263,6 +264,8 @@ def revisar_push(repo, rama, args, sesion, ahora):
             return
         bloquear("push de todas las ramas (incluye las protegidas)")
     pares = [(rama or "HEAD", d) if isinstance(d, str) else d for d in destinos]
+    forzado = any(a in ("-f", "--force") or a.startswith("--force-with-lease") or a.startswith("--force-if-includes")
+                  for a in args) or any(r.startswith("+") for r in args_no_opcion(args)[1:])
     for origen, destino in pares:
         if destino not in prot:
             continue
@@ -270,7 +273,8 @@ def revisar_push(repo, rama, args, sesion, ahora):
             bloquear("borrar la rama protegida `%s` del remoto" % destino)
         origen = origen if origen not in ("", "HEAD") else (rama or "HEAD")
         remoto = "refs/remotes/origin/%s" % destino
-        if git(repo, "rev-parse", "--verify", "--quiet", remoto):
+        if not forzado and (str(repo), destino) not in modificadas and \
+                git(repo, "rev-parse", "--verify", "--quiet", remoto):
             nuevos = git(repo, "rev-list", "%s..%s" % (remoto, origen))
             if nuevos == "":
                 continue  # nada que subir
@@ -283,7 +287,24 @@ def revisar_push(repo, rama, args, sesion, ahora):
         bloquear("push a la rama protegida `%s`" % destino)
 
 
-def revisar_git(tokens, cwd, sesion, ahora):
+def rama_tras_cambio(repo, sub, args):
+    """La rama en que queda el repo tras `git switch`/`git checkout`, o None si no cambia de rama."""
+    crear = {"switch": ("-c", "-C", "--create", "--force-create"), "checkout": ("-b", "-B")}[sub]
+    for k, a in enumerate(args):
+        if a in crear and k + 1 < len(args):
+            return args[k + 1]
+    if "--" in args or "--detach" in args:
+        return None
+    resto = args_no_opcion(args)
+    if resto and git(repo, "rev-parse", "--verify", "--quiet", "refs/heads/" + resto[0]):
+        return resto[0]
+    return None
+
+
+def revisar_git(tokens, cwd, sesion, ahora, estado=None):
+    """`estado` lleva la rama de cada repo según los `switch`/`checkout` anteriores de la misma
+    cadena: la guardia revisa antes de que corra el comando, y la rama real aún no cambió."""
+    estado = {} if estado is None else estado
     i = 1
     while i < len(tokens) and tokens[i].startswith("-"):
         t = tokens[i]
@@ -304,9 +325,17 @@ def revisar_git(tokens, cwd, sesion, ahora):
     repo = raiz(cwd)
     if repo is None:
         return  # fuera de un repo: init, clone, o un error del propio git
-    rama = rama_actual(repo)
+    rama = estado.get(str(repo)) or rama_actual(repo)
     prot = protegidas(repo)
     en_protegida = rama in prot
+    if sub in ("switch", "checkout"):
+        nueva = rama_tras_cambio(repo, sub, args)
+        if nueva:
+            estado[str(repo)] = nueva
+    if en_protegida and sub in ("reset", "merge", "pull", "cherry-pick", "revert", "am", "rebase"):
+        # Lo que esto cambie aún no existe al revisar: un push posterior en la misma cadena no
+        # puede juzgarse por lo que hay ahora, y pide permiso.
+        estado.setdefault("modificadas", set()).add((str(repo), rama))
 
     if sub == "commit" and en_protegida:
         revisar_commit(repo, rama, args, sesion, ahora)
@@ -327,7 +356,7 @@ def revisar_git(tokens, cwd, sesion, ahora):
             if not usar_permiso(sesion, repo, "merge", ahora):
                 bloquear("pull de otra rama hacia la rama protegida `%s`" % rama)
     elif sub == "push":
-        revisar_push(repo, rama, args, sesion, ahora)
+        revisar_push(repo, rama, args, sesion, ahora, estado.get("modificadas", set()))
     elif sub == "branch":
         if any(a in args for a in ("-f", "--force", "-D", "-d", "--delete", "-M", "-m", "--move", "-C", "-c")):
             tocadas = [a for a in args_no_opcion(args) if a in prot]
@@ -365,10 +394,11 @@ def interior_de_shell(tokens):
     return None
 
 
-def revisar_bash(cmd, cwd, sesion, ahora=None, profundidad=0):
+def revisar_bash(cmd, cwd, sesion, ahora=None, profundidad=0, estado=None):
     """Levanta Bloqueo con el motivo si el comando no debe correr. Mira también dentro de
     `bash -c '…'`, `eval …`, `$(…)` y las comillas invertidas."""
     ahora = ahora or time.time()
+    estado = {} if estado is None else estado
     if profundidad > 5:
         bloquear("comando anidado demasiadas veces para revisarlo")
     destinos = re.findall(r">>?\s*['\"]?([^\s'\";&|]+)", cmd)
@@ -377,7 +407,7 @@ def revisar_bash(cmd, cwd, sesion, ahora=None, profundidad=0):
     if not re.search(r"(^|[^\w-])(git|gh)(\s|$)", cmd):
         return
     for m in SUSTITUCION.finditer(cmd):
-        revisar_bash(m.group(1) or m.group(2) or "", cwd, sesion, ahora, profundidad + 1)
+        revisar_bash(m.group(1) or m.group(2) or "", cwd, sesion, ahora, profundidad + 1, estado)
     for tokens in segmentos(cmd):
         while tokens and re.match(r"^[A-Za-z_][A-Za-z0-9_]*=", tokens[0]):
             tokens = tokens[1:]
@@ -393,13 +423,13 @@ def revisar_bash(cmd, cwd, sesion, ahora=None, profundidad=0):
         if nombre in SHELLS:
             interior = interior_de_shell(tokens)
             if interior is not None:
-                revisar_bash(interior, cwd, sesion, ahora, profundidad + 1)
+                revisar_bash(interior, cwd, sesion, ahora, profundidad + 1, estado)
             continue
         if nombre == "eval":
-            revisar_bash(" ".join(tokens[1:]), cwd, sesion, ahora, profundidad + 1)
+            revisar_bash(" ".join(tokens[1:]), cwd, sesion, ahora, profundidad + 1, estado)
             continue
         if nombre == "git":
-            revisar_git(tokens, cwd, sesion, ahora)
+            revisar_git(tokens, cwd, sesion, ahora, estado)
         elif os.path.basename(tokens[0]) == "gh" and tokens[1:3] == ["pr", "merge"]:
             repo = raiz(cwd) or Path(cwd)
             if not usar_permiso(sesion, repo, "merge", ahora):

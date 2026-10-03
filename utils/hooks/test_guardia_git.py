@@ -175,6 +175,13 @@ class Guardia(unittest.TestCase):
         self.pasa("git merge --ff-only origin/main")
         self.pasa("git fetch && git status")
 
+    def test_push_forzado_a_main_siempre_pide_permiso(self):
+        sh(self.r, "reset", "-q", "--hard", "HEAD")
+        self.bloquea("git push --force origin main")
+        self.bloquea("git push -f")
+        self.bloquea("git push --force-with-lease origin main")
+        self.bloquea("git push origin +main")
+
     def test_forzar_o_borrar_main_se_bloquea(self):
         self.bloquea("git branch -f main HEAD~1")
         self.bloquea("git switch -C main")
@@ -228,6 +235,24 @@ class Guardia(unittest.TestCase):
         self.bloquea("bash -c \"bash -c 'git push origin main'\"")
         self.pasa("bash -c 'git status && git log -1'")
         self.pasa("bash script.sh")
+
+    def test_opciones_cortas_agrupadas_no_confunden_el_mensaje(self):
+        (self.r / "tareas" / "pendientes.md").write_text("# P\n- algo\n", encoding="utf-8")
+        sh(self.r, "add", "-A")
+        self.pasa("git commit -qm 'tareas: pendientes'")
+        self.pasa('git commit -qm "tareas: pendientes\n\nCo-Authored-By: x"')
+
+    def test_sigue_el_cambio_de_rama_dentro_de_la_cadena(self):
+        self.rama_con_trabajo()
+        sh(self.r, "switch", "-q", "arreglo")
+        self.bloquea("git switch main && git merge --no-ff arreglo")
+        self.bloquea("git checkout main && git commit --allow-empty -m x")
+        self.bloquea("git switch -q main && git reset --hard arreglo && git push")
+        self.bloquea("git switch main; git reset --hard arreglo; git push origin main")
+        self.pasa("git switch -c otra && git commit --allow-empty -m x")
+        sh(self.r, "switch", "-q", "main")
+        self.pasa("git switch arreglo && git commit --allow-empty -m x")
+        self.pasa("git checkout -b nueva && git commit --allow-empty -m x")
 
     def test_comando_ajeno_a_git_pasa(self):
         self.pasa("python3 -m unittest && ls -la")
