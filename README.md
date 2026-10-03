@@ -5,7 +5,7 @@ aplicación: no hay build, test ni lint — los "artefactos" son skills en
 Markdown, agentes, comandos y manifiestos JSON que Claude Code carga
 directamente.
 
-Incluye cuatro plugins:
+Incluye cinco plugins:
 
 - **brand-voice-pro** — descubre materiales de marca, genera guías de voz y
   las aplica al contenido generado por IA.
@@ -17,6 +17,8 @@ Incluye cuatro plugins:
 - **utils** — utilidades personales: sistema de tareas (Toggl para lo que
   haces tú; plan, rama y pendientes para lo de Claude; historial en cada repo),
   guardia de git que protege `main` y la rama destino, y registro de tiempo.
+- **avance-del-plan** — mod de Claude Code: el avance del plan de la rama en
+  la barra de estado y en un panel con `/plan`.
 
 ## Dónde ver qué hace cada skill
 
